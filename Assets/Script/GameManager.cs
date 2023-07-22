@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         animator = player.GetComponent<Animator>();
-        animator.SetInteger("animation", 0);
+        animator.SetInteger("anim", 0);
     }
 
     public void StartButton()

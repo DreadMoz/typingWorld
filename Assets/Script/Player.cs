@@ -139,7 +139,11 @@ void Start()
             }
         }
 
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Damage"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi"))
+        {
+            transform.position = transform.position;
+        }
+        else
         {
             if (!status.activeSelf)
             {
@@ -147,24 +151,39 @@ void Start()
                 {
                     agent.destination = this.transform.position;
                     transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                    if (Input.GetKey(KeyCode.RightArrow))
+                    {
+                        transform.rotation = Quaternion.Euler(0.0f, 45.0f, 0.0f);
+                    } else if (Input.GetKey(KeyCode.LeftArrow))
+                    {
+                        transform.rotation = Quaternion.Euler(0.0f, 315, 0.0f);
+                    }
                     transform.position += transform.forward * speed * Time.deltaTime;
                     animator.SetBool("Run", true);
                 }
-                if (Input.GetKey(KeyCode.DownArrow))
+                else if (Input.GetKey(KeyCode.DownArrow))
                 {
                     agent.destination = this.transform.position;
                     transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                    if (Input.GetKey(KeyCode.RightArrow))
+                    {
+                        transform.rotation = Quaternion.Euler(0.0f, 135.0f, 0.0f);
+                    }
+                    else if (Input.GetKey(KeyCode.LeftArrow))
+                    {
+                        transform.rotation = Quaternion.Euler(0.0f, 225.0f, 0.0f);
+                    }
                     transform.position += transform.forward * speed * Time.deltaTime;
                     animator.SetBool("Run", true);
                 }
-                if (Input.GetKey(KeyCode.RightArrow))
+                else if (Input.GetKey(KeyCode.RightArrow))
                 {
                     agent.destination = this.transform.position;
                     transform.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
                     transform.position += transform.forward * speed * Time.deltaTime;
                     animator.SetBool("Run", true);
                 }
-                if (Input.GetKey(KeyCode.LeftArrow))
+                else if (Input.GetKey(KeyCode.LeftArrow))
                 {
                     agent.destination = this.transform.position;
                     transform.rotation = Quaternion.Euler(0.0f, 270.0f, 0.0f);
