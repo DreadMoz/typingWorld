@@ -73,6 +73,7 @@ public class GameManager : MonoBehaviour
             if ((Input.GetKeyDown(KeyCode.I) || inventryButton.isOpen()) && (count == 0))
             {
                 count = windowOpenCount;
+                inventryButton.resetOpen();
 
                 if (inventry.activeSelf)
                 {
@@ -97,6 +98,7 @@ public class GameManager : MonoBehaviour
             else if ((Input.GetKeyDown(KeyCode.R) || rankingButton.isOpen()) && (count == 0))
             {
                 count = windowOpenCount;
+                rankingButton.resetOpen();
 
                 if (ranking.activeSelf)
                 {

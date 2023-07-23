@@ -101,6 +101,7 @@ public class Player : MonoBehaviour
                     if (Vector3.Distance(transform.position, agent.destination) < 0.2f)
                     {
                         animator.SetBool("Run", false);
+                        agent.destination = this.transform.position;
                     }
                 }
             }
@@ -112,10 +113,12 @@ public class Player : MonoBehaviour
         if (col.gameObject.name == "Door")
         {
             animator.SetTrigger("Hi");
+            agent.destination = this.transform.position;
         }
         else if (col.gameObject.name != "Terrain")
         {
             animator.SetTrigger("Damage");
+            agent.destination = this.transform.position;
         }
     }
 }
