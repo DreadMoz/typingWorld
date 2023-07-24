@@ -205,8 +205,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2453971053694234691}
   - component: {fileID: 5782133847234815271}
+  - component: {fileID: 1653774500192977351}
   - component: {fileID: 1398929555034048719}
-  - component: {fileID: 6038983747624458898}
   m_Layer: 0
   m_Name: Chibi_Cat
   m_TagString: Untagged
@@ -374,6 +374,20 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.50653994, y: -0.05716282, z: 0.00000008940697}
     m_Extent: {x: 0.89047134, y: 0.5877145, z: 0.9307356}
   m_DirtyAABB: 0
+--- !u!114 &1653774500192977351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586744538786703941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b9de7863c2f6cb4dbb5535ad7c62a12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvasRectTfm: {fileID: 8436671781909782980}
+  targetTfm: {fileID: 2453971053694234691}
 --- !u!114 &1398929555034048719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,19 +439,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 0b9a9f2a1e608c24b9f92f38282798b1, type: 2}
   - {fileID: 2100000, guid: 59b4d8325b4f3b84b8206757565f65d6, type: 2}
   - {fileID: 2100000, guid: 466ccfdfaf266004ea6ab2251ec67d99, type: 2}
---- !u!114 &6038983747624458898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 586744538786703941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ad055e16caf8f04584b4376a2dc7c3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameText: {fileID: 2777480671376993186}
 --- !u!1 &719103370355681120
 GameObject:
   m_ObjectHideFlags: 0
@@ -1277,8 +1278,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "neko\u3055\u3093"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d4749f25e566e184a8eefe15cf083b48, type: 2}
-  m_sharedMaterial: {fileID: -1675648425860121951, guid: d4749f25e566e184a8eefe15cf083b48, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3b5b84f00150501479fe9c4fae60035f, type: 2}
+  m_sharedMaterial: {fileID: 1275885346427420115, guid: 3b5b84f00150501479fe9c4fae60035f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
