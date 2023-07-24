@@ -101,7 +101,7 @@ public class Player : MonoBehaviour
                     if (Vector3.Distance(transform.position, agent.destination) < 0.2f)
                     {
                         animator.SetBool("Run", false);
-                        agent.destination = this.transform.position;
+//                        agent.destination = this.transform.position;
                     }
                 }
             }
