@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2003931976}
-  m_IndirectSpecularColor: {r: 0.09142324, g: 0.13754551, b: 0.24406181, a: 1}
+  m_IndirectSpecularColor: {r: 0.0914313, g: 0.1376316, b: 0.24423896, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1132,6 +1132,10 @@ PrefabInstance:
     - target: {fileID: 3699318472326166217, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
       propertyPath: m_Name
       value: DropItem (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3699318472326166217, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4596018973615300602, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
       propertyPath: m_Sprite
@@ -3094,6 +3098,10 @@ PrefabInstance:
     - target: {fileID: 3699318472326166217, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
       propertyPath: m_Name
       value: DropItem (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3699318472326166217, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4596018973615300602, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
       propertyPath: m_Sprite
@@ -8521,7 +8529,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8436671781909782980, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 2.2
       objectReference: {fileID: 0}
     - target: {fileID: 9145831487966826177, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
       propertyPath: m_SizeDelta.x
@@ -15006,7 +15014,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3500044728803102981, guid: 24d431edc21a6f84888a4302f93e0411, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4793044034814494138, guid: 24d431edc21a6f84888a4302f93e0411, type: 3}
       propertyPath: m_RootOrder
@@ -15080,6 +15088,10 @@ PrefabInstance:
     - target: {fileID: 3699318472326166217, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
       propertyPath: m_Name
       value: DropItem
+      objectReference: {fileID: 0}
+    - target: {fileID: 3699318472326166217, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6681110328296469977, guid: 149f906fd5cfac84ca0ea54693550686, type: 3}
       propertyPath: m_Pivot.x
