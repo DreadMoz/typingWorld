@@ -46,8 +46,6 @@ public class Player : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.UpArrow))
                 {
-                    agent.destination = this.transform.position;
-                    transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
                     if (Input.GetKey(KeyCode.RightArrow))
                     {
                         transform.rotation = Quaternion.Euler(0.0f, 45.0f, 0.0f);
@@ -55,13 +53,16 @@ public class Player : MonoBehaviour
                     {
                         transform.rotation = Quaternion.Euler(0.0f, 315, 0.0f);
                     }
+                    else
+                    {
+                        transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                    }
+                    agent.destination = this.transform.position;
                     transform.position += transform.forward * speed * Time.deltaTime;
                     animator.SetBool("Run", true);
                 }
                 else if (Input.GetKey(KeyCode.DownArrow))
                 {
-                    agent.destination = this.transform.position;
-                    transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
                     if (Input.GetKey(KeyCode.RightArrow))
                     {
                         transform.rotation = Quaternion.Euler(0.0f, 135.0f, 0.0f);
@@ -70,20 +71,25 @@ public class Player : MonoBehaviour
                     {
                         transform.rotation = Quaternion.Euler(0.0f, 225.0f, 0.0f);
                     }
+                    else
+                    {
+                        transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                    }
+                    agent.destination = this.transform.position;
                     transform.position += transform.forward * speed * Time.deltaTime;
                     animator.SetBool("Run", true);
                 }
                 else if (Input.GetKey(KeyCode.RightArrow))
                 {
-                    agent.destination = this.transform.position;
                     transform.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+                    agent.destination = this.transform.position;
                     transform.position += transform.forward * speed * Time.deltaTime;
                     animator.SetBool("Run", true);
                 }
                 else if (Input.GetKey(KeyCode.LeftArrow))
                 {
-                    agent.destination = this.transform.position;
                     transform.rotation = Quaternion.Euler(0.0f, 270.0f, 0.0f);
+                    agent.destination = this.transform.position;
                     transform.position += transform.forward * speed * Time.deltaTime;
                     animator.SetBool("Run", true);
                 }

@@ -205,7 +205,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2453971053694234691}
   - component: {fileID: 5782133847234815271}
-  - component: {fileID: 1653774500192977351}
   - component: {fileID: 1398929555034048719}
   m_Layer: 0
   m_Name: Chibi_Cat
@@ -374,20 +373,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.50653994, y: -0.05716282, z: 0.00000008940697}
     m_Extent: {x: 0.89047134, y: 0.5877145, z: 0.9307356}
   m_DirtyAABB: 0
---- !u!114 &1653774500192977351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 586744538786703941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b9de7863c2f6cb4dbb5535ad7c62a12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvasRectTfm: {fileID: 8436671781909782980}
-  targetTfm: {fileID: 2453971053694234691}
 --- !u!114 &1398929555034048719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1235,7 +1220,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3065290050789603228}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
@@ -2797,6 +2782,7 @@ GameObject:
   - component: {fileID: 8132680278932062076}
   - component: {fileID: 2628707296059988817}
   - component: {fileID: 2363140928121069917}
+  - component: {fileID: 2087675373659839370}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -2886,6 +2872,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2087675373659839370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7100669662262454745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b9de7863c2f6cb4dbb5535ad7c62a12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7158414191124050998
 GameObject:
   m_ObjectHideFlags: 0
