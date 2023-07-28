@@ -9,7 +9,7 @@ public class DropItem : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Image>().sprite = item.icon;
+        GetComponent<Image>().sprite = item.MyItemImage;
     }
     public void Pickup()
     {

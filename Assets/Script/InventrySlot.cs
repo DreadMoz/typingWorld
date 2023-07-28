@@ -5,22 +5,19 @@ using UnityEngine.UI;
 
 public class InventrySlot : MonoBehaviour
 {
-    public Image icon;
-//    public GameObject removeButton;
-    Item item;
+    private Item item;
 
-    public void AddItem(Item newItem)
+    [SerializeField]
+    private Image itemImage;
+    public Item MyItem { get => item; private set => item = value; }
+
+    public void SetItem(Item item)
     {
-        item = newItem;
-        icon.sprite = newItem.icon;
-//        removeButton.SetActive(true);
-    }
+        MyItem = item;
 
-    public void ClearSlot()
-    {
-        item = null;
-        icon.sprite = null;
-//        removeButton.SetActive(false);
+        if (item != null)
+        {
+            itemImage.sprite = item.MyItemImage;
+        }
     }
-
 }
