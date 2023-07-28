@@ -16,6 +16,9 @@ public class Player : MonoBehaviour
     private float inputHorizontal;
     private float inputVertical;
 
+    public OpenButton inventryButton;
+    public OpenButton rankingButton;
+
     // Start is called before the first frame update
     void Start()
     {

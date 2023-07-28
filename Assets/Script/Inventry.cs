@@ -24,6 +24,7 @@ private void Awake()
 
     void Update()
     {
+
     }
 
     public void Add(Item item)

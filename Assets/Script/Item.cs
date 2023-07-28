@@ -6,7 +6,12 @@ using UnityEngine;
 
 public class Item : ScriptableObject
 {
-    new public string name = "New Item";
+    [SerializeField]
+    private string itemName;
 
-    public Sprite icon = null;
+    [SerializeField]
+    private Sprite itemImage;
+
+    public string MyItemName { get => itemName;}
+    public Sprite MyItemImage { get => itemImage;}
 }
