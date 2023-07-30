@@ -19,8 +19,6 @@ public class InventryUI : MonoBehaviour
 
         for (int i = 0; i < slots.Length; i++)
         {
-
-
             if (i < Inventry.instance.items.Count)
             {
                 slots[i].SetItem(Inventry.instance.items[i]);
