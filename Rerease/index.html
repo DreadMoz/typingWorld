@@ -6,10 +6,15 @@
     <title>Unity WebGL Player | typingWorld</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="Build/UnityLoader.js"></script>
+    <script>
+      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/Build.json", {onProgress: UnityProgress});
+    </script>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600></canvas>
+      <canvas id="unity-canvas" width=1366 height=768></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -93,8 +98,8 @@
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
+        canvas.style.width = "1366px";
+        canvas.style.height = "768px";
       }
 
       loadingBar.style.display = "block";
@@ -115,5 +120,7 @@
       };
       document.body.appendChild(script);
     </script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
   </body>
 </html>
