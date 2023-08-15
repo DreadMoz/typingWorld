@@ -12,7 +12,7 @@ namespace AdventCalendar2020
     public class GoogleSheetManager : MonoBehaviour
     {
         /// <summary>
-        /// Jsonの変換用クラス
+        /// Json???????p?N???X
         /// </summary>
         public class ValueRange
         {
@@ -27,7 +27,7 @@ namespace AdventCalendar2020
 
 #if UNITY_WEBGL
         /// <summary>
-        /// jslibと名前を合わせる
+        /// jslib?????O??????????
         /// </summary>
         [DllImport("__Internal")]
         private static extern bool IsGoogleSignedIn();
@@ -37,10 +37,13 @@ namespace AdventCalendar2020
 
         [DllImport("__Internal")]
         private static extern void GoogleSignOut();
+
+        [DllImport("__Internal")]
+        private static extern void Firebase();
 #endif
 
         /// <summary>
-        /// JS側から渡されるアクセストークン
+        /// JS???????n???????A?N?Z?X?g?[?N??
         /// </summary>
         private string _accessToken;
 
@@ -49,17 +52,18 @@ namespace AdventCalendar2020
         public bool IsSignedIn => IsSignedInProperty.Value;
 
         /// <summary>
-        /// google認証
+        /// google?F??
         /// </summary>
         public void Auth()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
+            Firebase();
             GoogleAuth();
 #endif
         }
 
         /// <summary>
-        /// ログアウト
+        /// ???O?A?E?g
         /// </summary>
         public void SignOut()
         {
@@ -69,10 +73,10 @@ namespace AdventCalendar2020
         }
 
         /// <summary>
-        /// スプレッドシートのレンジを取得
+        /// ?X?v???b?h?V?[?g???????W??????
         /// </summary>
-        /// <param name="spreadsheetId">スプレッドシートのユニークID</param>
-        /// <param name="range">レンジ Ex: "シート１!A1:B2" はシート１のA1からB2までという意味</param>
+        /// <param name="spreadsheetId">?X?v???b?h?V?[?g?????j?[?NID</param>
+        /// <param name="range">?????W Ex: "?V?[?g?P!A1:B2" ???V?[?g?P??A1????B2??????????????</param>
         public async UniTask<ValueRange> GetSpreadsheetAsync(string spreadsheetId, string range, CancellationToken ct)
         {
             var url = $"{GoogleSpreadsheetURL}/{spreadsheetId}/values/{range}";
@@ -84,7 +88,7 @@ namespace AdventCalendar2020
             }
             catch (UnauthorizedAccessException)
             {
-                Debug.Log("未認証");
+                Debug.Log("???F??");
                 return null;
             }
             catch
@@ -94,7 +98,7 @@ namespace AdventCalendar2020
         }
 
         /// <summary>
-        /// UnityWebRequest.Getで送信する
+        /// UnityWebRequest.Get?????M????
         /// </summary>
         private async UniTask<string> SendGetRequestAsync(string url, CancellationToken ct)
         {
@@ -113,9 +117,9 @@ namespace AdventCalendar2020
                         }
                     };
                     var errorData = JsonConvert.DeserializeAnonymousType(uwr.downloadHandler.text, errorDefinition);
-                    // 未認証エラー
+                    // ???F???G???[
                     if (errorData.error.status == "UNAUTHENTICATED") throw new UnauthorizedAccessException();
-                    // その他エラー
+                    // ???????G???[
                     throw new Exception(uwr.downloadHandler.text);
                 }
 
@@ -124,7 +128,7 @@ namespace AdventCalendar2020
         }
 
         /// <summary>
-        /// URLの最後にクエリを追加
+        /// URL?????????N?G????????
         /// </summary>
         private string AppendAccessTokenToURL(string url, string token)
         {
