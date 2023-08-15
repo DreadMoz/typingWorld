@@ -1,27 +1,33 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class TextManager : MonoBehaviour
 {
-    public Text textInstance;
+    [DllImport("__Internal")]
+    private static extern void Firebase();
 
-    // js‘¤‚©‚çXV‚ª‡‚Á‚½‚ÉŒÄ‚Ño‚³‚ê‚éŠÖ”
+    public Text textInstance;
+    public RawImage imageInstance;
+
+    // jsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÉŒÄ‚Ñoï¿½ï¿½ï¿½ï¿½ï¿½Öï¿½
     public void UpdateText(string newText)
     {
-        // ƒeƒLƒXƒgƒRƒ“ƒ|[ƒlƒ“ƒg‚Ìæ“¾
-        textInstance.text = newText;
+        Debug.Log("UpdateText called with newText: " + newText);
+        // ï¿½eï¿½Lï¿½Xï¿½gï¿½Rï¿½ï¿½ï¿½|ï¿½[ï¿½lï¿½ï¿½ï¿½gï¿½Ìæ“¾
+        textInstance.text = "zz";
     }
 
 
     void Start()
     {
-        //js‘¤‚ÌŠÖ”‚ğŒÄ‚Ño‚µ‚Äƒf[ƒ^‚ÌŠÄ‹ŠJn
+        //jsï¿½ï¿½ï¿½ÌŠÖï¿½ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½ï¿½Äƒfï¿½[ï¿½^ï¿½ÌŠÄï¿½ï¿½Jï¿½n
     }
 
     public void OnButtonX()
     {
-        // ƒeƒLƒXƒgƒRƒ“ƒ|[ƒlƒ“ƒg‚Ìæ“¾
+        // ï¿½eï¿½Lï¿½Xï¿½gï¿½Rï¿½ï¿½ï¿½|ï¿½[ï¿½lï¿½ï¿½ï¿½gï¿½Ìæ“¾
         textInstance.text = "button";
     }
 }
