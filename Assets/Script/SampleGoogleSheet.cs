@@ -16,78 +16,28 @@ namespace AdventCalendar2020
         private Button _authButton;
 
         [SerializeField]
-        private Button _singOutButton;
+        private Button _setDataButton;
 
         [SerializeField]
         private Button _getDataButton;
 
         private void Start()
         {
-            // Å‰‚Í‰½‚à•\¦‚µ‚È‚¢
-            _authButton.gameObject.SetActive(false);
-            _singOutButton.gameObject.SetActive(false);
-            _getDataButton.gameObject.SetActive(false);
-            Bind();
-        }
-
-        private void Bind()
-        {
-            // ƒTƒCƒ“ƒCƒ“ó‘Ô‚ªXV‚³‚ê‚½‚çŒŸ’m
-            _sheetManager.IsSignedInProperty
-                .Subscribe(UpdateButtonActive) // isSigned => UpdateButtonActive(isSigned);
-                .AddTo(gameObject);
         }
 
         /// <summary>
-        /// ƒTƒCƒ“ƒCƒ“ó‘Ô‚É‰‚¶‚Äƒ{ƒ^ƒ“‚Ì•\¦Ø‚è‘Ö‚¦
-        /// </summary>
-        private void UpdateButtonActive(bool isSigned)
-        {
-            _authButton.gameObject.SetActive(isSigned == false);
-            _singOutButton.gameObject.SetActive(isSigned);
-            _getDataButton.gameObject.SetActive(isSigned);
-        }
-
-        /// <summary>
-        /// AuthButton‚ÌEvent‚©‚çŒÄ‚Ô
+        /// AuthButtonï¿½ï¿½Eventï¿½ï¿½ï¿½ï¿½Ä‚ï¿½
         /// </summary>
         public void GoogleAuth() => _sheetManager.Auth();
 
         /// <summary>
-        /// SignOutButton‚ÌEvent‚©‚çŒÄ‚Ô
+        /// GetDataButtonï¿½ï¿½Eventï¿½ï¿½ï¿½ï¿½Ä‚ï¿½
         /// </summary>
-        public void GoogleSignOut() => _sheetManager.SignOut();
+        public void GetFirebase() => _sheetManager.GetFirebase();
 
         /// <summary>
-        /// GetDataButton‚ÌEvent‚©‚çŒÄ‚Ô
+        /// SetDataButtonï¿½ï¿½Eventï¿½ï¿½ï¿½ï¿½Ä‚ï¿½
         /// </summary>
-        public void GetSheetData() => GetSheetDataAsync(gameObject.GetCancellationTokenOnDestroy()).Forget();
-
-        /// <summary>
-        /// ƒXƒvƒV‚Ìƒf[ƒ^‚ğ‚Æ‚èƒRƒ“ƒ\[ƒ‹‚Éo—Í
-        /// </summary>
-        private async UniTask GetSheetDataAsync(CancellationToken ct)
-        {
-            if (_sheetManager.IsSignedIn == false) return;
-
-            // ƒvƒ‰ƒCƒx[ƒg‚ÈƒXƒvƒVID‚Å‚à‰Â”\i”FØ‚µ‚½Û‚ÌƒAƒJƒEƒ“ƒg‚ªŒ©‚ê‚é‚È‚çæ‚ê‚é
-            // ¡‰ñ‚ÍƒTƒ“ƒvƒ‹‚»‚Ì‚Ü‚Ü‚ğ‘‚«‚Ü‚·
-            // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-            var spreadsheetId = "1Eu9XzoSDAEfmO3mrOnImbnKm0qF_CBa4eUqV3cPG_dU";
-            var range = "Class Data!A2:E";
-
-            var data = await _sheetManager.GetSpreadsheetAsync(spreadsheetId, range, ct);
-            if (data != null && data.values.Length > 0)
-            {
-                foreach (var row in data.values)
-                {
-                    Debug.Log($"{row[0]}, {row[4]}");
-                }
-            }
-            else
-            {
-                Debug.Log("No data found.");
-            }
-        }
+        public void SetFirebase() => _sheetManager.SetFirebase();
     }
 }

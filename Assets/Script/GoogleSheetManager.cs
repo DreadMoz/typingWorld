@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -6,11 +7,14 @@ using Newtonsoft.Json;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Item;
 
 namespace AdventCalendar2020
 {
     public class GoogleSheetManager : MonoBehaviour
     {
+        [SerializeField] private GameManager gameManager;
+
         /// <summary>
         /// Json???????p?N???X
         /// </summary>
@@ -36,10 +40,13 @@ namespace AdventCalendar2020
         private static extern void GoogleAuth();
 
         [DllImport("__Internal")]
-        private static extern void GoogleSignOut();
+        private static extern void Firebase();
 
         [DllImport("__Internal")]
-        private static extern void Firebase();
+        private static extern void getFirebase();
+
+        [DllImport("__Internal")]
+        private static extern void setFirebase();
 #endif
 
         /// <summary>
@@ -63,13 +70,38 @@ namespace AdventCalendar2020
         }
 
         /// <summary>
-        /// ???O?A?E?g
+        /// google?F??
         /// </summary>
-        public void SignOut()
+        public void SetFirebase()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            GoogleSignOut();
+            setFirebase();
 #endif
+        }
+
+        /// <summary>
+        /// google?F??
+        /// </summary>
+        public void GetFirebase()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            getFirebase();
+#else
+            getDummyDatabase();
+#endif
+        }
+
+        private void getDummyDatabase()
+        {
+            int[] msgS = { 1, 1, 1, 178, 999 };
+            bool[] msgI = { true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
+            int[] msgE = { 201, 1, 2, 151, 0 };
+            int[] msgM = { 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            gameManager.getStatus(msgS);
+            gameManager.getInventry(msgI);
+            gameManager.getEquipments(msgE);
+            gameManager.getMedals(msgM);
         }
 
         /// <summary>
@@ -141,14 +173,9 @@ namespace AdventCalendar2020
             _isSignedInProperty.Dispose();
         }
 
-        #region From JavaScript
-
-        public void SetAccessToken(string token)
+        private void getDummyDataBase()
         {
-            _accessToken = token;
-            IsSignedInProperty.Value = string.IsNullOrEmpty(_accessToken) == false;
-        }
 
-        #endregion
+        }
     }
 }
