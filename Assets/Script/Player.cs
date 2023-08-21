@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
@@ -22,20 +23,24 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();           // ƒNƒŠƒbƒN‰ÓŠ‚Ö‚ÌˆÚ“®—p
+        agent = GetComponent<NavMeshAgent>();           // ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½Óï¿½ï¿½Ö‚ÌˆÚ“ï¿½ï¿½p
         agent.speed = speed;
 
-        animator = GetComponent<Animator>();            // Player‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
-        animator.SetInteger("anim", 1);                 // ƒI[ƒvƒjƒ“ƒOƒV[ƒ“0Aƒ[ƒ‹ƒhƒV[ƒ“1
-        animator.SetTrigger("Hi");                      // ƒAƒjƒ[ƒVƒ‡ƒ“HiÀs
+        animator = GetComponent<Animator>();            // Playerï¿½ÌƒAï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½
+        animator.SetInteger("anim", 1);                 // ï¿½Iï¿½[ï¿½vï¿½jï¿½ï¿½ï¿½Oï¿½Vï¿½[ï¿½ï¿½0ï¿½Aï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½Vï¿½[ï¿½ï¿½1
+        animator.SetTrigger("Hi");                      // ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½Hiï¿½ï¿½ï¿½s
     }
 
     // Update is called once per frame
     void Update()
     {
-        // ƒtƒF[ƒhƒCƒ“Š®—¹‚Å‚È‚¯‚ê‚ÎƒtƒF[ƒhƒCƒ“Às
+        // ï¿½tï¿½Fï¿½[ï¿½hï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å‚È‚ï¿½ï¿½ï¿½Îƒtï¿½Fï¿½[ï¿½hï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½s
         if (!fade.IsFadeInComplete()){
             transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            return;
+        }
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
             return;
         }
 
