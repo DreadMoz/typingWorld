@@ -7,11 +7,19 @@ using UnityEngine;
 public class Item : ScriptableObject
 {
     [SerializeField]
+    private byte itemId;
+
+    [SerializeField]
     private string itemName;
+
+    [SerializeField]
+    private short itemPrice;
 
     [SerializeField]
     private Sprite itemImage;
 
-    public string MyItemName { get => itemName;}
+    public byte MyItemId { get => itemId; }
+    public string MyItemName { get => itemName; }
+    public short MyItemPrice { get => itemPrice; }
     public Sprite MyItemImage { get => itemImage;}
 }

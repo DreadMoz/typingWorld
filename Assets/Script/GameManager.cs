@@ -6,25 +6,27 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject player;                           // ƒvƒŒƒCƒ„[
-    public GameObject cam;                              // ƒJƒƒ‰
-    private Animator animator;                          // PlayerƒAƒjƒ[ƒVƒ‡ƒ“
-    public Fade fade;                                   // ‰æ–ÊƒtƒF[ƒhˆ—
+    public SaveData savedata;
+
+    public GameObject player;                           // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[
+    public GameObject cam;                              // ï¿½Jï¿½ï¿½ï¿½ï¿½
+    private Animator animator;                          // Playerï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½
+    public Fade fade;                                   // ï¿½ï¿½Êƒtï¿½Fï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½
     public GameObject inventry;
     public GameObject equipment;
     public GameObject ranking;
     public GameObject status;
 
-    public OpenButton inventryButton;                   // ƒCƒ“ƒxƒ“ƒgƒŠƒEƒBƒ“ƒhƒEƒ{ƒ^ƒ“
-    public OpenButton rankingButton;                    // ƒ‰ƒ“ƒLƒ“ƒOƒEƒBƒ“ƒhƒEƒ{ƒ^ƒ“
+    public OpenButton inventryButton;                   // ï¿½Cï¿½ï¿½ï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½{ï¿½^ï¿½ï¿½
+    public OpenButton rankingButton;                    // ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½Oï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½{ï¿½^ï¿½ï¿½
 
-    private bool firstPush = false;                     // ƒXƒ^[ƒgƒ{ƒ^ƒ“2“x‰Ÿ‚µ–h~ƒtƒ‰ƒO
-    private bool goNextScene = false;                   // ƒ[ƒ‹ƒhƒV[ƒ“2“x‰Ÿ‚µ–h~ƒtƒ‰ƒO
-    private int windowOpenCount = 10;                   // ƒEƒBƒ“ƒhƒEŠJ•ÂƒtƒŒ[ƒ€ƒJƒEƒ“ƒg
-    private int count = 0;                              // ƒtƒŒ[ƒ€ƒJƒEƒ“ƒg
+    private bool firstPush = false;                     // ï¿½Xï¿½^ï¿½[ï¿½gï¿½{ï¿½^ï¿½ï¿½2ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½hï¿½~ï¿½tï¿½ï¿½ï¿½O
+    private bool goNextScene = false;                   // ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½Vï¿½[ï¿½ï¿½2ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½hï¿½~ï¿½tï¿½ï¿½ï¿½O
+    private int windowOpenCount = 2;                   // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Jï¿½Âƒtï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Jï¿½Eï¿½ï¿½ï¿½g
+    private int count = 0;                              // ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Jï¿½Eï¿½ï¿½ï¿½g
     private int inventryOpen = 0;
     private int rankingOpen = 0;
-    private int cameraMove = 0;                         // 0:’Ç”ö 1:ˆÚ“®‚È‚µ 2:’Ç”öˆÊ’u 3:ƒXƒe[ƒ^ƒX
+    private int cameraMove = 0;                         // 0:ï¿½Ç”ï¿½ 1:ï¿½Ú“ï¿½ï¿½È‚ï¿½ 2:ï¿½Ç”ï¿½ï¿½Ê’u 3:ï¿½Xï¿½eï¿½[ï¿½^ï¿½X
 
     Vector3 chaseOffset = new Vector3(0f, 8f, -14f);
     Quaternion chaseRotation = Quaternion.Euler(25f, 0f, 0f);
@@ -41,8 +43,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        animator = player.GetComponent<Animator>();     // PlayerƒAƒjƒ[ƒVƒ‡ƒ“
-        animator.SetInteger("anim", 0);                 // ƒI[ƒvƒjƒ“ƒOƒV[ƒ“ 0
+        animator = player.GetComponent<Animator>();     // Playerï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½
+        animator.SetInteger("anim", 0);                 // ï¿½Iï¿½[ï¿½vï¿½jï¿½ï¿½ï¿½Oï¿½Vï¿½[ï¿½ï¿½ 0
 
         difx = (statusRotation.eulerAngles.x - chaseRotation.eulerAngles.x) / windowOpenCount;
         dify = (statusRotation.eulerAngles.y - chaseRotation.eulerAngles.y) / windowOpenCount;
@@ -51,6 +53,8 @@ public class GameManager : MonoBehaviour
         posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
         posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
         difr = Vector3.Distance(chaseOffset, statusOffset) / windowOpenCount;
+
+
     }
 
     public void StartButton()
@@ -66,10 +70,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // ƒ[ƒ‹ƒhƒV[ƒ“ 1
+        // ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½Vï¿½[ï¿½ï¿½ 1
         if (animator.GetInteger("anim") == 1)
         {
-            // ƒCƒ“ƒxƒ“ƒgƒŠƒEƒBƒ“ƒhƒEƒI[ƒvƒ“‘€ì
+            // ï¿½Cï¿½ï¿½ï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Iï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if ((Input.GetKeyDown(KeyCode.I) || inventryButton.isOpen()) && (count == 0))
             {
                 count = windowOpenCount;
@@ -94,7 +98,7 @@ public class GameManager : MonoBehaviour
                     cameraMove = 3;
                 }
             }
-            // ƒ‰ƒ“ƒLƒ“ƒOƒEƒBƒ“ƒhƒEƒI[ƒvƒ“‘€ì
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½Oï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Iï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             else if ((Input.GetKeyDown(KeyCode.R) || rankingButton.isOpen()) && (count == 0))
             {
                 count = windowOpenCount;
@@ -122,19 +126,19 @@ public class GameManager : MonoBehaviour
 
             if (count > 0)
             {
-                // ƒEƒBƒ“ƒhƒE•Â‚¶‚éˆ—
+                // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Â‚ï¿½ï¿½éˆï¿½ï¿½
                 if (count > windowOpenCount / 2)
                 {
                     if (inventryOpen == -1)
                     {
-                        status.transform.position += new Vector3(0, 30, 0);
-                        inventry.transform.position += new Vector3(110, 0, 0);
-                        equipment.transform.position += new Vector3(0, -35, 0);
+                        status.transform.position += new Vector3(0, 300/windowOpenCount, 0);
+                        inventry.transform.position += new Vector3(1100/windowOpenCount, 0, 0);
+                        equipment.transform.position += new Vector3(0, -350/windowOpenCount, 0);
                     }
                     if (rankingOpen == -1)
                     {
-                        status.transform.position += new Vector3(0, 30, 0);
-                        ranking.transform.position += new Vector3(110, 0, 0);
+                        status.transform.position += new Vector3(0, 300/windowOpenCount, 0);
+                        ranking.transform.position += new Vector3(1100/windowOpenCount, 0, 0);
                     }
                     count--;
                     if (count == windowOpenCount / 2)
@@ -145,7 +149,7 @@ public class GameManager : MonoBehaviour
                         ranking.SetActive(false);
                     }
                 }
-                // ƒEƒBƒ“ƒhƒEŠJ‚­ˆ—
+                // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 else
                 {
                     if (inventryOpen == 1)
@@ -153,16 +157,16 @@ public class GameManager : MonoBehaviour
                         status.SetActive(true);
                         inventry.SetActive(true);
                         equipment.SetActive(true);
-                        status.transform.position += new Vector3(0, -30, 0);
-                        inventry.transform.position += new Vector3(-110, 0, 0);
-                        equipment.transform.position += new Vector3(0, 35, 0);
+                        status.transform.position += new Vector3(0, -300/windowOpenCount, 0);
+                        inventry.transform.position += new Vector3(-1100/windowOpenCount, 0, 0);
+                        equipment.transform.position += new Vector3(0, 350/windowOpenCount, 0);
                     }
                     if (rankingOpen == 1)
                     {
                         status.SetActive(true);
                         ranking.SetActive(true);
-                        status.transform.position += new Vector3(0, -30, 0);
-                        ranking.transform.position += new Vector3(-110, 0, 0);
+                        status.transform.position += new Vector3(0, -300/windowOpenCount, 0);
+                        ranking.transform.position += new Vector3(-1100/windowOpenCount, 0, 0);
                     }
                     count--;
                 }
@@ -182,10 +186,10 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        // ƒI[ƒvƒjƒ“ƒOƒV[ƒ“ 0
+        // ï¿½Iï¿½[ï¿½vï¿½jï¿½ï¿½ï¿½Oï¿½Vï¿½[ï¿½ï¿½ 0
         else if (animator.GetInteger("anim") == 0)
         {
-            // 1•ª‚É10•b‚Î‚½‚Â‚©‚¹‚é
+            // 1ï¿½ï¿½ï¿½ï¿½10ï¿½bï¿½Î‚ï¿½ï¿½Â‚ï¿½ï¿½ï¿½ï¿½ï¿½
             if (Time.time % 60 > 50)
             {
                 animator.SetBool("Swim", true);
@@ -195,21 +199,42 @@ public class GameManager : MonoBehaviour
                 animator.SetBool("Swim", false);
             }
 
-            // SƒL[‚ÅƒXƒ^[ƒg
+            // Sï¿½Lï¿½[ï¿½ÅƒXï¿½^ï¿½[ï¿½g
             if (Input.GetKeyDown(KeyCode.S))
             {
                 this.StartButton();
             }
 
-            // ƒtƒF[ƒhƒAƒEƒg‚ªŠ®—¹‚µ‚½‚çƒ[ƒ‹ƒhƒV[ƒ“‚ÖˆÚs
+            // ï¿½tï¿½Fï¿½[ï¿½hï¿½Aï¿½Eï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½çƒï¿½[ï¿½ï¿½ï¿½hï¿½Vï¿½[ï¿½ï¿½ï¿½ÖˆÚs
             if (!goNextScene && fade.IsFadeOutComplete())
             {
-                SceneManager.LoadScene("WorldScene");       // ƒV[ƒ“ˆÚs
-                animator.SetInteger("anim", 1);             // ƒ[ƒ‹ƒhƒV[ƒ“ 1
-                goNextScene = true;                         // 2‰ñ–ÚÀ{–h~
+                SceneManager.LoadScene("WorldScene");       // ï¿½Vï¿½[ï¿½ï¿½ï¿½Ús
+                animator.SetInteger("anim", 1);             // ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½Vï¿½[ï¿½ï¿½ 1
+                goNextScene = true;                         // 2ï¿½ï¿½Úï¿½ï¿½{ï¿½hï¿½~
             }
         }
     }
+
+    public void getStatus(int[] msg)
+    {
+        savedata.setStatus(msg);
+    }
+
+    public void getInventry(bool[] msg)
+    {
+        savedata.setInventry(msg);
+    }
+
+    public void getEquipments(int[] msg)
+    {
+        savedata.setEquipments(msg);
+    }
+
+    public void getMedals(int[] msg)
+    {
+        savedata.setMedals(msg);
+    }
+
     public int getCameraMove()
     {
         return cameraMove;

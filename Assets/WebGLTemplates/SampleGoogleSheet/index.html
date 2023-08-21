@@ -1,1 +1,297 @@
+<<<<<<< HEAD
 
+=======
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Unity WebGL Player | typingWorld</title>
+        <link rel="shortcut icon" href="TemplateData/favicon.ico">
+        <link rel="stylesheet" href="TemplateData/style.css">
+    </head>
+    <body>
+        <div id="unity-container" class="unity-desktop">
+            <canvas id="unity-canvas" width=1366 height=768></canvas>
+            <div id="unity-loading-bar">
+                <div id="unity-logo"></div>
+                <div id="unity-progress-bar-empty">
+                    <div id="unity-progress-bar-full"></div>
+                </div>
+            </div>
+            <div id="unity-warning"> </div>
+            <div id="unity-footer">
+                <div id="unity-webgl-logo"></div>
+                <div id="unity-fullscreen-button"></div>
+                <div id="unity-build-title">typingWorld</div>
+            </div>
+        </div>
+
+
+        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+        <script type="module">import { initializeApp }
+                from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+            import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider }
+                from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
+            import { getDatabase, ref, push, set, onValue, onChildAdded, remove, onChildRemoved }
+                from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
+            import { getAnalytics }
+                from "https://www.gstatic.com/firebasejs/10.2.0/firebase-analytics.js";
+
+
+            var container = document.querySelector("#unity-container");
+            var canvas = document.querySelector("#unity-canvas");
+            var loadingBar = document.querySelector("#unity-loading-bar");
+            var progressBarFull = document.querySelector("#unity-progress-bar-full");
+            var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+            var warningBanner = document.querySelector("#unity-warning");
+
+            // Shows a temporary message banner/ribbon for a few seconds, or
+            // a permanent error message on top of the canvas if type=='error'.
+            // If type=='warning', a yellow highlight color is used.
+            // Modify or remove this function to customize the visually presented
+            // way that non-critical warnings and error messages are presented to the
+            // user.
+            function unityShowBanner(msg, type) {
+                function updateBannerVisibility() {
+                    warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+                }
+                var div = document.createElement('div');
+                div.innerHTML = msg;
+                warningBanner.appendChild(div);
+                if (type == 'error') div.style = 'background: red; padding: 10px;';
+                else {
+                    if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+                    setTimeout(function () {
+                        warningBanner.removeChild(div);
+                        updateBannerVisibility();
+                    }, 5000);
+                }
+                updateBannerVisibility();
+            }
+
+            var buildUrl = "Build";
+            var loaderUrl = buildUrl + "/Release.loader.js";
+            var config = {
+                dataUrl: buildUrl + "/Release.data.unityweb",
+                frameworkUrl: buildUrl + "/Release.framework.js.unityweb",
+                codeUrl: buildUrl + "/Release.wasm.unityweb",
+                streamingAssetsUrl: "StreamingAssets",
+                companyName: "DefaultCompany",
+                productName: "typingWorld",
+                productVersion: "0.1",
+                showBanner: unityShowBanner,
+            };
+
+            // By default Unity keeps WebGL canvas render target size matched with
+            // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+            // Set this to false if you want to decouple this synchronization from
+            // happening inside the engine, and you would instead like to size up
+            // the canvas DOM size and WebGL render target sizes yourself.
+            // config.matchWebGLToCanvasSize = false;
+
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                // Mobile device style: fill the whole browser client area with the game canvas:
+
+                var meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+                document.getElementsByTagName('head')[0].appendChild(meta);
+                container.className = "unity-mobile";
+                canvas.className = "unity-mobile";
+
+                // To lower canvas resolution on mobile devices to gain some
+                // performance, uncomment the following line:
+                // config.devicePixelRatio = 1;
+
+                unityShowBanner('WebGL builds are not supported on mobile devices.');
+            } else {
+                // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+
+                canvas.style.width = "1366px";
+                canvas.style.height = "768px";
+            }
+
+            loadingBar.style.display = "block";
+
+            var myGameInstance = null;
+            var script = document.createElement("script");
+            script.src = loaderUrl;
+            script.onload = () => {
+                createUnityInstance(canvas, config, (progress) => {
+                    progressBarFull.style.width = 100 * progress + "%";
+                }).then((unityInstance) => {
+                    myGameInstance = unityInstance;
+                    loadingBar.style.display = "none";
+                    fullscreenButton.onclick = () => {
+                        unityInstance.SetFullscreen(1);
+                    };
+                }).catch((message) => {
+                    alert(message);
+                });
+            };
+            document.body.appendChild(script);
+
+            /**
+            *  ログイン状態フラグ C#から呼ぶ（サンプルでは使わない
+            */
+            function isSignedIn() {
+                return gapi.auth2.getAuthInstance().isSignedIn.get();
+            }
+
+            /**
+            *  サインアウト C#側から呼ぶ
+            */
+            function signOut() {
+
+            }
+            // user 変数を auth 関数外で宣言
+            let user;
+            let db;
+
+            /**
+            *  認証 C#側から呼ぶ
+            */
+            function auth() {
+
+                const firebaseConfig = {
+                    // Firebaseの設定情報
+                    apiKey: "AIzaSyD2uf3ULaqZQLfYYQa-9QLdamelA0CwguE",
+                    authDomain: "firetyping-ad101.firebaseapp.com",
+                    databaseURL: "https://firetyping-ad101-default-rtdb.firebaseio.com",
+                    projectId: "firetyping-ad101",
+                    storageBucket: "firetyping-ad101.appspot.com",
+                    messagingSenderId: "658577906647",
+                    appId: "1:658577906647:web:09e85b0541ca715bf94992",
+                    measurementId: "G-D0NXRPYMNR"
+                };
+
+                //                const app = firebase.initializeApp(firebaseConfig); // Firebaseアプリを初期化
+                //                const db = firebase.getDatabase(app);    // RealtimeDBに接続
+                //                const provider = new firebase.auth.GoogleAuthProvider(); // Google 認証プロバイダー
+                //                const authInstance = app.auth(); // Firebase Auth インスタンスを取得
+
+                const app = initializeApp(firebaseConfig); // Firebaseアプリを初期化
+                db = getDatabase(app);    // RealtimeDBに接続
+                const provider = new GoogleAuthProvider(); // Google 認証プロバイダー
+                const authInstance = getAuth(); // Firebase Auth インスタンスを取得
+
+                //                authInstance.signInWithPopup(provider)
+                signInWithPopup(authInstance, provider)
+                    .then((result) => {
+                        // ログイン成功時の処理
+                        user = result.user;
+                        user.providerData.forEach((profile) => {
+                            myGameInstance.SendMessage('Text', 'UpdateText', profile.email);
+                            myGameInstance.SendMessage('Image', 'UpdateImage', profile.photoURL);
+                            // Login情報取得
+                            //                    SendMessage('Text', 'UpdateText', 'bbb');
+                            //                    SendMessage('Image', 'UpdateImage', profile.photoURL);
+                        });
+
+                        // location.href = "http://google.com";
+                    })
+                    .catch((error) => {
+                        // ログインエラー時の処理
+                        // Handle Errors here.
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        // the email of the user's account used.
+                        const email = error.email;
+                        // The AuthCredential type that was used.
+                        // const credential = firebase.auth.GoogleAuthProvider.credentialFromError(error);
+                    });
+
+            }
+
+            // auth 関数をグローバルに公開
+            window.auth = auth;
+
+            //######################################################
+            // ゲームデータ取得
+            //######################################################
+            function getFirebaseData() {
+                if (user) {
+                    // User is signed in, see docs for a list of available properties
+                    // https://firebase.google.com/docs/reference/js/firebase.User
+                    const uid = user.uid;
+                    // ユーザー情報取得
+                    if (user !== null) {
+                        user.providerData.forEach((profile) => {
+                            myGameInstance.SendMessage('Text', 'UpdateText', profile.email);
+                            myGameInstance.SendMessage('Image', 'UpdateImage', profile.photoURL);
+                            myGameInstance.SendMessage('GameManager', 'getNmae', profile.name);
+                        });
+                        const dbRef = ref(db, "users/" + uid + "/status");   // RealtimeDB内の"chat"を使う
+                        onValue(dbRef, function (data) {
+                            const msg = data.val();        // オブジェクトデータを取得し、変数msgに代入
+                            myGameInstance.SendMessage('GameManager', 'getStatus', msg);
+                        });
+
+                        const dbRefInventry = ref(db, "users/" + uid + "/items/inventry");   // RealtimeDB内の"chat"を使う
+                        onValue(dbRefInventry, function (data) {
+                            const msgInventry = data.val();        // オブジェクトデータを取得し、変数msgに代入
+                            myGameInstance.SendMessage('GameManager', 'getInventry', msgInventry);
+                        });
+
+                        const dbRefEquipments = ref(db, "users/" + uid + "/items/equipments");   // RealtimeDB内の"chat"を使う
+                        onValue(dbRefEquipments, function (data) {
+                            const msgEquipments = data.val();        // オブジェクトデータを取得し、変数msgに代入
+                            myGameInstance.SendMessage('GameManager', 'getEquipments', msgEquipments);
+                        });
+
+                        const dbRefMedals = ref(db, "users/" + uid + "/medals");   // RealtimeDB内の"chat"を使う
+                        onValue(dbRefMedals, function (data) {
+                            const msgMedals = data.val();        // オブジェクトデータを取得し、変数msgに代入
+                            myGameInstance.SendMessage('GameManager', 'getMedals', msgMedals);
+                        });
+                    }
+                }
+            }
+            // getFirebaseData関数をグローバルに公開
+            window.getFirebaseData = getFirebaseData;
+
+            //######################################################
+            // ゲームデータ保存
+            //######################################################
+            function setFirebaseData() {
+                if (user) {
+                    // User is signed in, see docs for a list of available properties
+                    // https://firebase.google.com/docs/reference/js/firebase.User
+                    const uid = user.uid;
+
+                    // データ登録(ステータス)
+                    const msg = {
+                        charid: 4,
+                        nickname: 4,
+                        serverid: 2,
+                        wpm: 129,
+                        seeker: 10
+                    }
+                    const dbRef = ref(db, "users/" + uid + "/status");   // RealtimeDB内の"chat"を使う
+                    set(dbRef, msg);    // DBに値をセットする
+
+                    // データ登録(アイテム)
+                    const msgInventry = [true, true, false, false, false, true, false, false];
+                    const dbRefInventry = ref(db, "users/" + uid + "/items/inventry");   // RealtimeDB内の"chat"を使う
+                    set(dbRefInventry, msgInventry);    // DBに値をセットする
+
+                    // データ登録(装備)
+                    const msgEquipments = [201, 1, 2, 151, 0];
+                    const dbRefEquipments = ref(db, "users/" + uid + "/items/equipments");   // RealtimeDB内の"chat"を使う
+                    set(dbRefEquipments, msgEquipments);    // DBに値をセットする
+
+                    // データ登録(メダル)
+                    const msgMedals = [3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 1, 0, 0, 0, 0, 0];
+                    const dbRefMedals = ref(db, "users/" + uid + "/medals");   // RealtimeDB内の"chat"を使う
+                    set(dbRefMedals, msgMedals);    // DBに値をセットする
+                }
+            }
+            // setFirebaseData 関数をグローバルに公開
+            window.setFirebaseData = setFirebaseData;</script>
+    </body>
+</html>
+>>>>>>> origin/SendMes
