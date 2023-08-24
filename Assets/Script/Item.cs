@@ -6,8 +6,17 @@ using UnityEngine;
 
 public class Item : ScriptableObject
 {
+    public enum itemtype
+    {
+        hand,
+        head,
+        face,
+        glasses,
+        nickname
+    }
+
     [SerializeField]
-    private byte itemId;
+    private itemtype itemType;
 
     [SerializeField]
     private string itemName;
@@ -18,8 +27,12 @@ public class Item : ScriptableObject
     [SerializeField]
     private Sprite itemImage;
 
-    public byte MyItemId { get => itemId; }
+    [SerializeField]
+    private string itemComment;
+
+    public itemtype MyItemType { get => itemType; }
     public string MyItemName { get => itemName; }
     public short MyItemPrice { get => itemPrice; }
-    public Sprite MyItemImage { get => itemImage;}
+    public Sprite MyItemImage { get => itemImage; }
+    public string MyItemComment { get => itemComment; }
 }

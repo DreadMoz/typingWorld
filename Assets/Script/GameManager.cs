@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public SaveData savedata;
+    public Database db;
 
     public GameObject player;                           // �v���C���[
     public GameObject cam;                              // �J����
@@ -16,6 +18,8 @@ public class GameManager : MonoBehaviour
     public GameObject equipment;
     public GameObject ranking;
     public GameObject status;
+    public setStatus stat;
+    public TextMeshProUGUI headName;
 
     public OpenButton inventryButton;                   // �C���x���g���E�B���h�E�{�^��
     public OpenButton rankingButton;                    // �����L���O�E�B���h�E�{�^��
@@ -40,6 +44,8 @@ public class GameManager : MonoBehaviour
     float posy;
     float posz;
 
+    Canvas canvasName;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -54,7 +60,9 @@ public class GameManager : MonoBehaviour
         posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
         difr = Vector3.Distance(chaseOffset, statusOffset) / windowOpenCount;
 
-
+        canvasName = player.GetComponentInChildren<ChibiCat>().GetComponentInChildren<Canvas>();
+        string name = savedata.getUsername() + db.GetItemById(savedata.getStatus((int)Status.nickname)).MyItemName;
+        headName.SetText(name);
     }
 
     public void StartButton()
@@ -76,6 +84,7 @@ public class GameManager : MonoBehaviour
             // �C���x���g���E�B���h�E�I�[�v������
             if ((Input.GetKeyDown(KeyCode.I) || inventryButton.isOpen()) && (count == 0))
             {
+                stat.setStatusData();
                 count = windowOpenCount;
                 inventryButton.resetOpen();
 
@@ -101,6 +110,7 @@ public class GameManager : MonoBehaviour
             // �����L���O�E�B���h�E�I�[�v������
             else if ((Input.GetKeyDown(KeyCode.R) || rankingButton.isOpen()) && (count == 0))
             {
+                stat.setStatusData();
                 count = windowOpenCount;
                 rankingButton.resetOpen();
 
@@ -147,6 +157,8 @@ public class GameManager : MonoBehaviour
                         inventry.SetActive(false);
                         equipment.SetActive(false);
                         ranking.SetActive(false);
+
+                        canvasName.gameObject.SetActive(true);
                     }
                 }
                 // �E�B���h�E�J������
@@ -157,6 +169,8 @@ public class GameManager : MonoBehaviour
                         status.SetActive(true);
                         inventry.SetActive(true);
                         equipment.SetActive(true);
+                        canvasName.gameObject.SetActive(false);
+
                         status.transform.position += new Vector3(0, -300/windowOpenCount, 0);
                         inventry.transform.position += new Vector3(-1100/windowOpenCount, 0, 0);
                         equipment.transform.position += new Vector3(0, 350/windowOpenCount, 0);
@@ -165,6 +179,8 @@ public class GameManager : MonoBehaviour
                     {
                         status.SetActive(true);
                         ranking.SetActive(true);
+                        canvasName.gameObject.SetActive(false);
+
                         status.transform.position += new Vector3(0, -300/windowOpenCount, 0);
                         ranking.transform.position += new Vector3(-1100/windowOpenCount, 0, 0);
                     }
@@ -172,7 +188,7 @@ public class GameManager : MonoBehaviour
                 }
                 if (cameraMove == 3)
                 {
-                    cam.transform.rotation = Quaternion.Euler(statusRotation.eulerAngles.x - difx * count, statusRotation.eulerAngles.y - dify * count, statusRotation.eulerAngles.z - difz * count);
+                     cam.transform.rotation = Quaternion.Euler(statusRotation.eulerAngles.x - difx * count, statusRotation.eulerAngles.y - dify * count, statusRotation.eulerAngles.z - difz * count);
                     cam.transform.position = player.transform.position + new Vector3(statusOffset.x - posx * count, statusOffset.y - posy * count, statusOffset.z - posz * count);
                 }
                 else if (cameraMove == 2)
@@ -215,25 +231,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void getStatus(int[] msg)
+    public void setName(string msg)
+    {
+        savedata.setName(msg);
+    }
+
+    public void setStatus(int[] msg)
     {
         savedata.setStatus(msg);
     }
 
-    public void getInventry(bool[] msg)
+    public void setInventry(int[] msg)
     {
         savedata.setInventry(msg);
     }
 
-    public void getEquipments(int[] msg)
-    {
-        savedata.setEquipments(msg);
-    }
-
-    public void getMedals(int[] msg)
+    public void setMedals(int[] msg)
     {
         savedata.setMedals(msg);
     }
+
 
     public int getCameraMove()
     {

@@ -5,9 +5,11 @@ using UnityEngine;
 public class Inventry : MonoBehaviour
 {
     public static Inventry instance;
+
     InventryUI inventryUI;
 
-    public List<Item> items = new List<Item>();
+    [SerializeField]
+    GameManager gm;
 
 private void Awake()
     {
@@ -27,15 +29,15 @@ private void Awake()
 
     }
 
-    public void Add(Item item)
+    public void Add(int addId, int itemNo)
     {
-        items.Add(item);
-        inventryUI.UpdateUI();
+        gm.savedata.setItem(addId, itemNo);
+        inventryUI.setItemData();
     }
 
-    public void Remove(Item item)
+    public void Remove(int delNo)
     {
-        items.Remove(item);
-        inventryUI.UpdateUI();
+        gm.savedata.setItem(delNo, 0);
+        inventryUI.setItemData();
     }
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.1004528, g: 0.15229763, b: 0.27122805, a: 1}
+  m_IndirectSpecularColor: {r: 0.09119249, g: 0.13720712, b: 0.24367279, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1071,6 +1071,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &802422947 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2777480671376993186, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
+  m_PrefabInstance: {fileID: 1915085949927470997}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &824973504
 GameObject:
   m_ObjectHideFlags: 0
@@ -2643,6 +2654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   savedata: {fileID: 11400000, guid: cbd59c020b8de48f49d33afa895622af, type: 2}
+  db: {fileID: 11400000, guid: 6900bb9716d034cf7a3f86eca2003c5b, type: 2}
   player: {fileID: 8865011217638685703}
   cam: {fileID: 0}
   fade: {fileID: 1820588913}
@@ -2650,6 +2662,8 @@ MonoBehaviour:
   equipment: {fileID: 0}
   ranking: {fileID: 0}
   status: {fileID: 0}
+  stat: {fileID: 0}
+  headName: {fileID: 802422947}
   inventryButton: {fileID: 0}
   rankingButton: {fileID: 0}
 --- !u!1 &2008221282

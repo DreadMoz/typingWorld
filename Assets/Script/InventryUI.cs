@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class InventryUI : MonoBehaviour
 {
+    [SerializeField]
+    private GameManager gm;
+
     public Transform slotsParent;
 
     InventrySlot[] slots;
@@ -12,26 +15,23 @@ public class InventryUI : MonoBehaviour
     private Item[] allItems;
 
 
-    // Start is called before the first frame update
     void Start()
+    {
+        setItemData();
+    }
+
+    public void setItemData()
     {
         slots = slotsParent.GetComponentsInChildren<InventrySlot>();
 
-        for (int i = 0; i < slots.Length; i++)
+        int[] itemId = gm.savedata.getInventry();
+        for (int i = 0; i < itemId.Length; i++)
         {
-            if (i < Inventry.instance.items.Count)
+            if (i < slots.Length)
             {
-                slots[i].SetItem(Inventry.instance.items[i]);
-            }
-            else
-            {
-                slots[i].SetItem(null);
+                slots[i].SetItem(gm.db.GetItemById(itemId[i]));
             }
         }
     }
     
-    // Update is called once per frame
-    public void UpdateUI()
-    {
-    }
 }

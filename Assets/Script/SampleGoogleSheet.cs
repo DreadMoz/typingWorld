@@ -10,7 +10,7 @@ namespace AdventCalendar2020
     public class SampleGoogleSheet : MonoBehaviour
     {
         [SerializeField]
-        private GoogleSheetManager _sheetManager;
+        private dataManager _sheetManager;
 
         [SerializeField]
         private Button _authButton;
