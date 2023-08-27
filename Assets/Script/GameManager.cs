@@ -22,7 +22,9 @@ public class GameManager : MonoBehaviour
 
     private bool firstPush = false;                     // �X�^�[�g�{�^��2�x�����h�~�t���O
     private bool goNextScene = false;                   // ���[���h�V�[��2�x�����h�~�t���O
-    private int windowOpenCount = 2;                   // �E�B���h�E�J�t���[���J�E���g
+
+    [SerializeField]
+    private int windowOpenCount = 20;                   // �E�B���h�E�J�t���[���J�E���g
     private int count = 0;                              // �t���[���J�E���g
     private int inventryOpen = 0;
     private int rankingOpen = 0;
@@ -30,12 +32,11 @@ public class GameManager : MonoBehaviour
 
     Vector3 chaseOffset = new Vector3(0f, 8f, -14f);
     Quaternion chaseRotation = Quaternion.Euler(25f, 0f, 0f);
-    Vector3 statusOffset = new Vector3(-1.3f, 1.3f, 4f);
-    Quaternion statusRotation = Quaternion.Euler(5f, 180f, 0f);
+    Vector3 statusOffset = new Vector3(1.4f, 1.3f, -4f);
+    Quaternion statusRotation = Quaternion.Euler(5f, 0f, 0f);
     float difx;
     float dify;
     float difz;
-    float difr;
     float posx;
     float posy;
     float posz;
@@ -52,9 +53,6 @@ public class GameManager : MonoBehaviour
         posx = (statusOffset.x - chaseOffset.x) / windowOpenCount;
         posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
         posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
-        difr = Vector3.Distance(chaseOffset, statusOffset) / windowOpenCount;
-
-
     }
 
     public void StartButton()
