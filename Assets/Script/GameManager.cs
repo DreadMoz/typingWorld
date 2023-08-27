@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public Database db;
     public SaveData savedata;
 
     public GameObject player;                           // �v���C���[
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         animator = player.GetComponent<Animator>();     // Player�A�j���[�V����
         animator.SetInteger("anim", 0);                 // �I�[�v�j���O�V�[�� 0
 
@@ -218,14 +220,9 @@ public class GameManager : MonoBehaviour
         savedata.setStatus(msg);
     }
 
-    public void getInventry(bool[] msg)
+    public void getInventry(int[] msg)
     {
         savedata.setInventry(msg);
-    }
-
-    public void getEquipments(int[] msg)
-    {
-        savedata.setEquipments(msg);
     }
 
     public void getMedals(int[] msg)

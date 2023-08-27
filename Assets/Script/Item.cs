@@ -7,9 +7,6 @@ using UnityEngine;
 public class Item : ScriptableObject
 {
     [SerializeField]
-    private byte itemId;
-
-    [SerializeField]
     private string itemName;
 
     [SerializeField]
@@ -18,8 +15,11 @@ public class Item : ScriptableObject
     [SerializeField]
     private Sprite itemImage;
 
-    public byte MyItemId { get => itemId; }
+    [SerializeField]
+    private string itemMemo;
+
     public string MyItemName { get => itemName; }
     public short MyItemPrice { get => itemPrice; }
-    public Sprite MyItemImage { get => itemImage;}
+    public Sprite MyItemImage { get => itemImage; }
+    public string MyItemMemo { get => itemMemo; }
 }

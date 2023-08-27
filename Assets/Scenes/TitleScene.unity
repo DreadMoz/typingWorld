@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.1004528, g: 0.15229763, b: 0.27122805, a: 1}
+  m_IndirectSpecularColor: {r: 0.09747223, g: 0.14743811, b: 0.26231962, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 422189c1cdc1dfe4c97cceeca50bb9a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sheetManager: {fileID: 644709830}
+  _sheetManager: {fileID: 644709831}
   _authButton: {fileID: 1452724555}
   _setDataButton: {fileID: 1205886606}
   _getDataButton: {fileID: 315727010}
@@ -936,7 +936,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 644709829}
-  - component: {fileID: 644709830}
+  - component: {fileID: 644709831}
   m_Layer: 0
   m_Name: GoogleSheetManager
   m_TagString: Untagged
@@ -959,7 +959,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &644709830
+--- !u!114 &644709831
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -968,10 +968,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 644709828}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92b2f68d22d667c4db097830f6f822ce, type: 3}
+  m_Script: {fileID: 11500000, guid: d3a746d83724c4bf5829a7f8b40324cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1955719975}
+  gm: {fileID: 1955719975}
 --- !u!4 &653704930 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5277315091251844998, guid: 1a00176822507c64b97db94941106f03, type: 3}
@@ -2642,6 +2642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7bc41e397296f949ac52e25e631568d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  db: {fileID: 11400000, guid: b9160425f480a4eb4855fb300b28fae4, type: 2}
   savedata: {fileID: 11400000, guid: cbd59c020b8de48f49d33afa895622af, type: 2}
   player: {fileID: 8865011217638685703}
   cam: {fileID: 0}
@@ -2652,6 +2653,7 @@ MonoBehaviour:
   status: {fileID: 0}
   inventryButton: {fileID: 0}
   rankingButton: {fileID: 0}
+  windowOpenCount: 20
 --- !u!1 &2008221282
 GameObject:
   m_ObjectHideFlags: 0

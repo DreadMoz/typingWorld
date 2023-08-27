@@ -9,29 +9,35 @@ public class InventryUI : MonoBehaviour
     InventrySlot[] slots;
 
     [SerializeField]
+    private GameManager gm;
+
+    [SerializeField]
     private Item[] allItems;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        slots = slotsParent.GetComponentsInChildren<InventrySlot>();
-
-        for (int i = 0; i < slots.Length; i++)
-        {
-            if (i < Inventry.instance.items.Count)
-            {
-                slots[i].SetItem(Inventry.instance.items[i]);
-            }
-            else
-            {
-                slots[i].SetItem(null);
-            }
-        }
+        setAllItems();
     }
     
     // Update is called once per frame
     public void UpdateUI()
     {
+    }
+
+    private void setAllItems()
+    {
+        slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+
+        int[] saveItem = gm.savedata.getInventry();
+
+        for (int i = 0; i < saveItem.Length; i++)
+        {
+            if (i < slots.Length)
+            {
+                slots[i].SetItem(gm.db.GetItem(saveItem[i]));
+            }
+        }
     }
 }

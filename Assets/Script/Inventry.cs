@@ -22,11 +22,6 @@ private void Awake()
         inventryUI = GetComponent<InventryUI>();
     }
 
-    void Update()
-    {
-
-    }
-
     public void Add(Item item)
     {
         items.Add(item);
