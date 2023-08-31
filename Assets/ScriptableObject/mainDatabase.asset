@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f7cd3c77eb6945c6aa7cd2a4acb6946, type: 3}
   m_Name: mainDatabase
   m_EditorClassIdentifier: 
-  itemLists:
+  itemList:
   - {fileID: 0}
   - {fileID: 11400000, guid: df4d1c595818bad439daa24b780f6f5a, type: 2}
   - {fileID: 11400000, guid: ebf04fbf68d9c5e4e9f80c38638e2bad, type: 2}
@@ -114,36 +114,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: ab335e8b045f5c746b565d40b5c02266, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -194,6 +164,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 11400000, guid: ab335e8b045f5c746b565d40b5c02266, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -214,9 +185,38 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: 91b512bf5ab2741ad9e5a8f5e3444c06, type: 2}
-  - {fileID: 11400000, guid: 6a241114962c44a329e5bad1ec84dc51, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 11400000, guid: 82ecb90395d294d5c98d006bb8a2037f, type: 2}
+  - {fileID: 11400000, guid: 6a241114962c44a329e5bad1ec84dc51, type: 2}
+  - {fileID: 11400000, guid: 91b512bf5ab2741ad9e5a8f5e3444c06, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -269,7 +269,21 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  serverLists:
+  serverList:
+  - "\u30C7\u30A3\u30A2\u30EF\u30F3\u30C0\u30FC\u30E9\u30F3\u30C9"
+  - "\u30C7\u30A3\u30A2\u30A2\u30C9\u30D9\u30F3\u30C1\u30E3\u30FC"
+  - "\u30C7\u30A3\u30A2\u30C9\u30EA\u30FC\u30E0"
+  - "\u30C7\u30A3\u30A2\u30B8\u30E5\u30CB\u30A2"
+  - "\u30C7\u30A3\u30A2\u30EF\u30FC\u30EB\u30C9"
+  - "\u30C7\u30A3\u30A2\u30CF\u30FC\u30C8"
+  - "\u30C7\u30A3\u30A2\u30D5\u30A1\u30F3\u30BF\u30B8\u30FC"
+  - "\u30C7\u30A3\u30A2\u30D1\u30E9\u30C0\u30A4\u30B9"
+  - "\u30C7\u30A3\u30A2\u30D5\u30EC\u30F3\u30C9"
+  - "\u30C7\u30A3\u30A2\u30D1\u30EC\u30C3\u30C8"
+  - "\u30C7\u30A3\u30A2\u30B9\u30DA\u30FC\u30B9"
+  - "\u30C7\u30A3\u30A2\u30DF\u30E5\u30FC\u30B8\u30C3\u30AF"
+  - "\u30C7\u30A3\u30A2\u30E9\u30F3\u30C9"
+  - "\u30C7\u30A3\u30A2\u30AC\u30FC\u30C7\u30F3"
   - 
   - 
   - 
@@ -306,71 +320,7 @@ MonoBehaviour:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  medalLists:
+  medalList:
   - 
   - 
   - 

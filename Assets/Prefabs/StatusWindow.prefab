@@ -170,7 +170,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.30004883, y: -32}
+  m_AnchoredPosition: {x: -0.30004883, y: -28}
   m_SizeDelta: {x: 480.7, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9013584823235536685
@@ -264,7 +264,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 20.219116, y: 0, z: 192.12488, w: 0}
+  m_margin: {x: 20.219116, y: 0, z: 7.0792236, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -305,7 +305,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 132.59985, y: 28}
+  m_AnchoredPosition: {x: 132.59985, y: 25}
   m_SizeDelta: {x: 180, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4480438077694493315
@@ -416,13 +416,14 @@ GameObject:
   - component: {fileID: 3500044728803102980}
   - component: {fileID: 3500044728803102986}
   - component: {fileID: 3500044728803102987}
+  - component: {fileID: 5682395104728668899}
   m_Layer: 5
   m_Name: StatusWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3500044728803102980
 RectTransform:
   m_ObjectHideFlags: 0
@@ -430,7 +431,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3500044728803102981}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -487,6 +488,25 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2.4
+--- !u!114 &5682395104728668899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3500044728803102981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff190f85228c84df6b191e4eca85725d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  TMPHeadName: {fileID: 0}
+  TMPName: {fileID: 6194803695910596693}
+  TMPGold: {fileID: 1979367975818655727}
+  TMPServer: {fileID: 2582984419417181878}
+  TMPWpm: {fileID: 5764102214460465617}
+  TMPRank: {fileID: 2500435619383918198}
 --- !u!1 &3500044730373518134
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,7 +582,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 2.4
+  m_PixelsPerUnitMultiplier: 2
 --- !u!1 &5245045031235908988
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,7 +618,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 9.3, y: -32}
+  m_AnchoredPosition: {x: 9.3, y: -28}
   m_SizeDelta: {x: 460.2, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4008960788849567365
@@ -733,7 +753,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -91.40015, y: 28}
+  m_AnchoredPosition: {x: -91.40015, y: 25}
   m_SizeDelta: {x: 260, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4600824613549456784
@@ -764,7 +784,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "ryosuke\u3055\u3093"
+  m_text: "neko\u3055\u3093"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3b5b84f00150501479fe9c4fae60035f, type: 2}
   m_sharedMaterial: {fileID: 1275885346427420115, guid: 3b5b84f00150501479fe9c4fae60035f, type: 2}

@@ -36,7 +36,7 @@ public class InventryUI : MonoBehaviour
         {
             if (i < slots.Length)
             {
-                slots[i].SetItem(gm.db.GetItem(saveItem[i]));
+                slots[i].SetItem(gm.db.GetItemList()[saveItem[i]]);
             }
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +9,9 @@ public class GameManager : MonoBehaviour
 {
     public Database db;
     public SaveData savedata;
+
+    [SerializeField]
+    private StatusUI statusWindow;
 
     public GameObject player;                           // �v���C���[
     public GameObject cam;                              // �J����
@@ -45,7 +49,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         animator = player.GetComponent<Animator>();     // Player�A�j���[�V����
         animator.SetInteger("anim", 0);                 // �I�[�v�j���O�V�[�� 0
 
@@ -215,17 +218,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void getStatus(int[] msg)
+    public void setUserName(string msg)
+    {
+        savedata.setUserName(msg);
+    }
+
+    public void setStatus(int[] msg)
     {
         savedata.setStatus(msg);
     }
 
-    public void getInventry(int[] msg)
+    public void setInventry(int[] msg)
     {
         savedata.setInventry(msg);
     }
 
-    public void getMedals(int[] msg)
+    public void setMedals(int[] msg)
     {
         savedata.setMedals(msg);
     }

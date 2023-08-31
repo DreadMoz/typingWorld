@@ -6,29 +6,25 @@ using UnityEngine;
 public class Database : ScriptableObject
 {
     [SerializeField]
-    private List<Item> itemLists = new List<Item>();
+    private List<Item> itemList = new List<Item>();
 
     [SerializeField]
-    private List<string> serverLists = new List<string>();
+    private List<string> serverList = new List<string>();
 
     [SerializeField]
-    private List<string> medalLists = new List<string>();
+    private List<string> medalList = new List<string>();
 
 
-    public List<Item> GetItemLists()
+    public List<Item> GetItemList()
     {
-        return itemLists;
+        return itemList;
     }
-    public List<string> GetServerLists()
+    public List<string> GetServerList()
     {
-        return serverLists;
+        return serverList;
     }
-    public List<string> GetMedalLists()
+    public List<string> GetMedalList()
     {
-        return medalLists;
-    }
-    public Item GetItem(int no)
-    {
-        return itemLists[no];
+        return medalList;
     }
 }

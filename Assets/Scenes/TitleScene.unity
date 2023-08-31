@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.09747223, g: 0.14743811, b: 0.26231962, a: 1}
+  m_IndirectSpecularColor: {r: 0.0911272, g: 0.13716418, b: 0.24357246, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 133407440}
   - component: {fileID: 133407441}
   m_Layer: 5
-  m_Name: SampleGoogleSheet
+  m_Name: Connect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -213,17 +213,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133407439}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 195278424}
-  m_RootOrder: 6
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 683, y: 384}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &133407441
@@ -235,13 +235,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 133407439}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 422189c1cdc1dfe4c97cceeca50bb9a6, type: 3}
+  m_Script: {fileID: 11500000, guid: d3a746d83724c4bf5829a7f8b40324cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sheetManager: {fileID: 644709831}
-  _authButton: {fileID: 1452724555}
-  _setDataButton: {fileID: 1205886606}
-  _getDataButton: {fileID: 315727010}
+  gm: {fileID: 1955719975}
 --- !u!1 &172241937
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,7 +552,6 @@ RectTransform:
   - {fileID: 1820588911}
   - {fileID: 1205886609}
   - {fileID: 315727013}
-  - {fileID: 133407440}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -638,7 +634,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 133407441}
-        m_TargetAssemblyTypeName: AdventCalendar2020.SampleGoogleSheet, Assembly-CSharp
+        m_TargetAssemblyTypeName: Connection, Assembly-CSharp
         m_MethodName: GetFirebase
         m_Mode: 1
         m_Arguments:
@@ -927,51 +923,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &644709828
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 644709829}
-  - component: {fileID: 644709831}
-  m_Layer: 0
-  m_Name: GoogleSheetManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &644709829
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644709828}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 683, y: 384, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &644709831
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644709828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3a746d83724c4bf5829a7f8b40324cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gm: {fileID: 1955719975}
 --- !u!4 &653704930 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5277315091251844998, guid: 1a00176822507c64b97db94941106f03, type: 3}
@@ -1651,7 +1602,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 133407441}
-        m_TargetAssemblyTypeName: AdventCalendar2020.SampleGoogleSheet, Assembly-CSharp
+        m_TargetAssemblyTypeName: Connection, Assembly-CSharp
         m_MethodName: SetFirebase
         m_Mode: 1
         m_Arguments:
@@ -2130,8 +2081,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 133407441}
-        m_TargetAssemblyTypeName: AdventCalendar2020.SampleGoogleSheet, Assembly-CSharp
-        m_MethodName: GoogleAuth
+        m_TargetAssemblyTypeName: Connection, Assembly-CSharp
+        m_MethodName: Auth
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
