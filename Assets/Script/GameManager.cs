@@ -49,6 +49,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    windowOpenCount = windowOpenCount * 2;
+#endif
         animator = player.GetComponent<Animator>();     // Player�A�j���[�V����
         animator.SetInteger("anim", 0);                 // �I�[�v�j���O�V�[�� 0
 
@@ -141,7 +144,7 @@ public class GameManager : MonoBehaviour
                     if (rankingOpen == -1)
                     {
                         status.transform.position += new Vector3(0, 300/windowOpenCount, 0);
-                        ranking.transform.position += new Vector3(1100/windowOpenCount, 0, 0);
+                        ranking.transform.position += new Vector3(1100/ windowOpenCount, 0, 0);
                     }
                     count--;
                     if (count == windowOpenCount / 2)
@@ -169,7 +172,7 @@ public class GameManager : MonoBehaviour
                         status.SetActive(true);
                         ranking.SetActive(true);
                         status.transform.position += new Vector3(0, -300/windowOpenCount, 0);
-                        ranking.transform.position += new Vector3(-1100/windowOpenCount, 0, 0);
+                        ranking.transform.position += new Vector3(-1100/ windowOpenCount, 0, 0);
                     }
                     count--;
                 }
