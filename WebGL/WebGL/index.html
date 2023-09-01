@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 <!DOCTYPE html>
 <html lang="en-us">
     <head>
@@ -223,30 +220,24 @@
                         user.providerData.forEach((profile) => {
                             myGameInstance.SendMessage('Text', 'UpdateText', profile.email);
                             myGameInstance.SendMessage('Image', 'UpdateImage', profile.photoURL);
-                            myGameInstance.SendMessage('GameManager', 'getNmae', profile.name);
+                            myGameInstance.SendMessage('GameManager', 'setUserName', profile.name);
                         });
                         const dbRef = ref(db, "users/" + uid + "/status");   // RealtimeDB内の"chat"を使う
                         onValue(dbRef, function (data) {
                             const msg = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                            myGameInstance.SendMessage('GameManager', 'getStatus', msg);
+                            myGameInstance.SendMessage('GameManager', 'setStatus', msg);
                         });
 
-                        const dbRefInventry = ref(db, "users/" + uid + "/items/inventry");   // RealtimeDB内の"chat"を使う
+                        const dbRefInventry = ref(db, "users/" + uid + "/inventry");   // RealtimeDB内の"chat"を使う
                         onValue(dbRefInventry, function (data) {
                             const msgInventry = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                            myGameInstance.SendMessage('GameManager', 'getInventry', msgInventry);
-                        });
-
-                        const dbRefEquipments = ref(db, "users/" + uid + "/items/equipments");   // RealtimeDB内の"chat"を使う
-                        onValue(dbRefEquipments, function (data) {
-                            const msgEquipments = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                            myGameInstance.SendMessage('GameManager', 'getEquipments', msgEquipments);
+                            myGameInstance.SendMessage('GameManager', 'setInventry', msgInventry);
                         });
 
                         const dbRefMedals = ref(db, "users/" + uid + "/medals");   // RealtimeDB内の"chat"を使う
                         onValue(dbRefMedals, function (data) {
                             const msgMedals = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                            myGameInstance.SendMessage('GameManager', 'getMedals', msgMedals);
+                            myGameInstance.SendMessage('GameManager', 'setMedals', msgMedals);
                         });
                     }
                 }
@@ -264,25 +255,14 @@
                     const uid = user.uid;
 
                     // データ登録(ステータス)
-                    const msg = {
-                        charid: 4,
-                        nickname: 4,
-                        serverid: 2,
-                        wpm: 129,
-                        seeker: 10
-                    }
+                    const msg = [1, 2, 3, 4, 5, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0];
                     const dbRef = ref(db, "users/" + uid + "/status");   // RealtimeDB内の"chat"を使う
                     set(dbRef, msg);    // DBに値をセットする
 
                     // データ登録(アイテム)
-                    const msgInventry = [true, true, false, false, false, true, false, false];
-                    const dbRefInventry = ref(db, "users/" + uid + "/items/inventry");   // RealtimeDB内の"chat"を使う
+                    const msgInventry = [1, 2, 3, 4, 5, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0];
+                    const dbRefInventry = ref(db, "users/" + uid + "/inventry");   // RealtimeDB内の"chat"を使う
                     set(dbRefInventry, msgInventry);    // DBに値をセットする
-
-                    // データ登録(装備)
-                    const msgEquipments = [201, 1, 2, 151, 0];
-                    const dbRefEquipments = ref(db, "users/" + uid + "/items/equipments");   // RealtimeDB内の"chat"を使う
-                    set(dbRefEquipments, msgEquipments);    // DBに値をセットする
 
                     // データ登録(メダル)
                     const msgMedals = [3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 1, 0, 0, 0, 0, 0];
@@ -294,4 +274,3 @@
             window.setFirebaseData = setFirebaseData;</script>
     </body>
 </html>
->>>>>>> origin/SendMes
