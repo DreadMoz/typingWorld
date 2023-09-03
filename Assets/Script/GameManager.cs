@@ -61,6 +61,11 @@ public class GameManager : MonoBehaviour
         posx = (statusOffset.x - chaseOffset.x) / windowOpenCount;
         posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
         posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
+
+        if (statusWindow)
+        {
+            statusWindow.setStatus();
+        }
     }
 
     public void StartButton()
@@ -139,7 +144,7 @@ public class GameManager : MonoBehaviour
                     {
                         status.transform.position += new Vector3(0, 300/windowOpenCount, 0);
                         inventry.transform.position += new Vector3(1100/windowOpenCount, 0, 0);
-                        equipment.transform.position += new Vector3(0, -350/windowOpenCount, 0);
+                        equipment.transform.position += new Vector3(0, -400/windowOpenCount, 0);
                     }
                     if (rankingOpen == -1)
                     {
@@ -165,7 +170,7 @@ public class GameManager : MonoBehaviour
                         equipment.SetActive(true);
                         status.transform.position += new Vector3(0, -300/windowOpenCount, 0);
                         inventry.transform.position += new Vector3(-1100/windowOpenCount, 0, 0);
-                        equipment.transform.position += new Vector3(0, 350/windowOpenCount, 0);
+                        equipment.transform.position += new Vector3(0, 400/windowOpenCount, 0);
                     }
                     if (rankingOpen == 1)
                     {
@@ -226,17 +231,17 @@ public class GameManager : MonoBehaviour
         savedata.setUserName(msg);
     }
 
-    public void setStatus(int[] msg)
+    public void setStatus(string msg)
     {
         savedata.setStatus(msg);
     }
 
-    public void setInventry(int[] msg)
+    public void setInventry(string msg)
     {
         savedata.setInventry(msg);
     }
 
-    public void setMedals(int[] msg)
+    public void setMedals(string msg)
     {
         savedata.setMedals(msg);
     }

@@ -21,17 +21,29 @@ public class SaveData : ScriptableObject
     {
         userName = msg;
     }
-    public void setStatus(int[] msg)
+    public void setStatus(string msg)
     {
-        status = msg;
+        string[] intStrings = msg.Split(',');
+        for (int i = 0; i < intStrings.Length; i++)
+        {
+            status[i] = int.Parse(intStrings[i]);
+        }
     }
-    public void setInventry(int[] msg)
+    public void setInventry(string msg)
     {
-        inventry = msg;
+        string[] intStrings = msg.Split(',');
+        for (int i = 0; i < intStrings.Length; i++)
+        {
+            inventry[i] = int.Parse(intStrings[i]);
+        }
     }
-    public void setMedals(int[] msg)
+    public void setMedals(string msg)
     {
-        medals = msg;
+        string[] intStrings = msg.Split(',');
+        for (int i = 0; i < intStrings.Length; i++)
+        {
+            medals[i] = int.Parse(intStrings[i]);
+        }
     }
 
     public string getUserName()

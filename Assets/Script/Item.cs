@@ -10,6 +10,9 @@ public class Item : ScriptableObject
     private string itemName;
 
     [SerializeField]
+    private ItemType itemType;
+
+    [SerializeField]
     private short itemPrice;
 
     [SerializeField]
@@ -19,7 +22,19 @@ public class Item : ScriptableObject
     private string itemMemo;
 
     public string MyItemName { get => itemName; }
+    public ItemType MyItemType { get => itemType; }
     public short MyItemPrice { get => itemPrice; }
     public Sprite MyItemImage { get => itemImage; }
     public string MyItemMemo { get => itemMemo; }
+}
+
+//アイテムタイプ    
+public enum ItemType
+{
+    Weapon,
+    Hat,
+    Glasses,
+    Face,
+    NickName,
+    Body
 }

@@ -49,11 +49,20 @@ public class StatusUI : MonoBehaviour
     public void setStatus()
     {
         int[] saveStatus = gm.savedata.getStatus();
-
-        TMPHeadName.text = gm.savedata.getUserName() + gm.db.GetItemList()[saveStatus[(int)status.NickName]].MyItemName;
-        TMPName.text = gm.savedata.getUserName() + gm.db.GetItemList()[saveStatus[(int)status.NickName]].MyItemName;
-        TMPGold.text = saveStatus[(int)status.Gold].ToString() + "ｼｰｶｰ";
+        string nickname;
+        if (saveStatus[(int)status.NickName] == 0)
+        {
+            nickname = "さん";
+        }
+        else
+        {
+            nickname = gm.db.GetItemList()[saveStatus[(int)status.NickName]].MyItemName;
+        }
+        TMPHeadName.text = gm.savedata.getUserName() + nickname;
+        TMPName.text = gm.savedata.getUserName() + nickname;
+        TMPGold.text = saveStatus[(int)status.Gold].ToString() + " ｼｰｶｰ";
         TMPServer.text = "サーバー：" + gm.db.GetServerList()[saveStatus[(int)status.Server]];
         TMPWpm.text = "1分間に" + saveStatus[(int)status.Wpm] + "キー";
+        TMPRank.text = "(" + saveStatus[(int)status.Rank] + "位 / 200位)";
     }
 }
