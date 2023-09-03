@@ -194,6 +194,9 @@
                     .catch((error) => {
                         // ログインエラー時の処理
                         // Handle Errors here.
+                        alert(error.code);
+                        alert(error.message);
+                        alert(error.mail);
                         const errorCode = error.code;
                         const errorMessage = error.message;
                         // the email of the user's account used.
