@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -9,41 +5,69 @@ using UnityEngine.EventSystems;
 public class Player : MonoBehaviour
 {
     public GameManager gameMaster;
+    public GameObject typingRoom;
     public GameObject status;
     public Fade fade;
+    public Fade fadeDoor;
     private Animator animator;
     private NavMeshAgent agent;
     private float speed = 8f;
-    private float inputHorizontal;
-    private float inputVertical;
-
-    public OpenButton inventryButton;
-    public OpenButton rankingButton;
+    private int typingWindow = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();           // �N���b�N�ӏ��ւ̈ړ��p
+        agent = GetComponent<NavMeshAgent>();  // ナビメッシュエージェントを取得
         agent.speed = speed;
 
-        animator = GetComponent<Animator>();            // Player�̃A�j���[�V����
-        animator.SetInteger("anim", 1);                 // �I�[�v�j���O�V�[��0�A���[���h�V�[��1
-        animator.SetTrigger("Hi");                      // �A�j���[�V����Hi���s
+        animator = GetComponent<Animator>();  // Playerのアニメーターを取得
+        animator.SetInteger("anim", 1);       // アニメーションステートを1に設定 (1: ランニング)
+
+        // "Hi" トリガーアニメーションを開始
+        animator.SetTrigger("Hi");
     }
 
     // Update is called once per frame
     void Update()
     {
-        // �t�F�[�h�C�������łȂ���΃t�F�[�h�C�����s
-        if (!fade.IsFadeInComplete()){
+        // フェードイン中は操作しない
+        if (!fade.IsFadeInComplete())
+        {
+            // プレイヤーの向きを固定
             transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             return;
         }
+
+        if (typingWindow == 1)
+        {
+            if (!fadeDoor.IsFadeOutComplete())
+            {
+                return;
+            }
+            typingWindow = 0;
+            typingRoom.SetActive(true);
+            fadeDoor.StartFadeIn();
+        }
+        else if (typingWindow == -1)
+        {
+            if (!fadeDoor.IsFadeOutComplete())
+            {
+                return;
+            }
+            typingWindow = 0;
+            typingRoom.SetActive(false);
+            fadeDoor.StartFadeIn();
+            // "Hi" トリガーアニメーションを開始
+            animator.SetTrigger("Hi");
+        }
+
+        // UI要素上でマウスカーソルがある場合は操作しない
         if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
 
+        // ダメージまたは"Hi"アニメーション中はプレイヤーの位置を固定
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi"))
         {
             transform.position = transform.position;
@@ -124,15 +148,27 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
+        // 衝突したオブジェクトに応じてアニメーションと目的地を設定
         if (col.gameObject.name == "Door")
         {
+            // "Hi" トリガーアニメーションを開始
             animator.SetTrigger("Hi");
             agent.destination = this.transform.position;
+
+            fadeDoor.StartFadeOut();
+            typingWindow = 1;
         }
         else if (col.gameObject.name != "Terrain")
         {
+            // "Damage" トリガーアニメーションを開始
             animator.SetTrigger("Damage");
             agent.destination = this.transform.position;
         }
+    }
+    public void CloseDoor()
+    {
+
+        fadeDoor.StartFadeOut();
+        typingWindow = -1;
     }
 }

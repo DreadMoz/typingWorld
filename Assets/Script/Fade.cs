@@ -8,6 +8,11 @@ public class Fade : MonoBehaviour
 {
     public bool firstFadeInComp;
 
+    [SerializeField]
+    private float fadeInSpeed = 1;
+    [SerializeField]
+    private float fadeOutSpeed = 1;
+
     private Image img = null;
     private int frameCount = 0;
     private float timer = 0.0f;
@@ -95,7 +100,7 @@ public class Fade : MonoBehaviour
         {
             FadeInComplete();
         }
-        timer += Time.deltaTime;
+        timer += Time.deltaTime * fadeInSpeed;
     }
     private void FadeOutUpdate()
     {
@@ -108,7 +113,7 @@ public class Fade : MonoBehaviour
         {
             FadeOutComplete();
         }
-        timer += Time.deltaTime;
+        timer += Time.deltaTime * fadeOutSpeed ;
     }
 
     private void FadeInComplete()
@@ -119,8 +124,8 @@ public class Fade : MonoBehaviour
         timer = 0.0f;
         fadeIn = false;
         compFadeIn = true;
-
     }
+
     private void FadeOutComplete()
     {
         img.color = new Color(1, 1, 1, 1);
@@ -129,6 +134,5 @@ public class Fade : MonoBehaviour
         timer = 0.0f;
         fadeOut = false;
         compFadeOut = true;
-
     }
 }

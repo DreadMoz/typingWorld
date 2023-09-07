@@ -12,7 +12,7 @@ public class SaveData : ScriptableObject
     private int[] status = new int[20];
 
     [SerializeField]
-    private int[] inventry = new int[256];
+    private int[] inventory = new int[256];
 
     [SerializeField]
     private int[] medals = new int[100];
@@ -29,12 +29,12 @@ public class SaveData : ScriptableObject
             status[i] = int.Parse(intStrings[i]);
         }
     }
-    public void setInventry(string msg)
+    public void setInventory(string msg)
     {
         string[] intStrings = msg.Split(',');
         for (int i = 0; i < intStrings.Length; i++)
         {
-            inventry[i] = int.Parse(intStrings[i]);
+            inventory[i] = int.Parse(intStrings[i]);
         }
     }
     public void setMedals(string msg)
@@ -54,9 +54,9 @@ public class SaveData : ScriptableObject
     {
         return status;
     }
-    public int[] getInventry()
+    public int[] getInventory()
     {
-        return inventry;
+        return inventory;
     }
     public int[] getMedals()
     {

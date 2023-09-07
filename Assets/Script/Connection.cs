@@ -51,7 +51,7 @@ public class Connection : MonoBehaviour
 
         gm.setUserName(msg);
         gm.setStatus(msgS);
-        gm.setInventry(msgI);
+        gm.setInventory(msgI);
         gm.setMedals(msgM);
     }
 }

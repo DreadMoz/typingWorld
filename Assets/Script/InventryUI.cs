@@ -30,7 +30,7 @@ public class InventryUI : MonoBehaviour
     {
         slots = slotsParent.GetComponentsInChildren<InventrySlot>();
 
-        int[] saveItem = gm.savedata.getInventry();
+        int[] saveItem = gm.savedata.getInventory();
 
         for (int i = 0; i < saveItem.Length; i++)
         {

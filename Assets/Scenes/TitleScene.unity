@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.0911272, g: 0.13716418, b: 0.24357246, a: 1}
+  m_IndirectSpecularColor: {r: 0.09118299, g: 0.13710716, b: 0.24343508, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2595,6 +2595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   db: {fileID: 11400000, guid: b9160425f480a4eb4855fb300b28fae4, type: 2}
   savedata: {fileID: 11400000, guid: cbd59c020b8de48f49d33afa895622af, type: 2}
+  statusWindow: {fileID: 0}
   player: {fileID: 8865011217638685703}
   cam: {fileID: 0}
   fade: {fileID: 1820588913}
@@ -2977,6 +2978,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 195278424}
     m_Modifications:
+    - target: {fileID: 7354686175377531424, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
+      propertyPath: m_FillAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7354686175377531454, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
       propertyPath: m_Name
       value: Fade
@@ -3063,6 +3068,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8726772760927977463, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
+      propertyPath: firstFadeInComp
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
