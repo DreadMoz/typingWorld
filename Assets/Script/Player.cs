@@ -4,15 +4,29 @@ using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
-    public GameManager gameMaster;
-    public GameObject typingRoom;
-    public GameObject status;
-    public Fade fade;
-    public Fade fadeDoor;
+    [SerializeField]
+    private GameManager gameMaster;
+
+    [SerializeField]
+    private GameObject typingRoom;
+
+    [SerializeField]
+    private GameObject itemShop;
+
+    [SerializeField]
+    private GameObject status;
+
+    [SerializeField]
+    private Fade fade;
+
+    [SerializeField]
+    private Fade fadeDoor;
+
     private Animator animator;
     private NavMeshAgent agent;
     private float speed = 8f;
     private int typingWindow = 0;
+    private int shopWindow = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -57,8 +71,30 @@ public class Player : MonoBehaviour
             typingWindow = 0;
             typingRoom.SetActive(false);
             fadeDoor.StartFadeIn();
-            // "Hi" トリガーアニメーションを開始
-            animator.SetTrigger("Hi");
+            // "Bow" トリガーアニメーションを開始
+            animator.SetTrigger("Bow");
+        }
+        if (shopWindow == 1)
+        {
+            if (!fadeDoor.IsFadeOutComplete())
+            {
+                return;
+            }
+            shopWindow = 0;
+            itemShop.SetActive(true);
+            fadeDoor.StartFadeIn();
+        }
+        else if (shopWindow == -1)
+        {
+            if (!fadeDoor.IsFadeOutComplete())
+            {
+                return;
+            }
+            shopWindow = 0;
+            itemShop.SetActive(false);
+            fadeDoor.StartFadeIn();
+            // "Bow" トリガーアニメーションを開始
+            animator.SetTrigger("Bow");
         }
 
         // UI要素上でマウスカーソルがある場合は操作しない
@@ -149,7 +185,7 @@ public class Player : MonoBehaviour
     void OnCollisionEnter(Collision col)
     {
         // 衝突したオブジェクトに応じてアニメーションと目的地を設定
-        if (col.gameObject.name == "Door")
+        if (col.gameObject.name == "TypingDoor")
         {
             // "Hi" トリガーアニメーションを開始
             animator.SetTrigger("Hi");
@@ -158,6 +194,15 @@ public class Player : MonoBehaviour
             fadeDoor.StartFadeOut();
             typingWindow = 1;
         }
+        else if (col.gameObject.name == "ShopDoor")
+        {
+            // "Hi" トリガーアニメーションを開始
+            animator.SetTrigger("Hi");
+            agent.destination = this.transform.position;
+
+            fadeDoor.StartFadeOut();
+            shopWindow = 1;
+        }
         else if (col.gameObject.name != "Terrain")
         {
             // "Damage" トリガーアニメーションを開始
@@ -165,10 +210,14 @@ public class Player : MonoBehaviour
             agent.destination = this.transform.position;
         }
     }
-    public void CloseDoor()
+    public void CloseTypingDoor()
     {
-
         fadeDoor.StartFadeOut();
         typingWindow = -1;
+    }
+    public void CloseShopDoor()
+    {
+        fadeDoor.StartFadeOut();
+        shopWindow = -1;
     }
 }
