@@ -238,14 +238,14 @@
                     onValue(dbRefInventry, function (data) {
                         var msgInventry = data.val();        // オブジェクトデータを取得し、変数msgに代入
                         var intArrayAsStringInventry = msgInventry.join(",");
-                        myGameInstance.SendMessage('GameManager', 'setInventry', msgInventryInventry);
+                        myGameInstance.SendMessage('GameManager', 'setInventry', intArrayAsStringInventry);
                     });
 
                     const dbRefMedals = ref(db, "users/" + uid + "/medals");   // RealtimeDB内の"chat"を使う
                     onValue(dbRefMedals, function (data) {
                         var msgMedals = data.val();        // オブジェクトデータを取得し、変数msgに代入
                         var intArrayAsStringMedals = msgMedals.join(",");
-                        myGameInstance.SendMessage('GameManager', 'setMedals', msgMedalsMedals);
+                        myGameInstance.SendMessage('GameManager', 'setMedals', intArrayAsStringMedals);
                     });
                 }
             }
