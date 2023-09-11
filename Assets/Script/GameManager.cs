@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL && !UNITY_EDITOR    // WebGLでの実行 Unityエディタ上での実行
         windowOpenCount = windowOpenCount * 2;
 #endif
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得

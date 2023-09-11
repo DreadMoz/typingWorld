@@ -234,18 +234,18 @@
                         myGameInstance.SendMessage('GameManager', 'setStatus', intArrayAsString);
                     });
 
-                    const dbRefInventry = ref(db, "users/" + uid + "/inventry");   // RealtimeDB内の"chat"を使う
-                    onValue(dbRefInventry, function (data) {
-                        var msgInventry = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                        var intArrayAsStringInventry = msgInventry.join(",");
-                        myGameInstance.SendMessage('GameManager', 'setInventry', msgInventryInventry);
+                    const dbRefInventory = ref(db, "users/" + uid + "/inventory");   // RealtimeDB内の"chat"を使う
+                    onValue(dbRefInventory, function (data) {
+                        var msgInventory = data.val();        // オブジェクトデータを取得し、変数msgに代入
+                        var intArrayAsStringInventory = msgInventory.join(",");
+                        myGameInstance.SendMessage('GameManager', 'setInventory', intArrayAsStringInventory);
                     });
 
                     const dbRefMedals = ref(db, "users/" + uid + "/medals");   // RealtimeDB内の"chat"を使う
                     onValue(dbRefMedals, function (data) {
                         var msgMedals = data.val();        // オブジェクトデータを取得し、変数msgに代入
                         var intArrayAsStringMedals = msgMedals.join(",");
-                        myGameInstance.SendMessage('GameManager', 'setMedals', msgMedalsMedals);
+                        myGameInstance.SendMessage('GameManager', 'setMedals', intArrayAsStringMedals);
                     });
                 }
             }
@@ -267,9 +267,9 @@
                     set(dbRef, msg);    // DBに値をセットする
 
                     // データ登録(アイテム)
-                    const msgInventry = [1, 2, 3, 4, 0, 0, 0, 0, 6, 5, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                    const dbRefInventry = ref(db, "users/" + uid + "/inventry");   // RealtimeDB内の"chat"を使う
-                    set(dbRefInventry, msgInventry);    // DBに値をセットする
+                    const msgInventory = [1, 2, 3, 4, 0, 0, 0, 0, 6, 5, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    const dbRefInventory = ref(db, "users/" + uid + "/inventory");   // RealtimeDB内の"chat"を使う
+                    set(dbRefInventory, msgInventory);    // DBに値をセットする
 
                     // データ登録(メダル)
                     const msgMedals = [3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 1, 0, 0, 0, 0, 0];
