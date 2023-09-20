@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2003931976}
-  m_IndirectSpecularColor: {r: 0.105307, g: 0.15858862, b: 0.28164512, a: 1}
+  m_IndirectSpecularColor: {r: 0.10400992, g: 0.15629277, b: 0.2772185, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7bc41e397296f949ac52e25e631568d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  db: {fileID: 11400000, guid: b9160425f480a4eb4855fb300b28fae4, type: 2}
+  db: {fileID: 11400000, guid: e99636621e4e648e488646df988f8d8a, type: 2}
   savedata: {fileID: 11400000, guid: cbd59c020b8de48f49d33afa895622af, type: 2}
   statusWindow: {fileID: 1979795457}
   player: {fileID: 11456791}
@@ -10689,6 +10689,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 598339966}
     m_Modifications:
+    - target: {fileID: 419514564157303200, guid: 33eb10977159a8141b91c50d12a16393, type: 3}
+      propertyPath: gm
+      value: 
+      objectReference: {fileID: 1403480}
     - target: {fileID: 3151007388310021147, guid: 33eb10977159a8141b91c50d12a16393, type: 3}
       propertyPath: gm
       value: 
@@ -10781,5 +10785,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3151007388310021147, guid: 33eb10977159a8141b91c50d12a16393, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 33eb10977159a8141b91c50d12a16393, type: 3}

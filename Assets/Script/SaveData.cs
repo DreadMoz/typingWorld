@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
+[CreateAssetMenu(fileName = "SaveData", menuName = "SaveData")]
 public class SaveData : ScriptableObject
 {
     [SerializeField]
