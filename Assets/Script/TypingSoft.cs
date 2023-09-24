@@ -1,15 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class TypingSoft : MonoBehaviour
 {
     //　問題の日本語文
-    private string[] qJ = { "問題", "テスト", "タイピング", "かめくめちゃん" };
+    private string[] qJ = { "学問", "ダッシュボード", "タイピング", "グッナイ", "ぴゃっだっむっちゃ" };
     //　問題のひらがな文
-    private string[] qH = { "もんだい", "てすと", "たいぴんぐ", "かめくめちゃん" };
-    //　問題のローマ字文
-    private string[] qR = { "monndai", "tesuto", "taipinngu", "kamekumechann" };
+    private string[] qH = { "がくもん", "だっしゅぼーど", "たいぴんぐ", "ぐっない", "ぴゃっだっむっちゃ" };
 
     //　日本語表示テキスト
     private Text UIJ;
@@ -75,12 +74,19 @@ public class TypingSoft : MonoBehaviour
         //　選択した問題をテキストUIにセット
         nQJ = qJ[numberOfQuestion];
         nQH = qH[numberOfQuestion];
-        nQR = qR[numberOfQuestion];
+
+        bool isGenerateSuccess;
+        // 判定器
+        List<List<string>> typeJudge;
+
+        // Generate() 関数を呼び出す
+        (isGenerateSuccess, nQR, typeJudge) = GenerateSentence.Generate(nQH);
+
         UIJ.text = nQJ;
         UIH.text = nQH;
         UIR.text = nQR;
         //　問題出力メソッドを呼ぶ
-        OutputQ();
+//        OutputQ();
     }
 
 
@@ -175,7 +181,6 @@ public class TypingSoft : MonoBehaviour
         //　選択した問題をテキストUIにセット
         nQJ = qJ[numberOfQuestion];
         nQH = qH[numberOfQuestion];
-        nQR = qR[numberOfQuestion];
         UIJ.text = nQJ;
         UIH.text = nQH;
         UIR.text = nQR;
