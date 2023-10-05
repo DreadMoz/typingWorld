@@ -7,6 +7,13 @@ using Unity.VisualScripting;
 
 public class TypingSoft : MonoBehaviour
 {
+    // Assist Keyboard JIS
+    private static AssistKeyboardJIS AssistKeyboardObj;
+
+    public float totalTime = 60.0f; // タイマーの総時間（秒）
+    private float currentTime; // 現在の経過時間
+    private bool isTimerRunning = false; // タイマーが実行中かどうかのフラグ
+
     // 入力受け付け
     private static bool isInputValid;
     // タイピングの正誤判定器
@@ -33,6 +40,10 @@ public class TypingSoft : MonoBehaviour
     private Text UIH;
     //　ローマ字表示テキスト
     private Text UIR;
+    //　カウントダウン表示テキスト
+    private Text UICountDown;
+    //　残り時間表示テキスト
+    private Text UITimer;
 
     //　日本語問題
     private string nQJ;
@@ -73,9 +84,16 @@ public class TypingSoft : MonoBehaviour
         UIH = transform.Find("InputPanel/QuestionH").GetComponent<Text>();
         UIR = transform.Find("InputPanel/QuestionR").GetComponent<Text>();
         UII = transform.Find("InputPanel/Input").GetComponent<Text>();
+        UICountDown = transform.Find("InputPanel/CountDown").GetComponent<Text>();
         UIcorrectA = transform.Find("DataPanel/CorrectAnswer").GetComponent<Text>();
         UImistake = transform.Find("DataPanel/Mistake").GetComponent<Text>();
+        UITimer = transform.Find("DataPanel/Timer").GetComponent<Text>();
         UIcorrectAR = transform.Find("DataPanel/CorrectAnswerRate").GetComponent<Text>();
+        AssistKeyboardObj = GameObject.Find("AssistKeyboard").GetComponent<AssistKeyboardJIS>();
+
+        // タイマーを初期化
+        currentTime = totalTime;
+        UpdateTimerText();
 
         //　データ初期化処理
         correctN = 0;
@@ -85,8 +103,8 @@ public class TypingSoft : MonoBehaviour
         correctAR = 0;
         UIcorrectAR.text = correctAR.ToString();
 
-        // 次の文章
-        StartCoroutine(ChangeSentence());
+
+        StartCoroutine(CountDown());
     }
 
     private IEnumerator ChangeSentence()
@@ -119,9 +137,58 @@ public class TypingSoft : MonoBehaviour
         yield return new WaitForSeconds(0.1f);  // なんかとりあえず
     }
 
+    private void UpdateTimerText()
+    {
+        // 残り時間を表示
+        UITimer.text = string.Format("{0:0}", currentTime);
+    }
+
+    /// <summary>
+    /// カウントダウン演出
+    /// </summary>
+    private IEnumerator CountDown()
+    {
+        var count = 3;
+        while (count > 0)
+        {
+            UICountDown.text = count.ToString();
+            yield return new WaitForSeconds(1f);
+            count--;
+        }
+        UICountDown.text = "";
+
+        // 次の文章
+        StartCoroutine(ChangeSentence());
+        isTimerRunning = true;
+    }
 
     void Update()
     {
+        // タイマーが実行中の場合、時間を減少させる
+        if (isTimerRunning)
+        {
+            currentTime -= Time.deltaTime;
+
+            // タイマーが0以下になったら停止
+            if (currentTime <= 0)
+            {
+                currentTime = 0;
+                isTimerRunning = false;
+                // タイマーが終了したことを示す処理を追加できます
+            }
+
+            UpdateTimerText();
+        }
+        if (CurrentTypingSentence == "" || !isInputValid)
+        {
+            AssistKeyboardObj.SetAllKeyColorWhite();
+            AssistKeyboardObj.SetAllFingerColorWhite();
+        }
+        else if (isInputValid)
+        {
+            var nextHighlight = CurrentTypingSentence[0].ToString();
+            AssistKeyboardObj.SetNextHighlight(nextHighlight);
+        }
     }
 
     private void OnGUI()

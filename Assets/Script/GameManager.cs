@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public GameObject equipment;
     public GameObject ranking;
     public GameObject status;
+    public GameObject typingRoom;
+    public GameObject shopRoom;
 
     public OpenButton inventoryButton;  // インベントリボタン
     public OpenButton rankingButton;    // ランキングボタン
@@ -46,12 +48,21 @@ public class GameManager : MonoBehaviour
     float posy;
     float posz;
 
+    public float PopWindowTime = 1.0f;
+    float windowMoveTime = 0.0f;
+
+    private void Awake()
+    {
+        status.SetActive(false);
+        inventory.SetActive(false);
+        equipment.SetActive(false);
+        ranking.SetActive(false);
+        typingRoom.SetActive(false);
+        shopRoom.SetActive(false);
+    }
     // Start is called before the first frame update
     void Start()
     {
-#if UNITY_WEBGL && !UNITY_EDITOR    // WebGLでの実行 Unityエディタ上での実行
-        windowOpenCount = windowOpenCount * 2;
-#endif
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
         animator.SetInteger("anim", 0); // アニメーションステートを0に設定
 
@@ -86,6 +97,8 @@ public class GameManager : MonoBehaviour
             // インベントリボタンまたはIキーが押され、カウンタが0の場合
             if ((Input.GetKeyDown(KeyCode.I) || inventoryButton.isOpen()) && (count == 0))
             {
+                windowMoveTime = 0.001f;
+
                 count = windowOpenCount;
                 inventoryButton.resetOpen();
 
@@ -111,6 +124,8 @@ public class GameManager : MonoBehaviour
             // ランキングボタンまたはRキーが押され、カウンタが0の場合
             else if ((Input.GetKeyDown(KeyCode.R) || rankingButton.isOpen()) && (count == 0))
             {
+                windowMoveTime = 0.001f;
+
                 count = windowOpenCount;
                 rankingButton.resetOpen();
 
@@ -134,11 +149,14 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            if (count > 0)
+            if (windowMoveTime > 0.0f)
             {
+                windowMoveTime += Time.deltaTime;
+
                 // ウィンドウ表示
-                if (count > windowOpenCount / 2)
+                if (windowMoveTime < PopWindowTime / 2)
                 {
+
                     if (inventoryOpen == -1)
                     {
                         status.transform.position += new Vector3(0, 300 / windowOpenCount, 0);
