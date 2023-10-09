@@ -2,7 +2,7 @@
  {
      Properties
      {
-         _InnerColor("Inner Color", Color) = (1.0, 1.0, 1.0, 1.0)
+         _InnerColor("Inner Color", Color) = (0.0, 0.0, 1.0, 1.0) // 青色
          _MainTex("Particle Texture", 2D) = "white" {}
          _RimColor("Rim Color", Color) = (0.26,0.19,0.16,0.0)
          _RimPower("Rim Power", Range(0.5,8.0)) = 3.0
@@ -20,6 +20,7 @@
 		 }
  
          CGPROGRAM
+         
  #pragma surface surf Lambert
  
      struct Input

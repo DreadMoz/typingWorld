@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
 using Unity.VisualScripting;
+using UnityEngine.XR;
 
 public class TypingSoft : MonoBehaviour
 {
@@ -60,17 +61,21 @@ public class TypingSoft : MonoBehaviour
 
     //　入力した文字列テキスト
     private Text UII;
-    //　正解数
+    //　正解キー数
     private int correctN;
+    //　失敗数
+    private int mistakeN;
+
     //　正解数表示用テキストUI
     private Text UIcorrectA;
     //　正解した文字列を入れておく
     private string correctString;
 
-    //　失敗数
-    private int mistakeN;
     //　失敗数表示用テキストUI
     private Text UImistake;
+
+    //　コンボ表示用テキストUI
+    private Text UIcorrect;
 
     //　正解率
     private float correctAR;
@@ -79,16 +84,16 @@ public class TypingSoft : MonoBehaviour
 
     void Start()
     {
+
         //　テキストUIを取得
         UIJ = transform.Find("InputPanel/QuestionJ").GetComponent<Text>();
         UIH = transform.Find("InputPanel/QuestionH").GetComponent<Text>();
         UIR = transform.Find("InputPanel/QuestionR").GetComponent<Text>();
         UII = transform.Find("InputPanel/Input").GetComponent<Text>();
         UICountDown = transform.Find("InputPanel/CountDown").GetComponent<Text>();
-        UIcorrectA = transform.Find("DataPanel/CorrectAnswer").GetComponent<Text>();
+        UIcorrect = transform.Find("DataPanel/Combo").GetComponent<Text>();
         UImistake = transform.Find("DataPanel/Mistake").GetComponent<Text>();
         UITimer = transform.Find("DataPanel/Timer").GetComponent<Text>();
-        UIcorrectAR = transform.Find("DataPanel/CorrectAnswerRate").GetComponent<Text>();
         AssistKeyboardObj = GameObject.Find("AssistKeyboard").GetComponent<AssistKeyboardJIS>();
 
         // タイマーを初期化
@@ -97,13 +102,10 @@ public class TypingSoft : MonoBehaviour
 
         //　データ初期化処理
         correctN = 0;
-        UIcorrectA.text = correctN.ToString();
         mistakeN = 0;
-        UImistake.text = mistakeN.ToString();
-        correctAR = 0;
-        UIcorrectAR.text = correctAR.ToString();
+        //        UIcorrectAR.text = correctAR.ToString();
 
-
+        correctN = 0;
         StartCoroutine(CountDown());
     }
 
@@ -134,7 +136,11 @@ public class TypingSoft : MonoBehaviour
         // 入力受け付け状態にする
         isInputValid = true;
 
-        yield return new WaitForSeconds(0.1f);  // なんかとりあえず
+        var nextHighlight = typingJudge[0][0][0].ToString();
+
+        AssistKeyboardObj.SetNextHighlight(nextHighlight);
+
+        yield return new WaitForSeconds(0.01f);  // なんかとりあえず
     }
 
     private void UpdateTimerText()
@@ -178,16 +184,6 @@ public class TypingSoft : MonoBehaviour
             }
 
             UpdateTimerText();
-        }
-        if (CurrentTypingSentence == "" || !isInputValid)
-        {
-            AssistKeyboardObj.SetAllKeyColorWhite();
-            AssistKeyboardObj.SetAllFingerColorWhite();
-        }
-        else if (isInputValid)
-        {
-            var nextHighlight = CurrentTypingSentence[0].ToString();
-            AssistKeyboardObj.SetNextHighlight(nextHighlight);
         }
     }
 
@@ -396,6 +392,9 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void Correct(string typeChar)
     {
+        correctN++;
+        UIcorrect.text = string.Format("{0:0}", correctN);
+
         // 可能な入力パターンのチェック
         bool isIndexCountUp = IsJudgeIndexCountUp(typeChar);
         // ローマ字入力表示を更新
@@ -489,6 +488,18 @@ public class TypingSoft : MonoBehaviour
         }
         SetUITypeText(UIStr);
         CurrentTypingSentence = nextTypingSentence;
+
+
+        if (CurrentTypingSentence == "" || !isInputValid)
+        {
+            AssistKeyboardObj.SetAllKeyColorWhite();
+        }
+        else if (isInputValid)
+        {
+            var nextHighlight = CurrentTypingSentence[0].ToString();
+//            handAnimation(nextHighlight);
+            AssistKeyboardObj.SetNextHighlight(nextHighlight);
+        }
     }
 
     /// <summary>
@@ -532,6 +543,7 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void Mistype()
     {
+        correctN = 0;
         isSentenceMistyped = true;
         // 打つべき文字を赤く表示
         if (!isRecMistype)

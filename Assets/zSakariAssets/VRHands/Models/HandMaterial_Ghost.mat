@@ -11,11 +11,12 @@ Material:
   m_Shader: {fileID: 4800000, guid: f767d3db95ac17b499cd32c76553b445, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
+  - _ALPHABLEND_ON
   - _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3001
+  m_CustomRenderQueue: 3010
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -76,7 +77,7 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EmissiveIntensity: 0.54
     - _FlickerSpeed: 0.01
     - _Fold: 1
@@ -91,28 +92,28 @@ Material:
     - _Inside: 0
     - _InvertFresnel: 0
     - _Metallic: 0
-    - _Mode: 0
+    - _Mode: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Rim: 1
-    - _RimPower: 0.84
+    - _RimPower: 4.2
     - _ScanSpeed: 1
     - _ScanTiling: 0.05
     - _Shininess: 0.078125
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 0.5
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _Strength: 1.5
     - _Tile: 5.29
     - _UVSec: 0
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 0.38116348, g: 0.5925924, b: 0.6911765, a: 1}
+    - _Color: {r: 0, g: 0.25339815, b: 1, a: 0.70980394}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _InnerColor: {r: 0, g: 0, b: 0, a: 0}
+    - _InnerColor: {r: 0.5281684, g: 0.6695872, b: 0.7830189, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimColor: {r: 0, g: 0.6845889, b: 1, a: 0.89411765}
+    - _RimColor: {r: 0, g: 0.035294056, b: 1, a: 1}
     - _RimLightColor: {r: 0.6, g: 0.6, b: 0.7, a: 1}
     - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []

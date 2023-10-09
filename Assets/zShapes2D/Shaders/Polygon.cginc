@@ -57,7 +57,7 @@ float get_closest_distance(float2 pos, float2 radii) {
         // if (i == _NumVerts - 1)
         //     break;
     }
-    return closest_distance * when_eq(nodes % 2, 1) + -1 * when_neq(nodes % 2, 1);
+    return closest_distance * when_eq(fmod(nodes, 2), 1) + -1 * when_neq(fmod(nodes, 2), 1);
 }
 
 // tells you which side of the line p1->p2 pos is

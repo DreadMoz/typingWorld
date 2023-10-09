@@ -6,10 +6,16 @@ using UnityEngine;
 public class AssistKeyboardJIS : MonoBehaviour
 {
   [SerializeField] GameObject AKParent;
-  [SerializeField] GameObject AFLParent;
-  [SerializeField] GameObject AFRParent;
+
+    [SerializeField]
+    private GameObject lHand;        // Lハンドオブジェクト
+    [SerializeField]
+    private GameObject rHand;        // Rハンドオブジェクト
+    private Animator rightHandAnim;  // rightHandのアニメーター
+    private Animator leftHandAnim;   // leftHandのアニメーター
+
   // key_name -> GameObject のマップ
-  private static Dictionary<string, GameObject> AKKeys = new Dictionary<string, GameObject>();
+    private static Dictionary<string, GameObject> AKKeys = new Dictionary<string, GameObject>();
   // finger_name -> GameObject のマップ
   private static Dictionary<string, GameObject> AFingers = new Dictionary<string, GameObject>();
   // JIS 配列での文字とキーのマッピング
@@ -488,26 +494,29 @@ public class AssistKeyboardJIS : MonoBehaviour
   // キーの色
   private static Color colorGray = new Color(180f / 255f, 180f / 255f, 180f / 255f, 1);
   private static Color colorWhite = new Color(1, 1, 1, 1);
-  private static Color colorPink = new Color(1, 110f / 255f, 163f / 255f, 1);
+  private static Color colorBlack = new Color(0, 0, 0, 1);
+  private static Color colorBlackFill = new Color(24f / 255f, 24f / 255f, 24f / 255f, 1);
+  private static Color colorPink = new Color(1, 40f / 255f, 70f / 255f, 1);
   private static Color colorLightPink = new Color(1, 194f / 255f, 217f / 255f, 1);
-  private static Color colorOrange = new Color(251f / 255f, 183f / 255f, 67f / 255f, 1);
+  private static Color colorOrange = new Color(251f / 255f, 83f / 255f, 30f / 255f, 1);
   private static Color colorLightOrange = new Color(1, 220f / 255f, 160f / 255f, 1);
-  private static Color colorGreen = new Color(49f / 255f, 183f / 255f, 67f / 255f, 1);
+  private static Color colorGreen = new Color(49f / 255f, 83f / 255f, 30f / 255f, 1);
   private static Color colorLightGreen = new Color(180f / 255f, 1, 190f / 255f, 1);
-  private static Color colorBlue = new Color(58f / 255f, 195f / 255f, 216f / 255f, 1);
+  private static Color colorBlue = new Color(28f / 255f, 95f / 255f, 166f / 255f, 1);
   private static Color colorLightBlue = new Color(141f / 255f, 240f / 255f, 1, 1);
-  private static Color colorViolet = new Color(207f / 255f, 124f / 255f, 1, 1);
+  private static Color colorViolet = new Color(140f / 255f, 64f / 255f, 1, 1);
   private static Color colorLightViolet = new Color(234f / 255f, 198f / 255f, 1, 1);
 
   /// <summary>
   /// 初期化処理
   /// </summary>
   void Awake()
-  {
-    GetAllKeys(ConfigScript.InputMode, ConfigScript.InputArray);
-    GetAllFingers();
+    {
+        rightHandAnim = rHand.GetComponent<Animator>(); // rightHandのアニメーターを取得
+        leftHandAnim = lHand.GetComponent<Animator>(); // leftHandのアニメーターを取得
+
+        GetAllKeys(ConfigScript.InputMode, ConfigScript.InputArray);
     SetAllKeyColorWhite();
-    SetAllFingerColorWhite();
   }
 
   /// <summary>
@@ -549,23 +558,6 @@ public class AssistKeyboardJIS : MonoBehaviour
     }
   }
 
-  /// <summary>
-  /// 指のオブジェクトを取得する
-  /// </summary>
-  private void GetAllFingers()
-  {
-    AFingers = new Dictionary<string, GameObject>();
-    for (int i = 0; i < AFLParent.transform.childCount; ++i)
-    {
-      var obj = AFLParent.transform.GetChild(i).gameObject;
-      AFingers.Add(obj.name, obj);
-    }
-    for (int i = 0; i < AFRParent.transform.childCount; ++i)
-    {
-      var obj = AFRParent.transform.GetChild(i).gameObject;
-      AFingers.Add(obj.name, obj);
-    }
-  }
 
   /// <summary>
   /// 指定したキーの色を白に設定する
@@ -574,9 +566,11 @@ public class AssistKeyboardJIS : MonoBehaviour
   private void SetKeyColorWhite(string keyName)
   {
     var shape = AKKeys[keyName].GetComponent<Shape>();
-    shape.settings.outlineColor = colorGray;
-    shape.settings.fillColor = colorWhite;
-  }
+//        shape.settings.outlineColor = colorGray;
+//        shape.settings.fillColor = colorWhite;
+        shape.settings.outlineColor = colorBlack;
+        shape.settings.fillColor = colorBlackFill;
+    }
 
   /// <summary>
   /// 指定したキーの色を変更する
@@ -611,52 +605,6 @@ public class AssistKeyboardJIS : MonoBehaviour
   }
 
   /// <summary>
-  /// 指定した指の色を変更する
-  /// <param name="keyName">キー名</param>
-  /// </summary>
-  private void SetFingerColorHighlight(string keyName)
-  {
-    var fingering = keyFingering[keyName];
-    // Space キーは両方の親指を変更
-    if (fingering.Item2 == 'B')
-    {
-      var obj = AFingers["L1"].GetComponent<Shape>();
-      obj.settings.fillColor = colorViolet;
-      obj = AFingers["R1"].GetComponent<Shape>();
-      obj.settings.fillColor = colorViolet;
-    }
-    // スペースキー以外
-    else
-    {
-      var objName = fingering.Item2.ToString() + fingering.Item1.ToString();
-      var obj = AFingers[objName].GetComponent<Shape>();
-      switch (fingering.Item1)
-      {
-        case 1:
-          obj.settings.outlineColor = colorViolet;
-          obj.settings.fillColor = colorLightViolet;
-          break;
-        case 2:
-          obj.settings.outlineColor = colorBlue;
-          obj.settings.fillColor = colorLightBlue;
-          break;
-        case 3:
-          obj.settings.outlineColor = colorGreen;
-          obj.settings.fillColor = colorLightGreen;
-          break;
-        case 4:
-          obj.settings.outlineColor = colorOrange;
-          obj.settings.fillColor = colorLightOrange;
-          break;
-        case 5:
-          obj.settings.outlineColor = colorPink;
-          obj.settings.fillColor = colorLightPink;
-          break;
-      }
-    }
-  }
-
-  /// <summary>
   /// 全てのキーの色を白にする
   /// </summary>
   public void SetAllKeyColorWhite()
@@ -671,27 +619,233 @@ public class AssistKeyboardJIS : MonoBehaviour
     }
   }
 
-  /// <summary>
-  /// 全ての指の色を白にする
-  /// </summary>
-  public void SetAllFingerColorWhite()
-  {
-    foreach (var kvp in AFingers)
+    /// <summary>
+    /// 手のアニメーション操作
+    /// </summary>
+    private void handAnimation(string word)
     {
-      var obj = kvp.Value.GetComponent<Shape>();
-      obj.settings.fillColor = colorWhite;
-    }
-  }
+        leftHandAnim.ResetTrigger("1");
+        leftHandAnim.ResetTrigger("2");
+        leftHandAnim.ResetTrigger("3");
+        leftHandAnim.ResetTrigger("4");
+        leftHandAnim.ResetTrigger("5");
+        leftHandAnim.ResetTrigger("6");
+        leftHandAnim.ResetTrigger("q");
+        leftHandAnim.ResetTrigger("w");
+        leftHandAnim.ResetTrigger("e");
+        leftHandAnim.ResetTrigger("r");
+        leftHandAnim.ResetTrigger("t");
+        leftHandAnim.ResetTrigger("a");
+        leftHandAnim.ResetTrigger("s");
+        leftHandAnim.ResetTrigger("d");
+        leftHandAnim.ResetTrigger("f");
+        leftHandAnim.ResetTrigger("g");
+        leftHandAnim.ResetTrigger("z");
+        leftHandAnim.ResetTrigger("x");
+        leftHandAnim.ResetTrigger("c");
+        leftHandAnim.ResetTrigger("v");
+        leftHandAnim.ResetTrigger("b");
+        leftHandAnim.ResetTrigger("home");
 
-  /// <summary>
-  /// 次に打つべき文字と指をハイライトする
-  /// <param name="nextHighlightChar">次に打つ文字</param>
-  /// </summary>
-  public void SetNextHighlight(string nextStr)
+        rightHandAnim.ResetTrigger("7");
+        rightHandAnim.ResetTrigger("8");
+        rightHandAnim.ResetTrigger("9");
+        rightHandAnim.ResetTrigger("0");
+        rightHandAnim.ResetTrigger("-");
+        rightHandAnim.ResetTrigger("^");
+        rightHandAnim.ResetTrigger("yen");
+        rightHandAnim.ResetTrigger("y");
+        rightHandAnim.ResetTrigger("u");
+        rightHandAnim.ResetTrigger("i");
+        rightHandAnim.ResetTrigger("o");
+        rightHandAnim.ResetTrigger("p");
+        rightHandAnim.ResetTrigger("at");
+        rightHandAnim.ResetTrigger("[");
+        rightHandAnim.ResetTrigger("h");
+        rightHandAnim.ResetTrigger("j");
+        rightHandAnim.ResetTrigger("k");
+        rightHandAnim.ResetTrigger("l");
+        rightHandAnim.ResetTrigger(";");
+        rightHandAnim.ResetTrigger("colon");
+        rightHandAnim.ResetTrigger("]");
+        rightHandAnim.ResetTrigger("n");
+        rightHandAnim.ResetTrigger("m");
+        rightHandAnim.ResetTrigger("comma");
+        rightHandAnim.ResetTrigger("dot");
+        rightHandAnim.ResetTrigger("slash");
+        rightHandAnim.ResetTrigger("_");
+        rightHandAnim.ResetTrigger("home");
+
+        switch (word)
+        {
+            case "1":
+                leftHandAnim.SetTrigger("1");
+                break;
+            case "2":
+                leftHandAnim.SetTrigger("2");
+                break;
+            case "3":
+                leftHandAnim.SetTrigger("3");
+                break;
+            case "4":
+                leftHandAnim.SetTrigger("4");
+                break;
+            case "5":
+                leftHandAnim.SetTrigger("5");
+                break;
+            case "6":
+                leftHandAnim.SetTrigger("6");
+                break;
+            case "q":
+                leftHandAnim.SetTrigger("q");
+                break;
+            case "w":
+                leftHandAnim.SetTrigger("w");
+                break;
+            case "e":
+                leftHandAnim.SetTrigger("e");
+                break;
+            case "r":
+                leftHandAnim.SetTrigger("r");
+                break;
+            case "t":
+                leftHandAnim.SetTrigger("t");
+                break;
+            case "a":
+                leftHandAnim.SetTrigger("a");
+                break;
+            case "s":
+                leftHandAnim.SetTrigger("s");
+                break;
+            case "d":
+                leftHandAnim.SetTrigger("d");
+                break;
+            case "f":
+                leftHandAnim.SetTrigger("f");
+                break;
+            case "g":
+                leftHandAnim.SetTrigger("g");
+                break;
+            case "z":
+                leftHandAnim.SetTrigger("z");
+                break;
+            case "x":
+                leftHandAnim.SetTrigger("x");
+                break;
+            case "c":
+                leftHandAnim.SetTrigger("c");
+                break;
+            case "v":
+                leftHandAnim.SetTrigger("v");
+                break;
+            case "b":
+                leftHandAnim.SetTrigger("b");
+                break;
+
+            default:
+                leftHandAnim.SetTrigger("home");
+                break;
+        }
+
+        switch (word)
+        {
+            case "7":
+                rightHandAnim.SetTrigger("7");
+                break;
+            case "8":
+                rightHandAnim.SetTrigger("8");
+                break;
+            case "9":
+                rightHandAnim.SetTrigger("9");
+                break;
+            case "0":
+                rightHandAnim.SetTrigger("0");
+                break;
+            case "-":
+                rightHandAnim.SetTrigger("-");
+                break;
+            case "^":
+                rightHandAnim.SetTrigger("^");
+                break;
+            case "\\":
+                rightHandAnim.SetTrigger("yen");
+                break;
+            case "y":
+                rightHandAnim.SetTrigger("y");
+                break;
+            case "u":
+                rightHandAnim.SetTrigger("u");
+                break;
+            case "i":
+                rightHandAnim.SetTrigger("i");
+                break;
+            case "o":
+                rightHandAnim.SetTrigger("o");
+                break;
+            case "p":
+                rightHandAnim.SetTrigger("p");
+                break;
+            case "@":
+                rightHandAnim.SetTrigger("at");
+                break;
+            case "[":
+                rightHandAnim.SetTrigger("[");
+                break;
+            case "h":
+                rightHandAnim.SetTrigger("h");
+                break;
+            case "j":
+                rightHandAnim.SetTrigger("j");
+                break;
+            case "k":
+                rightHandAnim.SetTrigger("k");
+                break;
+            case "l":
+                rightHandAnim.SetTrigger("l");
+                break;
+            case ";":
+                rightHandAnim.SetTrigger(";");
+                break;
+            case ":":
+                rightHandAnim.SetTrigger("colon");
+                break;
+            case "]":
+                rightHandAnim.SetTrigger("]");
+                break;
+            case "n":
+                rightHandAnim.SetTrigger("n");
+                break;
+            case "m":
+                rightHandAnim.SetTrigger("m");
+                break;
+            case ",":
+                rightHandAnim.SetTrigger("comma");
+                break;
+            case ".":
+                rightHandAnim.SetTrigger("dot");
+                break;
+            case "/":
+                rightHandAnim.SetTrigger("slash");
+                break;
+            case "_":
+                rightHandAnim.SetTrigger("_");
+                break;
+
+            default:
+                rightHandAnim.SetTrigger("home");
+                break;
+        }
+    }
+    /// <summary>
+    /// 次に打つべき文字と指をハイライトする
+    /// <param name="nextHighlightChar">次に打つ文字</param>
+    /// </summary>
+    public void SetNextHighlight(string nextStr)
   {
+    handAnimation(nextStr);
+
     // 一度指、キーの色をリセットする
     SetAllKeyColorWhite();
-    SetAllFingerColorWhite();
     var keyList = new List<string>();
     if (ConfigScript.InputArray == (int)ConfigScript.KeyArrayType.japanese)
     {
@@ -704,7 +858,6 @@ public class AssistKeyboardJIS : MonoBehaviour
     foreach (var keyName in keyList)
     {
       SetKeyColorHighlight(keyName);
-      SetFingerColorHighlight(keyName);
     }
   }
 
@@ -717,7 +870,6 @@ public class AssistKeyboardJIS : MonoBehaviour
     foreach (var keyName in keyList)
     {
       SetKeyColorHighlight(keyName);
-      SetFingerColorHighlight(keyName);
     }
   }
 }
