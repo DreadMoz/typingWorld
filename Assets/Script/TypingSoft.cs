@@ -11,10 +11,16 @@ public class TypingSoft : MonoBehaviour
     // Assist Keyboard JIS
     private static AssistKeyboardJIS AssistKeyboardObj;
 
+    [SerializeField]
+    private GameObject player;        // プレイヤーオブジェクト
+    private Animator animator;
+    public GameObject targetCam;
+
     public float totalTime = 60.0f; // タイマーの総時間（秒）
     private float currentTime; // 現在の経過時間
     private bool isTimerRunning = false; // タイマーが実行中かどうかのフラグ
 
+    private static bool spaceStart;
     // 入力受け付け
     private static bool isInputValid;
     // タイピングの正誤判定器
@@ -41,6 +47,8 @@ public class TypingSoft : MonoBehaviour
     private Text UIH;
     //　ローマ字表示テキスト
     private Text UIR;
+    //　終了表示テキスト
+    private Text END;
     //　カウントダウン表示テキスト
     private Text UICountDown;
     //　残り時間表示テキスト
@@ -63,19 +71,24 @@ public class TypingSoft : MonoBehaviour
     private Text UII;
     //　正解キー数
     private int correctN;
+    //　コンボ数
+    private int comboN;
     //　失敗数
     private int mistakeN;
 
     //　正解数表示用テキストUI
-    private Text UIcorrectA;
+    private Text UIcorrect;
     //　正解した文字列を入れておく
     private string correctString;
 
     //　失敗数表示用テキストUI
     private Text UImistake;
 
+    //　1分間あたりの入力キー数表示用テキストUI
+    private Text UIkpm;
+
     //　コンボ表示用テキストUI
-    private Text UIcorrect;
+    private Text UIcombo;
 
     //　正解率
     private float correctAR;
@@ -84,14 +97,30 @@ public class TypingSoft : MonoBehaviour
 
     void Start()
     {
+        // スペースでスタート状態にする
+        spaceStart = true;
+        // 入力禁止状態にする
+        isInputValid = false;
+
+        animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
+        player.transform.LookAt(targetCam.transform);   // カメラを向く
+
+
+        animator.SetFloat("walkSpeed", 1.0f);
+        animator.SetFloat("moveSpeed", 1.0f);
+        animator.SetFloat("runSpeed", 1.0f);
 
         //　テキストUIを取得
         UIJ = transform.Find("InputPanel/QuestionJ").GetComponent<Text>();
         UIH = transform.Find("InputPanel/QuestionH").GetComponent<Text>();
         UIR = transform.Find("InputPanel/QuestionR").GetComponent<Text>();
         UII = transform.Find("InputPanel/Input").GetComponent<Text>();
+        END = transform.Find("InputPanel/End").GetComponent<Text>();
         UICountDown = transform.Find("InputPanel/CountDown").GetComponent<Text>();
-        UIcorrect = transform.Find("DataPanel/Combo").GetComponent<Text>();
+        UIcorrect = transform.Find("DataPanel/Correct").GetComponent<Text>();
+        UIcorrectAR = transform.Find("DataPanel/CorrectAR").GetComponent<Text>();
+        UIcombo = transform.Find("DataPanel/Combo").GetComponent<Text>();
+        UIkpm = transform.Find("DataPanel/Kpm").GetComponent<Text>();
         UImistake = transform.Find("DataPanel/Mistake").GetComponent<Text>();
         UITimer = transform.Find("DataPanel/Timer").GetComponent<Text>();
         AssistKeyboardObj = GameObject.Find("AssistKeyboard").GetComponent<AssistKeyboardJIS>();
@@ -102,15 +131,21 @@ public class TypingSoft : MonoBehaviour
 
         //　データ初期化処理
         correctN = 0;
+        comboN = 0;
         mistakeN = 0;
         //        UIcorrectAR.text = correctAR.ToString();
 
-        correctN = 0;
-        StartCoroutine(CountDown());
+        AssistKeyboardObj.SetNextHighlight(" ");
     }
 
     private IEnumerator ChangeSentence()
     {
+        // コンボ数リセット、表示更新
+        if (totalTime != currentTime)
+        {
+            float kpm = correctN / (totalTime - currentTime) * 60.0f;
+            UIkpm.text = string.Format("{0:0}", kpm);
+        }
         //　問題数内でランダムに選ぶ
         numberOfQuestion = UnityEngine.Random.Range(0, qJ.Length);
 
@@ -133,8 +168,6 @@ public class TypingSoft : MonoBehaviour
         isRecMistype = false;
         isSentenceMistyped = false;
         index = 0;
-        // 入力受け付け状態にする
-        isInputValid = true;
 
         var nextHighlight = typingJudge[0][0][0].ToString();
 
@@ -154,6 +187,8 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private IEnumerator CountDown()
     {
+        animator.SetTrigger("kamae");
+        player.transform.rotation *= Quaternion.Euler(0, -60, 0);
         var count = 3;
         while (count > 0)
         {
@@ -166,6 +201,9 @@ public class TypingSoft : MonoBehaviour
         // 次の文章
         StartCoroutine(ChangeSentence());
         isTimerRunning = true;
+        isInputValid = true;
+
+        animator.SetBool("walk", true);
     }
 
     void Update()
@@ -173,27 +211,54 @@ public class TypingSoft : MonoBehaviour
         // タイマーが実行中の場合、時間を減少させる
         if (isTimerRunning)
         {
-            currentTime -= Time.deltaTime;
+            player.transform.position += new Vector3(0.02f, 0, 0); // 進んでいく
+            player.transform.LookAt(targetCam.transform);   // カメラを向く
+            player.transform.rotation *= Quaternion.Euler(0, -60, 0);
 
+            currentTime -= Time.deltaTime;
             // タイマーが0以下になったら停止
             if (currentTime <= 0)
             {
                 currentTime = 0;
                 isTimerRunning = false;
-                // タイマーが終了したことを示す処理を追加できます
+                isInputValid = false;
+                // ここに結果発表＆連続再生追加
+                END.text = "しゅうりょう";
+                UIJ.text = "";
+                UIH.text = "";
+                UIR.text = "";
+                UII.text = "";
             }
-
             UpdateTimerText();
+        }
+
+        if (spaceStart)
+        {
+            // 1秒ごとにアニメーションを切り替える
+            if (Time.time % 20 > 19.7)
+            {
+                animator.SetTrigger("reset");
+            }
         }
     }
 
     private void OnGUI()
     {
-        isInputValid = true;        // 仮
-
         Event e = Event.current;
         var isPushedShiftKey = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
+        if (spaceStart)
+        {
+            var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
+            if (inputStr.Equals(" "))
+            {
+                // スペースでスタート状態を解除する
+                spaceStart = false;
+                UIH.text = "";
+                StartCoroutine(CountDown());
+                return;
+            }
+        }
         if (isInputValid && e.type == EventType.KeyDown && e.keyCode != KeyCode.None
         && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
@@ -207,29 +272,6 @@ public class TypingSoft : MonoBehaviour
                 StartCoroutine(TypingCheck(inputStr));
             }
         }
-    }
-    //　新しい問題を表示する関数
-    void OutputQ()
-    {
-        //　テキストUIを初期化する
-        UIJ.text = "";
-        UIR.text = "";
-        UII.text = "";
-
-        //　正解した文字列を初期化
-        correctString = "";
-        //　文字の位置を0番目に戻す
-        indexOfString = 0;
-
-        //　問題数内でランダムに選ぶ
-        numberOfQuestion = UnityEngine.Random.Range(0, qJ.Length);
-
-        //　選択した問題をテキストUIにセット
-        nQJ = qJ[numberOfQuestion];
-        nQH = qH[numberOfQuestion];
-        UIJ.text = nQJ;
-        UIH.text = nQH;
-        UIR.text = nQR;
     }
     /// <summary>
     /// キーコードから string
@@ -354,11 +396,74 @@ public class TypingSoft : MonoBehaviour
         if (!isMistype)
         {
             Correct(nextString);
+            animator.ResetTrigger("die1");
+            animator.ResetTrigger("die2");
+            animator.ResetTrigger("damage");
         }
         else
         {
             Mistype();
         }
+        correctAR = (float)correctN / ((float)correctN + (float)mistakeN);
+        UIcorrectAR.text = string.Format("{0:0.0} %", correctAR*100);
+
+
+        if (comboN > 20)
+        {
+            animator.SetBool("run", true);
+            animator.SetBool("move", false);
+            animator.SetBool("walk", false);
+            if (comboN > 30)
+            {
+                animator.SetFloat("runSpeed", 1 + (float)((comboN - 30) / 35));
+            }
+        }
+        else if (comboN > 8)
+        {
+            animator.SetBool("run", false);
+            animator.SetBool("move", true);
+            animator.SetBool("walk", false);
+            animator.SetFloat("walkSpeed", 1.0f);
+            if (comboN > 10)
+            {
+                animator.SetFloat("moveSpeed", 1 + (float)((comboN - 10) / 6));
+            }
+        }
+        else if (comboN == 0)
+        {
+            animator.SetBool("run", false);
+            float run = animator.GetFloat("runSpeed");
+            if (run > 3)
+            {
+                animator.SetTrigger("die2");
+            }
+            else if (run > 2)
+            {
+                animator.SetTrigger("die1");
+            }
+            else
+            {
+                animator.SetTrigger("damage");
+            }
+            animator.SetFloat("runSpeed", 1.0f);
+            animator.SetFloat("moveSpeed", 1.0f);
+            animator.SetFloat("walkSpeed", 1.0f);
+        }
+        else
+        {
+            animator.SetBool("run", false);
+            animator.SetBool("move", false);
+            animator.SetBool("walk", true);
+            if (comboN > 3)
+            {
+                animator.SetFloat("walkSpeed", 1 + (float)((comboN - 3) / 3));
+            }
+            else
+            {
+                animator.SetFloat("walkSpeed", 1.0f);
+            }
+        }
+
         yield return null;
     }
 
@@ -393,7 +498,9 @@ public class TypingSoft : MonoBehaviour
     private void Correct(string typeChar)
     {
         correctN++;
+        comboN++;
         UIcorrect.text = string.Format("{0:0}", correctN);
+        UIcombo.text = string.Format("{0:0}", comboN);
 
         // 可能な入力パターンのチェック
         bool isIndexCountUp = IsJudgeIndexCountUp(typeChar);
@@ -436,7 +543,6 @@ public class TypingSoft : MonoBehaviour
     {
         // タイプした文字を緑色に
         UII.text = $"<color=#20A01D>{UII.text}</color>";
-        isInputValid = false;
 
         // 次の文章
         StartCoroutine(ChangeSentence());
@@ -543,7 +649,12 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void Mistype()
     {
-        correctN = 0;
+        // コンボ数リセット、表示更新
+        comboN = 0;
+        UIcombo.text = string.Format("{0:0}", comboN);
+        mistakeN++;
+        UImistake.text = string.Format("{0:0}", mistakeN);
+
         isSentenceMistyped = true;
         // 打つべき文字を赤く表示
         if (!isRecMistype)
