@@ -17,8 +17,6 @@ public class GenerateSentence
     private const int MIN_LEN_EN = 1;
     private const int MAX_LEN_EN = 70;
     private const string BASE_STR = "__BASE__";
-    private static int minLength = 1;
-    private static int maxLength = 50;
     private static readonly Dictionary<string, int> langMap = new Dictionary<string, int> {
     {"Japanese", 0},
     {"English", 1},

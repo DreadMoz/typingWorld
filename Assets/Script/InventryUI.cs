@@ -14,7 +14,6 @@ public class InventryUI : MonoBehaviour
     [SerializeField]
     private Item[] allItems;
 
-
     // Start is called before the first frame update
     void Start()
     {

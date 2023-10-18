@@ -35,10 +35,21 @@ public class Player : MonoBehaviour
         agent.speed = speed;
 
         animator = GetComponent<Animator>();  // Playerのアニメーターを取得
-        animator.SetInteger("anim", 1);       // アニメーションステートを1に設定 (1: ランニング)
+        animator.SetInteger("anim", 1);       // アニメーションステートを1に設定 タイトルのアニメーションを抜ける
 
-        // "Hi" トリガーアニメーションを開始
-        animator.SetTrigger("Hi");
+        if (GameManager.sceneNo == 1)
+        {
+            transform.rotation = Quaternion.Euler(0, 180, 0);
+            // "Hi" トリガーアニメーションを開始
+            animator.SetTrigger("Hi");
+        }
+        else
+        {
+            transform.position = new Vector3(288, 1, 117);
+            transform.rotation = Quaternion.Euler(0, 35, 0);
+            // "Bow" トリガーアニメーションを開始
+            animator.SetTrigger("Bow");
+        }
     }
 
     // Update is called once per frame
@@ -48,7 +59,7 @@ public class Player : MonoBehaviour
         if (!fade.IsFadeInComplete())
         {
             // プレイヤーの向きを固定
-            transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            transform.rotation = transform.rotation;
             return;
         }
 

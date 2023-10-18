@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public Database db;
     public SaveData savedata;
 
+    static public int sceneNo;      // ワールドシーンの状態番号
+    static public int kpm;          // 現在のkpm
+    static public int newKpm;       // 直近のタイピング結果のkpm
+
     [SerializeField]
     private StatusUI statusWindow;
 
@@ -48,23 +52,44 @@ public class GameManager : MonoBehaviour
     float posy;
     float posz;
 
-    public float PopWindowTime = 1.0f;
-    float windowMoveTime = 0.0f;
+    // 目標位置
+    Vector3 statusShowPos;
+    Vector3 inventoryShowPos;
+    Vector3 rankingShowPos;
+    Vector3 equipmentShowPos;
+    Vector3 statusHidePos;
+    Vector3 inventoryHidePos;
+    Vector3 rankingHidePos;
+    Vector3 equipmentHidePos;
 
     private void Awake()
     {
-        status.SetActive(false);
-        inventory.SetActive(false);
-        equipment.SetActive(false);
-        ranking.SetActive(false);
-        typingRoom.SetActive(false);
-        shopRoom.SetActive(false);
+        animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
+
+        // アニメーションステートが1最初のワールドの場合
+        if (sceneNo == 1)
+        {
+            status.SetActive(false);
+            inventory.SetActive(false);
+            equipment.SetActive(false);
+            ranking.SetActive(false);
+            typingRoom.SetActive(false);
+            shopRoom.SetActive(false);
+        }
+        // アニメーションステートが2ショップ後の場合
+        else if (sceneNo == 2)
+        {
+            status.SetActive(false);
+            inventory.SetActive(false);
+            equipment.SetActive(false);
+            ranking.SetActive(false);
+            typingRoom.SetActive(true);
+            shopRoom.SetActive(false);
+        }
     }
     // Start is called before the first frame update
     void Start()
     {
-        animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
-        animator.SetInteger("anim", 0); // アニメーションステートを0に設定
 
         difx = (statusRotation.eulerAngles.x - chaseRotation.eulerAngles.x) / windowOpenCount;
         dify = (statusRotation.eulerAngles.y - chaseRotation.eulerAngles.y) / windowOpenCount;
@@ -72,6 +97,16 @@ public class GameManager : MonoBehaviour
         posx = (statusOffset.x - chaseOffset.x) / windowOpenCount;
         posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
         posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
+
+        // 目標位置
+        statusShowPos = new Vector3(1080, 690, 0);
+        inventoryShowPos = new Vector3(1080, 340, 0);
+        rankingShowPos = new Vector3(1080, 340, 0);
+        equipmentShowPos = new Vector3(445, 110, 0);
+        statusHidePos = new Vector3(1080, 850, 0);
+        inventoryHidePos = new Vector3(1655, 340, 0);
+        rankingHidePos = new Vector3(1655, 340, 0);
+        equipmentHidePos = new Vector3(445, -110, 0);
 
         if (statusWindow)
         {
@@ -91,14 +126,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // アニメーションステートが1の場合
-        if (animator.GetInteger("anim") == 1)
+        // アニメーションステートが1最初のワールドの場合
+        if (sceneNo == 1)
         {
             // インベントリボタンまたはIキーが押され、カウンタが0の場合
             if ((Input.GetKeyDown(KeyCode.I) || inventoryButton.isOpen()) && (count == 0))
             {
-                windowMoveTime = 0.001f;
-
                 count = windowOpenCount;
                 inventoryButton.resetOpen();
 
@@ -124,8 +157,6 @@ public class GameManager : MonoBehaviour
             // ランキングボタンまたはRキーが押され、カウンタが0の場合
             else if ((Input.GetKeyDown(KeyCode.R) || rankingButton.isOpen()) && (count == 0))
             {
-                windowMoveTime = 0.001f;
-
                 count = windowOpenCount;
                 rankingButton.resetOpen();
 
@@ -149,24 +180,22 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            if (windowMoveTime > 0.0f)
+            if (count > 0)
             {
-                windowMoveTime += Time.deltaTime;
-
                 // ウィンドウ表示
-                if (windowMoveTime < PopWindowTime / 2)
+                if (count > windowOpenCount / 2)
                 {
-
                     if (inventoryOpen == -1)
                     {
-                        status.transform.position += new Vector3(0, 300 / windowOpenCount, 0);
-                        inventory.transform.position += new Vector3(1100 / windowOpenCount, 0, 0);
-                        equipment.transform.position += new Vector3(0, -400 / windowOpenCount, 0);
+                        // オブジェクトの位置を更新する
+                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusHidePos, Time.deltaTime * 20000 / windowOpenCount);
+                        inventory.transform.position = Vector3.MoveTowards(inventory.transform.position, inventoryHidePos, Time.deltaTime * 70000 / windowOpenCount);
+                        equipment.transform.position = Vector3.MoveTowards(equipment.transform.position, equipmentHidePos, Time.deltaTime * 30000 / windowOpenCount);
                     }
                     if (rankingOpen == -1)
                     {
-                        status.transform.position += new Vector3(0, 300 / windowOpenCount, 0);
-                        ranking.transform.position += new Vector3(1100 / windowOpenCount, 0, 0);
+                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusHidePos, Time.deltaTime * 20000 / windowOpenCount);
+                        ranking.transform.position = Vector3.MoveTowards(ranking.transform.position, rankingHidePos, Time.deltaTime * 70000 / windowOpenCount);
                     }
                     count--;
                     if (count == windowOpenCount / 2)
@@ -185,20 +214,22 @@ public class GameManager : MonoBehaviour
                         status.SetActive(true);
                         inventory.SetActive(true);
                         equipment.SetActive(true);
-                        status.transform.position += new Vector3(0, -300 / windowOpenCount, 0);
-                        inventory.transform.position += new Vector3(-1100 / windowOpenCount, 0, 0);
-                        equipment.transform.position += new Vector3(0, 400 / windowOpenCount, 0);
+
+                        // オブジェクトの位置を更新する
+                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
+                        inventory.transform.position = Vector3.MoveTowards(inventory.transform.position, inventoryShowPos, Time.deltaTime * 70000 / windowOpenCount);
+                        equipment.transform.position = Vector3.MoveTowards(equipment.transform.position, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
                     }
                     if (rankingOpen == 1)
                     {
                         status.SetActive(true);
                         ranking.SetActive(true);
-                        status.transform.position += new Vector3(0, -300 / windowOpenCount, 0);
-                        ranking.transform.position += new Vector3(-1100 / windowOpenCount, 0, 0);
+                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
+                        ranking.transform.position = Vector3.MoveTowards(ranking.transform.position, rankingShowPos, Time.deltaTime * 70000 / windowOpenCount);
                     }
                     count--;
                 }
-                                if (cameraMove == 3)
+                if (cameraMove == 3)
                 {
                     cam.transform.rotation = Quaternion.Euler(statusRotation.eulerAngles.x - difx * count, statusRotation.eulerAngles.y - dify * count, statusRotation.eulerAngles.z - difz * count);
                     cam.transform.position = player.transform.position + new Vector3(statusOffset.x - posx * count, statusOffset.y - posy * count, statusOffset.z - posz * count);
@@ -214,8 +245,8 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        // アニメーションステートが0の場合
-        else if (animator.GetInteger("anim") == 0)
+        // アニメーションステートが0タイトルシーンの場合
+        if (sceneNo == 0)
         {
             // 1秒ごとにアニメーションを切り替える
             if (Time.time % 60 > 50)
@@ -236,11 +267,18 @@ public class GameManager : MonoBehaviour
             // 画面遷移
             if (!goNextScene && fade.IsFadeOutComplete())
             {
+                GameManager.sceneNo = 1;              // ワールドシーンスタート
                 SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
-                animator.SetInteger("anim", 1);       // アニメーションステートを1に設定
                 goNextScene = true;                   // 2回目以降の遷移を防ぐためのフラグを立てる
             }
         }
+    }
+
+    public int RecalculateKpm(int nowKpm)
+    {
+        int newKpm = -1;
+
+        return newKpm;
     }
 
     public void setUserName(string msg)

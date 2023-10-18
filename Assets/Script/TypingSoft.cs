@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using System;
 using Unity.VisualScripting;
 using UnityEngine.XR;
+using UnityEngine.SceneManagement;
+using System.Globalization;
 
 public class TypingSoft : MonoBehaviour
 {
@@ -21,6 +23,7 @@ public class TypingSoft : MonoBehaviour
     private bool isTimerRunning = false; // タイマーが実行中かどうかのフラグ
 
     private static bool spaceStart;
+    private static bool spaceEnd;
     // 入力受け付け
     private static bool isInputValid;
     // タイピングの正誤判定器
@@ -86,6 +89,7 @@ public class TypingSoft : MonoBehaviour
 
     //　1分間あたりの入力キー数表示用テキストUI
     private Text UIkpm;
+    private float kpm;
 
     //　コンボ表示用テキストUI
     private Text UIcombo;
@@ -99,12 +103,13 @@ public class TypingSoft : MonoBehaviour
     {
         // スペースでスタート状態にする
         spaceStart = true;
+        // スペースでエンド状態を解除する
+        spaceEnd = false;
         // 入力禁止状態にする
         isInputValid = false;
 
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
         player.transform.LookAt(targetCam.transform);   // カメラを向く
-
 
         animator.SetFloat("walkSpeed", 1.0f);
         animator.SetFloat("moveSpeed", 1.0f);
@@ -143,7 +148,7 @@ public class TypingSoft : MonoBehaviour
         // コンボ数リセット、表示更新
         if (totalTime != currentTime)
         {
-            float kpm = correctN / (totalTime - currentTime) * 60.0f;
+            kpm = correctN / (totalTime - currentTime) * 60.0f;
             UIkpm.text = string.Format("{0:0}", kpm);
         }
         //　問題数内でランダムに選ぶ
@@ -188,6 +193,8 @@ public class TypingSoft : MonoBehaviour
     private IEnumerator CountDown()
     {
         animator.SetTrigger("kamae");
+        // キーカラークリア
+        AssistKeyboardObj.SetAllKeyColorWhite();
         player.transform.rotation *= Quaternion.Euler(0, -60, 0);
         var count = 3;
         while (count > 0)
@@ -211,33 +218,55 @@ public class TypingSoft : MonoBehaviour
         // タイマーが実行中の場合、時間を減少させる
         if (isTimerRunning)
         {
-            player.transform.position += new Vector3(0.02f, 0, 0); // 進んでいく
+            // 進んでいく フレームに依存しないTime.deltaTime
+            player.transform.position += new Vector3(1.7f * Time.deltaTime, 0, 0);
             player.transform.LookAt(targetCam.transform);   // カメラを向く
             player.transform.rotation *= Quaternion.Euler(0, -60, 0);
 
             currentTime -= Time.deltaTime;
             // タイマーが0以下になったら停止
-            if (currentTime <= 0)
+            if (currentTime < 0)
             {
                 currentTime = 0;
                 isTimerRunning = false;
                 isInputValid = false;
-                // ここに結果発表＆連続再生追加
-                END.text = "しゅうりょう";
+
+                END.text = "おしまい！";
                 UIJ.text = "";
                 UIH.text = "";
                 UIR.text = "";
                 UII.text = "";
+
+                // キーカラークリア
+                AssistKeyboardObj.SetAllKeyColorWhite();
+                AssistKeyboardObj.SetNextHighlight(" ");
+                string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
+                animator.SetTrigger(randEnd);
+                player.transform.LookAt(targetCam.transform);   // カメラを向く
+
+                spaceEnd = true;
             }
             UpdateTimerText();
         }
 
         if (spaceStart)
         {
-            // 1秒ごとにアニメーションを切り替える
-            if (Time.time % 20 > 19.7)
+            // アニメーションを切り替える
+            if (Time.time % 20 > 19.9)
             {
                 animator.SetTrigger("reset");
+                System.Threading.Thread.Sleep(100);
+            }
+        }
+        if (currentTime == 0)
+        {
+            // アニメーションを切り替える
+            if (Time.time % 12 > 11.9)
+            {
+                animator.SetTrigger("make");
+                System.Threading.Thread.Sleep(2000);
+                END.text = "";
+                UIH.text = "スペースキーでしゅうりょう";
             }
         }
     }
@@ -257,6 +286,16 @@ public class TypingSoft : MonoBehaviour
                 UIH.text = "";
                 StartCoroutine(CountDown());
                 return;
+            }
+        }
+        else if (spaceEnd)
+        {
+            var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
+            if (inputStr.Equals(" "))
+            {
+                GameManager.sceneNo = 2;        // ワールドシーンショップ前
+                int.TryParse(UIkpm.text, out GameManager.newKpm);
+                SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             }
         }
         if (isInputValid && e.type == EventType.KeyDown && e.keyCode != KeyCode.None
@@ -396,9 +435,6 @@ public class TypingSoft : MonoBehaviour
         if (!isMistype)
         {
             Correct(nextString);
-            animator.ResetTrigger("die1");
-            animator.ResetTrigger("die2");
-            animator.ResetTrigger("damage");
         }
         else
         {
@@ -407,8 +443,27 @@ public class TypingSoft : MonoBehaviour
         correctAR = (float)correctN / ((float)correctN + (float)mistakeN);
         UIcorrectAR.text = string.Format("{0:0.0} %", correctAR*100);
 
+        if (comboN == 0)
+        {
+            animator.SetBool("run", false);
+            animator.SetBool("move", false);
+            animator.SetBool("walk", true);
 
-        if (comboN > 20)
+            float run = animator.GetFloat("runSpeed");
+            if (run > 3)
+            {
+                animator.SetTrigger("die2");
+            }
+            else if (run > 1)
+            {
+                animator.SetTrigger("die1");
+            }
+            else
+            {
+                animator.SetTrigger("damage");
+            }
+        }
+        else if (comboN > 20)    // コンボ依存のアニメーション(run)
         {
             animator.SetBool("run", true);
             animator.SetBool("move", false);
@@ -418,42 +473,23 @@ public class TypingSoft : MonoBehaviour
                 animator.SetFloat("runSpeed", 1 + (float)((comboN - 30) / 35));
             }
         }
-        else if (comboN > 8)
+        else if (comboN > 8)    // コンボ依存のアニメーション（move)
         {
             animator.SetBool("run", false);
             animator.SetBool("move", true);
             animator.SetBool("walk", false);
             animator.SetFloat("walkSpeed", 1.0f);
+
             if (comboN > 10)
             {
                 animator.SetFloat("moveSpeed", 1 + (float)((comboN - 10) / 6));
             }
+            animator.ResetTrigger("die1");
+            animator.ResetTrigger("die2");
         }
-        else if (comboN == 0)
+        else if (comboN > 5)    // トリガー解除
         {
-            animator.SetBool("run", false);
-            float run = animator.GetFloat("runSpeed");
-            if (run > 3)
-            {
-                animator.SetTrigger("die2");
-            }
-            else if (run > 2)
-            {
-                animator.SetTrigger("die1");
-            }
-            else
-            {
-                animator.SetTrigger("damage");
-            }
-            animator.SetFloat("runSpeed", 1.0f);
-            animator.SetFloat("moveSpeed", 1.0f);
-            animator.SetFloat("walkSpeed", 1.0f);
-        }
-        else
-        {
-            animator.SetBool("run", false);
-            animator.SetBool("move", false);
-            animator.SetBool("walk", true);
+            animator.ResetTrigger("damage");
             if (comboN > 3)
             {
                 animator.SetFloat("walkSpeed", 1 + (float)((comboN - 3) / 3));
@@ -462,6 +498,8 @@ public class TypingSoft : MonoBehaviour
             {
                 animator.SetFloat("walkSpeed", 1.0f);
             }
+            animator.SetFloat("runSpeed", 1.0f);
+            animator.SetFloat("moveSpeed", 1.0f);
         }
 
         yield return null;
