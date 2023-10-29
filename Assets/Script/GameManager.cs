@@ -31,9 +31,6 @@ public class GameManager : MonoBehaviour
     public OpenButton inventoryButton;  // インベントリボタン
     public OpenButton rankingButton;    // ランキングボタン
 
-    private bool firstPush = false;      // スタートボタンが2回以上押されないようにするためのフラグ
-    private bool goNextScene = false;    // ワールドシーンに遷移するためのフラグ
-
     [SerializeField]
     private int windowOpenCount = 20;    // ウィンドウが開くフレーム数
     private int count = 0;               // カウンタ
@@ -111,15 +108,6 @@ public class GameManager : MonoBehaviour
         if (statusWindow)
         {
             statusWindow.setStatus();
-        }
-    }
-
-    public void StartButton()
-    {
-        if (!firstPush)
-        {
-            fade.StartFadeOut();
-            firstPush = true;
         }
     }
 
@@ -257,20 +245,6 @@ public class GameManager : MonoBehaviour
             {
                 animator.SetBool("Swim", false);
             }
-
-            // Sキーが押されたらStartButtonメソッドを呼ぶ
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                this.StartButton();
-            }
-
-            // 画面遷移
-            if (!goNextScene && fade.IsFadeOutComplete())
-            {
-                GameManager.sceneNo = 1;              // ワールドシーンスタート
-                SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
-                goNextScene = true;                   // 2回目以降の遷移を防ぐためのフラグを立てる
-            }
         }
     }
 
@@ -284,6 +258,11 @@ public class GameManager : MonoBehaviour
     public void setUserName(string msg)
     {
         savedata.setUserName(msg);
+    }
+
+    public void setKpm(string msg)
+    {
+        savedata.setKpm(msg);
     }
 
     public void setStatus(string msg)

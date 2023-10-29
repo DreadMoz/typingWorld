@@ -13,12 +13,28 @@ mergeInto(LibraryManager.library, {
         auth();
     },
 
+    getFirebase: function () {
+        getFirebaseData();
+    },
+
     setFirebase: function () {
         setFirebaseData();
     },
 
-    getFirebase: function () {
-        getFirebaseData();
+    setFirebaseStatus: function () {
+        setFirebaseStatus();
+    },
+
+    setFirebaseInventory: function () {
+        setFirebaseInventory();
+    },
+
+    setFirebaseMedals: function () {
+        setFirebaseMedals();
+    },
+
+    setFirebaseKpm: function () {
+        setFirebaseKpm();
     }
 
 });

@@ -9,6 +9,9 @@ public class SaveData : ScriptableObject
     private string userName;
 
     [SerializeField]
+    private int[] kpms = new int[10];
+
+    [SerializeField]
     private int[] status = new int[20];
 
     [SerializeField]
@@ -20,6 +23,14 @@ public class SaveData : ScriptableObject
     public void setUserName(string msg)
     {
         userName = msg;
+    }
+    public void setKpm(string msg)
+    {
+        string[] intStrings = msg.Split(',');
+        for (int i = 0; i < intStrings.Length; i++)
+        {
+            kpms[i] = int.Parse(intStrings[i]);
+        }
     }
     public void setStatus(string msg)
     {

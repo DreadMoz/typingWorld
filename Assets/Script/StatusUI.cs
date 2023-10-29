@@ -6,7 +6,7 @@ enum status
     Gold = 0,
     Server = 1,
     Rank = 2,
-    Wpm = 3,
+    Kpm = 3,
     CatBody = 4,
     CatFace = 5,
     Glasses = 6,
@@ -62,7 +62,7 @@ public class StatusUI : MonoBehaviour
         TMPName.text = gm.savedata.getUserName() + nickname;
         TMPGold.text = saveStatus[(int)status.Gold].ToString() + " ｼｰｶｰ";
         TMPServer.text = "サーバー：" + gm.db.GetServerList()[saveStatus[(int)status.Server]];
-        TMPWpm.text = "1分間に" + saveStatus[(int)status.Wpm] + "キー";
+        TMPWpm.text = "1分間に" + saveStatus[(int)status.Kpm] + "キー";
         TMPRank.text = "(" + saveStatus[(int)status.Rank] + "位 / 200位)";
     }
 }

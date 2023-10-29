@@ -35,13 +35,13 @@ public class ChibiCat : MonoBehaviour
 //        if (Input.GetKeyDown(KeyCode.R)) { setEmo(11); }
     }
 
-    private void setChara(int no)
+    public void setChara(int no)
     {
         Material[] tmp = materials;
         tmp[0] = cats[no];
         GetComponent<Renderer>().materials = tmp;
     }
-    private void setEmo(int no)
+    public void setEmo(int no)
     {
         Material[] tmp = materials;
         tmp[1] = emos[no];
