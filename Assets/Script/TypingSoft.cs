@@ -7,6 +7,8 @@ using Unity.VisualScripting;
 using UnityEngine.XR;
 using UnityEngine.SceneManagement;
 using System.Globalization;
+using static TypingSoft;
+using System.IO;
 
 public class TypingSoft : MonoBehaviour
 {
@@ -40,9 +42,9 @@ public class TypingSoft : MonoBehaviour
     private static bool isSentenceMistyped;
 
     //　問題の日本語文
-    private string[] qJ = { "学問", "ダッシュボード", "タイピング", "グッナイ", "ぴゃっだっむっちゃ" };
+    private string[] qJ;
     //　問題のひらがな文
-    private string[] qH = { "がくもん", "だっしゅぼーど", "たいぴんぐ", "ぐっない", "ぴゃっだっむっちゃ" };
+    private string[] qH;
 
     //　日本語表示テキスト
     private Text UIJ;
@@ -100,8 +102,31 @@ public class TypingSoft : MonoBehaviour
     private Text UIcorrectAR;
     private bool firstEnd = true;
 
+
+    private ThemeCollection themeCollection;
+    private List<Theme> shuffledThemes = new List<Theme>();
+    private int currentThemeIndex = 0;
+
+    [Serializable]
+    public class Theme
+    {
+        public int id;
+        public string kanji;
+        public string hiragana;
+    }
+
+    [Serializable]
+    public class ThemeCollection
+    {
+        public Theme[] themes;
+    }
+
+
     void Start()
     {
+        LoadThemes();
+        ShuffleThemes();
+
         // スペースでスタート状態にする
         spaceStart = true;
         // スペースでエンド状態を解除する
@@ -144,6 +169,39 @@ public class TypingSoft : MonoBehaviour
         AssistKeyboardObj.SetNextHighlight(" ");
     }
 
+    void LoadThemes()
+    {
+        string filePath = Path.Combine(Application.dataPath, "TextPrompts/nara.json");
+        if (File.Exists(filePath))
+        {
+            string dataAsJson = File.ReadAllText(filePath);
+            themeCollection = JsonUtility.FromJson<ThemeCollection>(dataAsJson);
+        }
+        else
+        {
+            Debug.LogError("Cannot find file!");
+        }
+    }
+
+    void ShuffleThemes()
+    {
+        if (themeCollection != null && themeCollection.themes.Length > 0)
+        {
+            shuffledThemes = new List<Theme>(themeCollection.themes);
+            for (int i = 0; i < shuffledThemes.Count; i++)
+            {
+                Theme temp = shuffledThemes[i];
+                int randomIndex = UnityEngine.Random.Range(i, shuffledThemes.Count);
+                shuffledThemes[i] = shuffledThemes[randomIndex];
+                shuffledThemes[randomIndex] = temp;
+            }
+        }
+        else
+        {
+            Debug.LogError("No themes loaded!");
+        }
+    }
+
     private IEnumerator ChangeSentence()
     {
         // コンボ数リセット、表示更新
@@ -152,13 +210,25 @@ public class TypingSoft : MonoBehaviour
             kpm = correctN / (totalTime - currentTime) * 60.0f;
             UIkpm.text = string.Format("{0:0}", kpm);
         }
-        //　問題数内でランダムに選ぶ
-        numberOfQuestion = UnityEngine.Random.Range(0, qJ.Length);
+        if (shuffledThemes.Count > 0)
+        {
+            Theme currentTheme = shuffledThemes[currentThemeIndex];
 
-        //　選択した問題をテキストUIにセット
-        nQJ = qJ[numberOfQuestion];
-        nQH = qH[numberOfQuestion];
+            // 選択した問題をテキストUIにセット
+            nQJ = currentTheme.kanji;
+            nQH = currentTheme.hiragana;
 
+            // 次のお題に移動
+            currentThemeIndex++;
+            if (currentThemeIndex >= shuffledThemes.Count)
+            {
+                currentThemeIndex = 0; // リストの最初に戻る
+            }
+        }
+        else
+        {
+            Debug.LogError("No themes to display!");
+        }
         bool isGenerateSuccess;
 
         // Generate() 関数を呼び出す
