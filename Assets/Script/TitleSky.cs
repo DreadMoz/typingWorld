@@ -4,6 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.VisualScripting;
+using System.Threading;
+using UnityEngine.UI;
+using UnityEngine.Networking;
+using System.IO;
+using UnityEngine.Rendering;
+using static UnityEngine.Rendering.DebugUI;
+//using UnityEditor.MemoryProfiler;
 
 public class TitleSky : MonoBehaviour
 {
@@ -22,7 +29,21 @@ public class TitleSky : MonoBehaviour
     private ChibiCat cat;                // ねこオブジェクト
 
     [SerializeField]
+    private Text firstNameText; // ダミーデータ表示用
+    [SerializeField]
+    private Text lastNameText; // ダミーデータ表示用
+    [SerializeField]
+    private Text mailText; // ダミーデータ表示用
+    [SerializeField]
+    private RawImage image; // ダミーデータ表示用
+
+    [SerializeField]
     private GameObject startButton; // startボタン
+    [SerializeField]
+    private GameObject userData; // ユーザーデータ
+    [SerializeField]
+    private GameObject message; // メッセージボックス
+
     [SerializeField]
     private GameObject standupButton; // standupボタン
     [SerializeField]
@@ -36,6 +57,7 @@ public class TitleSky : MonoBehaviour
     private int necoNo = 1;
     private bool firstPush = false;      // スタートボタンが2回以上押されないようにするためのフラグ
     private bool goNextScene = false;    // ワールドシーンに遷移するためのフラグ
+    private int startButtonStatus = 0;   // ログインやらスタートやら
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +70,8 @@ public class TitleSky : MonoBehaviour
         nextButton.SetActive(false);
         prevButton.SetActive(false);
         confirmButton.SetActive(false);
+        userData.SetActive(false);
+        message.SetActive(false);
     }
 
     // Update is called once per frame
@@ -58,13 +82,13 @@ public class TitleSky : MonoBehaviour
         // Sキーが押されたらStartButtonメソッドを呼ぶ
         if (Input.GetKeyDown(KeyCode.S))
         {
-            this.StartButton();
+//            this.StartButton();
         }
 
         // 画面遷移
         if (!goNextScene && fade.IsFadeOutComplete())
         {
-            GameManager.sceneNo = 1;              // ワールドシーンスタート
+            GameManager.sceneNo = (int)scene.World;      // ワールドシーンスタート
             SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             goNextScene = true;                   // 2回目以降の遷移を防ぐためのフラグを立てる
         }
@@ -72,20 +96,58 @@ public class TitleSky : MonoBehaviour
 
     public void StartButton()
     {
-        string userName = gm.savedata.getUserName();
-        if (userName == "")
+        if (startButtonStatus == 0)
+        {
+            startButton.SetActive(false);   // 誤動作防止用、ログイン完了まで一旦消す
+            gm.connection.fbAuth();
+        }
+        else if (startButtonStatus == 1)
+        {
+            if (!firstPush)
+            {
+                fade.StartFadeOut();
+                firstPush = true;
+            }
+        }
+    }
+
+    public void finishAuth()
+    {
+        userData.SetActive(true);
+        gm.connection.loadFbData();
+    }
+
+    public void finishDataLoad()
+    {
+        Debug.Log("gm.savedata.getEquipment()[(int)eq.CatBody]: " + gm.savedata.getEquipment()[(int)eq.CatBody]);
+        if (gm.savedata.getEquipment()[(int)eq.CatBody] == 0)      // catBodyがない状態なら
         {
             selectNeco();
-            return;
         }
-        if (!firstPush)
+        else
         {
-            fade.StartFadeOut();
-            firstPush = true;
+            cat.setChara(gm.savedata.getEquipment()[(int)eq.CatBody] - 200);
+            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+            buttonText.text = "スタート";
+            startButtonStatus = 1;
+
+            startButton.SetActive(true);   // スタートボタンにして表示
         }
+    }
+    public void setDummyData()
+    {
+        Thread.Sleep(300);
+        firstNameText.text=gm.savedata.getUserName();
+        lastNameText.text="0000-00";
+        mailText.text="abc-123-xyz@e-net.nara.jp";
+        image.texture = Resources.Load<Texture2D>("necoHand");
+        userData.SetActive(true);
+
+        Thread.Sleep(300);
     }
     private void selectNeco()
     {
+        message.SetActive(true);
         animator.SetBool("Standup", true);
         standupButton.SetActive(true);
         nextButton.SetActive(true);
@@ -95,12 +157,25 @@ public class TitleSky : MonoBehaviour
     }
     public void confirmNeco()
     {
+        var fbNecoBody = new Dictionary<string, int>
+        {
+            { ((int)eq.CatBody).ToString(), 200 + necoNo }
+        };
+
+        message.SetActive(false);
+        gm.savedata.setEquipmentIndex((int)eq.CatBody, 200 + necoNo);
+        gm.connection.saveFbEquipment(fbNecoBody);
         standupButton.SetActive(false);
         nextButton.SetActive(false);
         prevButton.SetActive(false);
         confirmButton.SetActive(false);
         startButton.SetActive(true);
 
+        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+        buttonText.text = "スタート";
+        startButtonStatus = 1;
+
+        startButton.SetActive(true);   // スタートボタンにして表示
     }
     public void updownNeco()
     {

@@ -9,7 +9,6 @@ public class TypingRoom : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
@@ -20,6 +19,7 @@ public class TypingRoom : MonoBehaviour
 
     public void gotoTypingState()
     {
+        GameManager.sceneNo = (int)scene.Typing;
         SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
     }
 }

@@ -1,19 +1,26 @@
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
-enum status
+// Gold,Server,Rank,Kpm,userName
+enum st
 {
     Gold = 0,
     Server = 1,
     Rank = 2,
-    Kpm = 3,
+    Kpm = 3
+}
+
+// RightHnad,Glasses(121),Head(151),LeftHand,CatBody(201)あえて0,CatFace(101),NickName(211)
+enum eq
+{
+    RightHnad = 0,
+    Glasses = 1,
+    Head = 2,
+    LeftHand = 3,
     CatBody = 4,
     CatFace = 5,
-    Glasses = 6,
-    Head = 7,
-    NickName = 8,
-    RightHnad =9,
-    LeftHand = 10
+    NickName = 6
 }
 
 public class StatusUI : MonoBehaviour
@@ -49,20 +56,22 @@ public class StatusUI : MonoBehaviour
     public void setStatus()
     {
         int[] saveStatus = gm.savedata.getStatus();
+        int[] saveEquip = gm.savedata.getEquipment();
         string nickname;
-        if (saveStatus[(int)status.NickName] == 0)
+        Item item = gm.db.GetItemList()[saveEquip[(int)eq.NickName]];
+        if (item != null)
         {
-            nickname = "さん";
+            nickname = item.MyItemName;
         }
         else
         {
-            nickname = gm.db.GetItemList()[saveStatus[(int)status.NickName]].MyItemName;
+            nickname = "さん";
         }
         TMPHeadName.text = gm.savedata.getUserName() + nickname;
         TMPName.text = gm.savedata.getUserName() + nickname;
-        TMPGold.text = saveStatus[(int)status.Gold].ToString() + " ｼｰｶｰ";
-        TMPServer.text = "サーバー：" + gm.db.GetServerList()[saveStatus[(int)status.Server]];
-        TMPWpm.text = "1分間に" + saveStatus[(int)status.Kpm] + "キー";
-        TMPRank.text = "(" + saveStatus[(int)status.Rank] + "位 / 200位)";
+        TMPGold.text = saveStatus[(int)st.Gold].ToString() + " ｼｰｶｰ";
+        TMPServer.text = "サーバー：" + gm.db.GetServerList()[saveStatus[(int)st.Server]];
+        TMPWpm.text = "1分間に" + saveStatus[(int)st.Kpm] + "キー";
+        TMPRank.text = "(" + saveStatus[(int)st.Rank] + "位 / 200位)";
     }
 }

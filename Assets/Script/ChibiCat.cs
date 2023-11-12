@@ -11,7 +11,7 @@ public class ChibiCat : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         materials = GetComponent<Renderer>().materials;
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class ChaseCamera : MonoBehaviour
 {
     public GameManager gameMaster;
-    public GameObject player;    //プレイヤー情報格納用
+    public GameObject player;
 
     Vector3 chaseOffset = new Vector3(0f, 8f, -14f);
 

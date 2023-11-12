@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class OpenButton : MonoBehaviour
 {
-    public bool doOpen = false;
+    private bool doOpen = false;
     
     public void OnButton()
     {
@@ -19,6 +19,10 @@ public class OpenButton : MonoBehaviour
     public void resetOpen()
     {
         doOpen = false;
+    }
+    public void forceOpen()
+    {
+        doOpen = true;
     }
 
 }

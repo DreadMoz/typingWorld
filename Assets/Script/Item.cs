@@ -7,6 +7,9 @@ using UnityEngine;
 public class Item : ScriptableObject
 {
     [SerializeField]
+    private int itemNo;
+
+    [SerializeField]
     private string itemName;
 
     [SerializeField]
@@ -21,6 +24,7 @@ public class Item : ScriptableObject
     [SerializeField]
     private string itemMemo;
 
+    public int MyItemNo { get => itemNo; }
     public string MyItemName { get => itemName; }
     public ItemType MyItemType { get => itemType; }
     public short MyItemPrice { get => itemPrice; }

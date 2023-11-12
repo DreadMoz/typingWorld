@@ -11,6 +11,12 @@ public class Player : MonoBehaviour
     private GameObject typingRoom;
 
     [SerializeField]
+    private GameObject inventoryButton;
+
+    [SerializeField]
+    private GameObject rankButton;
+
+    [SerializeField]
     private GameObject itemShop;
 
     [SerializeField]
@@ -37,18 +43,20 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();  // Playerのアニメーターを取得
         animator.SetInteger("anim", 1);       // アニメーションステートを1に設定 タイトルのアニメーションを抜ける
 
-        if (GameManager.sceneNo == 1)
+        if (GameManager.sceneNo == (int)scene.World)
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);
             // "Hi" トリガーアニメーションを開始
             animator.SetTrigger("Hi");
         }
-        else
+        else if (GameManager.sceneNo == (int)scene.House)
         {
             transform.position = new Vector3(288, 1, 117);
             transform.rotation = Quaternion.Euler(0, 35, 0);
             // "Bow" トリガーアニメーションを開始
             animator.SetTrigger("Bow");
+
+            GameManager.sceneNo = (int)scene.World;
         }
     }
 
@@ -71,6 +79,9 @@ public class Player : MonoBehaviour
             }
             typingWindow = 0;
             typingRoom.SetActive(true);
+            rankButton.SetActive(false);
+            inventoryButton.SetActive(false);
+            rankButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
         }
         else if (typingWindow == -1)
@@ -81,6 +92,9 @@ public class Player : MonoBehaviour
             }
             typingWindow = 0;
             typingRoom.SetActive(false);
+            rankButton.SetActive(true);
+            inventoryButton.SetActive(true);
+            rankButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
             // "Bow" トリガーアニメーションを開始
             animator.SetTrigger("Bow");
@@ -93,6 +107,9 @@ public class Player : MonoBehaviour
             }
             shopWindow = 0;
             itemShop.SetActive(true);
+            rankButton.SetActive(false);
+            inventoryButton.SetActive(false);
+            inventoryButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
         }
         else if (shopWindow == -1)
@@ -103,6 +120,9 @@ public class Player : MonoBehaviour
             }
             shopWindow = 0;
             itemShop.SetActive(false);
+            rankButton.SetActive(true);
+            inventoryButton.SetActive(true);
+            inventoryButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
             // "Bow" トリガーアニメーションを開始
             animator.SetTrigger("Bow");

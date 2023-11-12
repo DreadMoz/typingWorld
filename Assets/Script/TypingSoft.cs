@@ -98,6 +98,7 @@ public class TypingSoft : MonoBehaviour
     private float correctAR;
     //　正解率表示用テキストUI
     private Text UIcorrectAR;
+    private bool firstEnd = true;
 
     void Start()
     {
@@ -255,7 +256,7 @@ public class TypingSoft : MonoBehaviour
             if (Time.time % 20 > 19.9)
             {
                 animator.SetTrigger("reset");
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(100);     // 連続実行防止
             }
         }
         if (currentTime == 0)
@@ -263,10 +264,18 @@ public class TypingSoft : MonoBehaviour
             // アニメーションを切り替える
             if (Time.time % 12 > 11.9)
             {
-                animator.SetTrigger("make");
-                System.Threading.Thread.Sleep(2000);
-                END.text = "";
-                UIH.text = "スペースキーでしゅうりょう";
+                if (firstEnd)
+                {
+                    END.text = "";
+                    UIH.text = "スペースキーでしゅうりょう";
+                    firstEnd = false;
+                    System.Threading.Thread.Sleep(100);     // 連続実行防止
+                }
+                else
+                {
+                    animator.SetTrigger("make");
+                    System.Threading.Thread.Sleep(100);     // 連続実行防止
+                }
             }
         }
     }
@@ -293,8 +302,8 @@ public class TypingSoft : MonoBehaviour
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
             if (inputStr.Equals(" "))
             {
-                GameManager.sceneNo = 2;        // ワールドシーンショップ前
                 int.TryParse(UIkpm.text, out GameManager.newKpm);
+                GameManager.sceneNo = (int)scene.House;   // ワールドシーンショップ前
                 SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             }
         }

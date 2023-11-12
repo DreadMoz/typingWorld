@@ -39,4 +39,20 @@ public class InventryUI : MonoBehaviour
             }
         }
     }
+    public void getAllItems()
+    {
+        slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].MyItem != null)
+            {
+                gm.savedata.setInventoryIndex(i, slots[i].MyItem.MyItemNo);
+            }
+            else
+            {
+                gm.savedata.setInventoryIndex(i, 0);
+            }
+        }
+    }
 }

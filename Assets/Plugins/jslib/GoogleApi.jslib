@@ -1,40 +1,33 @@
 mergeInto(LibraryManager.library, {
 
-    IsGoogleSignedIn: function () {
-        return isSignedIn();
-    },
-    GoogleSignOut: function () {
-        signOut();
+    FbAuth: function () {
+        googleAuth();
     },
 
-    GoogleAuth: function () {
-    },
-    Firebase: function () {
-        auth();
+    LoadFbData: function () {
+        loadFirebaseData();
     },
 
-    getFirebase: function () {
-        getFirebaseData();
+    SaveFbStatus: function (value) {
+        saveFirebaseStatus(value);
     },
 
-    setFirebase: function () {
-        setFirebaseData();
+    SaveFbEquipment: function (valuePtr) {
+        var value = Pointer_stringify(valuePtr);
+        saveFirebaseEquipment(value);
     },
 
-    setFirebaseStatus: function () {
-        setFirebaseStatus();
+    SaveFbInventory: function (valuePtr) {
+        var value = Pointer_stringify(valuePtr);
+        saveFirebaseInventory(value);
     },
 
-    setFirebaseInventory: function () {
-        setFirebaseInventory();
+    SaveFbMedals: function (value) {
+        saveFirebaseMedals(value);
     },
 
-    setFirebaseMedals: function () {
-        setFirebaseMedals();
-    },
-
-    setFirebaseKpm: function () {
-        setFirebaseKpm();
+    SaveFbKpm: function (value) {
+        saveFirebaseKpm(value);
     }
 
 });

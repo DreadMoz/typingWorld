@@ -26,12 +26,27 @@ public class EquipmentUI : MonoBehaviour
     private void setAllEquipments()
     {
         slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+        int[] saveEquip = gm.savedata.getEquipment();
 
-        int[] saveEquip = gm.savedata.getStatus();
+        for (int i = 0; i < 4; i++)
+        {
+            slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);
+        }
+    }
+    public void getAllEquipments()
+    {
+        slots = slotsParent.GetComponentsInChildren<InventrySlot>();
 
-        slots[0].SetItem(gm.db.GetItemList()[saveEquip[9]]);
-        slots[1].SetItem(gm.db.GetItemList()[saveEquip[6]]);
-        slots[2].SetItem(gm.db.GetItemList()[saveEquip[7]]);
-        slots[3].SetItem(gm.db.GetItemList()[saveEquip[10]]);
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].MyItem != null)
+            {
+                gm.savedata.setEquipmentIndex(i, slots[i].MyItem.MyItemNo);
+            }
+            else
+            {
+                gm.savedata.setEquipmentIndex(i, 0);
+            }
+        }
     }
 }
