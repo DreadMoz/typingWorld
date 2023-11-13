@@ -171,21 +171,23 @@ public class TitleSky : MonoBehaviour
         confirmButton.SetActive(false);
         startButton.SetActive(true);
 
-        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-        buttonText.text = "スタート";
+        TMP_Text startText = startButton.GetComponentInChildren<TMP_Text>();
+        startText.text = "スタート";
         startButtonStatus = 1;
 
         startButton.SetActive(true);   // スタートボタンにして表示
     }
     public void updownNeco()
     {
-
+        TMP_Text standText = standupButton.GetComponentInChildren<TMP_Text>();
         if (animator.GetBool("Standup"))
         {
+            standText.text = "↑";
             animator.SetBool("Standup", false);
         }
         else
         {
+            standText.text = "↓";
             animator.SetBool("Standup", true);
         }
     }
