@@ -33,7 +33,7 @@
             from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
         import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider }
             from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
-        import { getDatabase, ref, push, set, update, onValue, onChildAdded, remove, onChildRemoved }
+        import { getDatabase, ref, push, set, get, update, onValue, onChildAdded, remove, onChildRemoved }
             from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
         import { getAnalytics }
             from "https://www.gstatic.com/firebasejs/10.2.0/firebase-analytics.js";
@@ -71,11 +71,11 @@
         }
 
         var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/Release.loader.js";
+        var loaderUrl = buildUrl + "/WebGL.loader.js";
         var config = {
-            dataUrl: buildUrl + "/Release.data.unityweb",
-            frameworkUrl: buildUrl + "/Release.framework.js.unityweb",
-            codeUrl: buildUrl + "/Release.wasm.unityweb",
+            dataUrl: buildUrl + "/WebGL.data.unityweb",
+            frameworkUrl: buildUrl + "/WebGL.framework.js.unityweb",
+            codeUrl: buildUrl + "/WebGL.wasm.unityweb",
             streamingAssetsUrl: "StreamingAssets",
             companyName: "DefaultCompany",
             productName: "typingWorld",
@@ -255,34 +255,40 @@
         window.loadFirebaseData = loadFirebaseData;
 
         function fetchData() {
-            onValue(pathStatus, (snapshot) => {
-                var msg = snapshot.val();
-                var intArrayAsString = msg.join(",");
-                myGameInstance.SendMessage('GameManager', 'setStatus', intArrayAsString);
+            Promise.all([
+                get(pathEquipment).then(data => {
+                    var msgEquipment = data.val();
+                    var intArrayAsStringEquipment = msgEquipment.join(",");
+                    myGameInstance.SendMessage('GameManager', 'setEquipment', intArrayAsStringEquipment);
+                }),
+                get(pathStatus).then(snapshot => {
+                    var msg = snapshot.val();
+                    var intArrayAsString = msg.join(",");
+                    myGameInstance.SendMessage('GameManager', 'setStatus', intArrayAsString);
+                }),
+                get(pathInventory).then(data => {
+                    var msgInventory = data.val();
+                    var intArrayAsStringInventory = msgInventory.join(",");
+                    myGameInstance.SendMessage('GameManager', 'setInventory', intArrayAsStringInventory);
+                }),
+                get(pathMedals).then(data => {
+                    var msgMedals = data.val();
+                    var intArrayAsStringMedals = msgMedals.join(",");
+                    myGameInstance.SendMessage('GameManager', 'setMedals', intArrayAsStringMedals);
+                }),
+                get(pathKpm).then(data => {
+                    var msgKpm = data.val();
+                    var intArrayAsStringKpm = msgKpm.join(",");
+                    myGameInstance.SendMessage('GameManager', 'setKpm', intArrayAsStringKpm);
+                })
+            ]).then(() => {
+                myGameInstance.SendMessage('TitleScene', 'finishDataLoad');
+            }).catch((error) => {
+                console.error('An error occurred:', error);
             });
-            onValue(pathEquipment, function (data) {
-                var msgEquipment = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                var intArrayAsStringEquipment = msgEquipment.join(",");
-                myGameInstance.SendMessage('GameManager', 'setEquipment', intArrayAsStringEquipment);
-            });
-            onValue(pathInventory, function (data) {
-                var msgInventory = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                var intArrayAsStringInventory = msgInventory.join(",");
-                myGameInstance.SendMessage('GameManager', 'setInventory', intArrayAsStringInventory);
-            });
-            onValue(pathMedals, function (data) {
-                var msgMedals = data.val();        // オブジェクトデータを取得し、変数msgに代入
-                var intArrayAsStringMedals = msgMedals.join(",");
-                myGameInstance.SendMessage('GameManager', 'setMedals', intArrayAsStringMedals);
-            });
-            onValue(pathKpm, function (data) {
-                var msgKpm = data.val();
-                var intArrayAsStringKpm = msgKpm.join(",");
-                myGameInstance.SendMessage('GameManager', 'setKpm', intArrayAsStringKpm);
-            });
-
-            myGameInstance.SendMessage('TitleScene', 'finishDataLoad');
         }
+
+
 
         //######################################################
         // ゲームデータ初期化
