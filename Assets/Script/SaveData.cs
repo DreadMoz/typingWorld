@@ -14,7 +14,7 @@ public class SaveData : ScriptableObject
     private int[] status = new int[10];
 
     [SerializeField]
-    private int[] equipment = new int[7];
+    private int[] equipment = new int[10];
 
     [SerializeField]
     private int[] inventory = new int[64];

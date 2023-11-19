@@ -58,14 +58,14 @@ public class GameManager : MonoBehaviour
     private float difx, dify, difz, posx, posy, posz;
 
     // 目標位置
-    Vector3 statusShowPos;
-    Vector3 inventoryShowPos;
-    Vector3 rankingShowPos;
-    Vector3 equipmentShowPos;
-    Vector3 statusHidePos;
-    Vector3 inventoryHidePos;
-    Vector3 rankingHidePos;
-    Vector3 equipmentHidePos;
+    Vector2 statusShowPos;
+    Vector2 inventoryShowPos;
+    Vector2 rankingShowPos;
+    Vector2 equipmentShowPos;
+    Vector2 statusHidePos;
+    Vector2 inventoryHidePos;
+    Vector2 rankingHidePos;
+    Vector2 equipmentHidePos;
 
     private int[] oldInventory;
     private int[] newInventory;
@@ -99,16 +99,6 @@ public class GameManager : MonoBehaviour
         posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
         posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
 
-        // 目標位置
-        statusShowPos = new Vector3(1080, 690, 0);
-        inventoryShowPos = new Vector3(1080, 340, 0);
-        rankingShowPos = new Vector3(1080, 340, 0);
-        equipmentShowPos = new Vector3(445, 110, 0);
-        statusHidePos = new Vector3(1080, 850, 0);
-        inventoryHidePos = new Vector3(1655, 340, 0);
-        rankingHidePos = new Vector3(1655, 340, 0);
-        equipmentHidePos = new Vector3(445, -110, 0);
-
         // アニメーションステートが1最初のワールドの場合
         if (sceneNo == (int)scene.World)
         {
@@ -129,8 +119,10 @@ public class GameManager : MonoBehaviour
             inventoryButton.SetActive(false);
             status.SetActive(true);
             ranking.SetActive(true);
-            status.transform.position = statusShowPos;      // ステータス表示位置
-            ranking.transform.position = rankingShowPos;    // ランキング表示位置
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
+            ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
             typingRoom.SetActive(true);
             shopRoom.SetActive(false);
         }
@@ -203,6 +195,19 @@ public class GameManager : MonoBehaviour
                 }
             }
 
+            // 画面サイズに基づいてUI要素の位置を計算
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+
+            // 目標位置
+            statusShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
+            inventoryShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
+            rankingShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
+            equipmentShowPos = new Vector2(screenWidth * 0.32f, screenHeight * 0.14f);
+            statusHidePos = new Vector2(screenWidth * 0.79f, screenHeight * 1.15f);
+            inventoryHidePos = new Vector2(screenWidth * 1.21f, screenHeight * 0.44f);
+            rankingHidePos = new Vector2(screenWidth * 1.21f, screenHeight * 0.44f);
+            equipmentHidePos = new Vector2(screenWidth * 0.32f, -screenHeight * 0.12f);
             if (count > 0)
             {
                 if (count > windowOpenCount / 2)    // ウィンドウひっこむ
@@ -210,14 +215,14 @@ public class GameManager : MonoBehaviour
                     if (inventoryOpen == -1)
                     {
                         // オブジェクトの位置を更新する
-                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusHidePos, Time.deltaTime * 20000 / windowOpenCount);
-                        inventory.transform.position = Vector3.MoveTowards(inventory.transform.position, inventoryHidePos, Time.deltaTime * 70000 / windowOpenCount);
-                        equipment.transform.position = Vector3.MoveTowards(equipment.transform.position, equipmentHidePos, Time.deltaTime * 30000 / windowOpenCount);
+                        status.transform.position = Vector2.MoveTowards(status.transform.position, statusHidePos, Time.deltaTime * 20000 / windowOpenCount);
+                        inventory.transform.position = Vector2.MoveTowards(inventory.transform.position, inventoryHidePos, Time.deltaTime * 70000 / windowOpenCount);
+                        equipment.transform.position = Vector2.MoveTowards(equipment.transform.position, equipmentHidePos, Time.deltaTime * 30000 / windowOpenCount);
                     }
                     if (rankingOpen == -1)
                     {
-                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusHidePos, Time.deltaTime * 20000 / windowOpenCount);
-                        ranking.transform.position = Vector3.MoveTowards(ranking.transform.position, rankingHidePos, Time.deltaTime * 70000 / windowOpenCount);
+                        status.transform.position = Vector2.MoveTowards(status.transform.position, statusHidePos, Time.deltaTime * 20000 / windowOpenCount);
+                        ranking.transform.position = Vector2.MoveTowards(ranking.transform.position, rankingHidePos, Time.deltaTime * 70000 / windowOpenCount);
                     }
                     count--;
                 }
@@ -263,19 +268,21 @@ public class GameManager : MonoBehaviour
                     {
                         status.SetActive(true);
                         inventory.SetActive(true);
-                        equipment.SetActive(true);
-
+                        if (!shopRoom.activeSelf)
+                        {
+                            equipment.SetActive(true);
+                        }
                         // オブジェクトの位置を更新する
-                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
-                        inventory.transform.position = Vector3.MoveTowards(inventory.transform.position, inventoryShowPos, Time.deltaTime * 70000 / windowOpenCount);
-                        equipment.transform.position = Vector3.MoveTowards(equipment.transform.position, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
+                        status.transform.position = Vector2.MoveTowards(status.transform.position, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
+                        inventory.transform.position = Vector2.MoveTowards(inventory.transform.position, inventoryShowPos, Time.deltaTime * 70000 / windowOpenCount);
+                        equipment.transform.position = Vector2.MoveTowards(equipment.transform.position, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
                     }
                     if (rankingOpen == 1)
                     {
                         status.SetActive(true);
                         ranking.SetActive(true);
-                        status.transform.position = Vector3.MoveTowards(status.transform.position, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
-                        ranking.transform.position = Vector3.MoveTowards(ranking.transform.position, rankingShowPos, Time.deltaTime * 70000 / windowOpenCount);
+                        status.transform.position = Vector2.MoveTowards(status.transform.position, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
+                        ranking.transform.position = Vector2.MoveTowards(ranking.transform.position, rankingShowPos, Time.deltaTime * 70000 / windowOpenCount);
                     }
                     count--;
                 }

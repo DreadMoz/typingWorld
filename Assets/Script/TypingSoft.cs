@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using System.Globalization;
 using static TypingSoft;
 using System.IO;
+using UnityEngine.Networking;
 
 public class TypingSoft : MonoBehaviour
 {
@@ -124,9 +125,6 @@ public class TypingSoft : MonoBehaviour
 
     void Start()
     {
-        LoadThemes();
-        ShuffleThemes();
-
         // スペースでスタート状態にする
         spaceStart = true;
         // スペースでエンド状態を解除する
@@ -167,15 +165,17 @@ public class TypingSoft : MonoBehaviour
         //        UIcorrectAR.text = correctAR.ToString();
 
         AssistKeyboardObj.SetNextHighlight(" ");
+
+        LoadThemes();
+        ShuffleThemes();
     }
 
     void LoadThemes()
     {
-        string filePath = Path.Combine(Application.dataPath, "TextPrompts/nara.json");
-        if (File.Exists(filePath))
+        TextAsset textAsset = Resources.Load<TextAsset>("TextPrompts/nara");
+        if (textAsset != null)
         {
-            string dataAsJson = File.ReadAllText(filePath);
-            themeCollection = JsonUtility.FromJson<ThemeCollection>(dataAsJson);
+            themeCollection = JsonUtility.FromJson<ThemeCollection>(textAsset.text);
         }
         else
         {
