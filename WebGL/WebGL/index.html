@@ -183,9 +183,9 @@
                             myGameInstance.SendMessage('lastName', 'UpdateText', lastName);
                         });
                     } else {
+                        myGameInstance.SendMessage('TitleScene', 'showDomainError');
                         // ドメインが一致しない場合はログアウトする
                         authInstance.signOut().then(() => {
-                            alert('いいネットならせんようのアプリです。');
                             // ログアウト後の処理、例えばログインページにリダイレクトする
                         });
                     }
