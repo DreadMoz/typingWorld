@@ -117,6 +117,13 @@ public class TitleSky : MonoBehaviour
         gm.connection.loadFbData();
     }
 
+    public void showDomainError()
+    {
+        message.SetActive(true);
+        Text messageText = message.GetComponentInChildren<Text>();
+        messageText.text = "いいネットなら専用アプリです。e-net.nara.jpのアカウントでログインしてね。";
+    }
+
     public void finishDataLoad()
     {
         Debug.Log("gm.savedata.getEquipment()[(int)eq.CatBody]: " + gm.savedata.getEquipment()[(int)eq.CatBody]);
@@ -171,11 +178,15 @@ public class TitleSky : MonoBehaviour
         confirmButton.SetActive(false);
         startButton.SetActive(true);
 
+        fade.StartFadeOut();
+        firstPush = true;
+        /*
         TMP_Text startText = startButton.GetComponentInChildren<TMP_Text>();
         startText.text = "スタート";
         startButtonStatus = 1;
 
         startButton.SetActive(true);   // スタートボタンにして表示
+        */
     }
     public void updownNeco()
     {

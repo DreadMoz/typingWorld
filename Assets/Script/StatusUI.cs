@@ -20,7 +20,7 @@ enum eq
     LeftHand = 3,
     CatBody = 4,
     CatFace = 5,
-      NickName = 6
+    NickName = 6
 }
 
 public class StatusUI : MonoBehaviour

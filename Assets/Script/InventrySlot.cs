@@ -50,16 +50,16 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     {
         if (MyItem == null) return;
 
-        // ƒAƒCƒeƒ€‚ÌƒCƒ[ƒW‚ğ•¡»
+        // ã‚¢ã‚¤ãƒ†ãƒ ã®ã‚¤ãƒ¡ãƒ¼ã‚¸ã‚’è¤‡è£½
         draggingObj = Instantiate(itemImageObj, canvasTransform);
 
-        // •¡»‚ğÅ‘O–Ê‚É”z’u
+        // è¤‡è£½ã—ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æœ€å‰é¢ã«é…ç½®
         draggingObj.transform.SetAsLastSibling();
 
-        // •¡»Œ³‚ÌF‚ğˆÃ‚­‚·‚é
+        // è¤‡è£½å…ƒã®ã‚¤ãƒ¡ãƒ¼ã‚¸ã®è‰²ã‚’ã‚°ãƒ¬ãƒ¼ã«ã™ã‚‹
         itemImage.color = Color.gray;
 
-        // Hand‚ÉƒAƒCƒeƒ€‚ğ“n‚·
+        // Handã«ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¨­å®š
         hand.SetGrabbingItem(MyItem);
     }
 
@@ -73,13 +73,13 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
     public void OnDrop(PointerEventData eventData)
     {
-        // Hand‚ªƒAƒCƒeƒ€‚ğ‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç‘Šúreturn
+        // Handã«ã‚¢ã‚¤ãƒ†ãƒ ãŒãªã‘ã‚Œã°ä½•ã‚‚ã›ãšã«return
         if (!hand.IsHavingItem()) return;
 
-        // Hand‚©‚çƒAƒCƒeƒ€‚ğó‚¯æ‚é
+        // Handã‹ã‚‰ã‚¢ã‚¤ãƒ†ãƒ ã‚’å–å¾—
         Item gotItem = hand.GetGrabbingItem();
 
-        // ‚à‚Æ‚à‚Æ‚Á‚Ä‚¢‚½ƒAƒCƒeƒ€‚ğHand‚É“n‚·
+        // äº¤æ›å…ˆã¨ã—ã¦ã‚¢ã‚¤ãƒ†ãƒ ã‚’Handã«è¨­å®š
         hand.SetGrabbingItem(MyItem);
 
         SetItem(gotItem);
@@ -89,11 +89,11 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     {
         Destroy(draggingObj);
 
-        // OnDrop‚ªæ‚ÉŒÄ‚Î‚ê‚é
-        // Hand‚©‚çƒAƒCƒeƒ€‚ğó‚¯æ‚é
+        // OnDropã§è¡Œã‚ã‚ŒãŸ
+        // Handã‹ã‚‰ã‚¢ã‚¤ãƒ†ãƒ ã‚’å–å¾—
         Item gotItem = hand.GetGrabbingItem();
 
-        // •¡»Œ³‚ÌF‚ğ–¾‚é‚­‚·‚é
+        // è¤‡è£½å…ƒã®ã‚¤ãƒ¡ãƒ¼ã‚¸ã®è‰²ã‚’å…ƒã«æˆ»ã™
         itemImage.color = Color.white;
 
         SetItem(gotItem);

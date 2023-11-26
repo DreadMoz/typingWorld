@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private GameManager gameMaster;
+    private GameManager gm;
 
     [SerializeField]
     private GameObject typingRoom;
@@ -218,21 +218,27 @@ public class Player : MonoBehaviour
         // 衝突したオブジェクトに応じてアニメーションと目的地を設定
         if (col.gameObject.name == "TypingDoor")
         {
-            // "Hi" トリガーアニメーションを開始
-            animator.SetTrigger("Hi");
-            agent.destination = this.transform.position;
+            if (!gm.getWindowOpen())
+            {
+                // "Hi" トリガーアニメーションを開始
+                animator.SetTrigger("Hi");
+                agent.destination = this.transform.position;
 
-            fadeDoor.StartFadeOut();
-            typingWindow = 1;
+                fadeDoor.StartFadeOut();
+                typingWindow = 1;
+            }
         }
         else if (col.gameObject.name == "ShopDoor")
         {
-            // "Hi" トリガーアニメーションを開始
-            animator.SetTrigger("Hi");
-            agent.destination = this.transform.position;
+            if (!gm.getWindowOpen())
+            {
+                // "Hi" トリガーアニメーションを開始
+                animator.SetTrigger("Hi");
+                agent.destination = this.transform.position;
 
-            fadeDoor.StartFadeOut();
-            shopWindow = 1;
+                fadeDoor.StartFadeOut();
+                shopWindow = 1;
+            }
         }
         else if (col.gameObject.name != "Terrain")
         {

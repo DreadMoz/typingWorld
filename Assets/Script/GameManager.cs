@@ -385,6 +385,14 @@ public class GameManager : MonoBehaviour
     {
         return cameraMove;
     }
+    public bool getWindowOpen()
+    {
+        if (inventoryOpen == 1 || rankingOpen == 1)
+        {
+            return true;
+        }
+        return false;
+    }
 
     //htmlから直でsavedataにアクセスできないため
     public void setUserName(string msg) { savedata.setUserName(msg);}
