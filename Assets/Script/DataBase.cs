@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Database", menuName = "Database")]
-public class Database : ScriptableObject
+[CreateAssetMenu(fileName = "DataBase", menuName = "DataBase")]
+public class DataBase : ScriptableObject
 {
     [SerializeField]
     private List<Item> itemList = new List<Item>();

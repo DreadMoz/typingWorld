@@ -16,7 +16,7 @@ enum scene
 
 public class GameManager : MonoBehaviour
 {
-    public Database db;
+    public DataBase db;
     public SaveData savedata;
     public Connection connection;
 
