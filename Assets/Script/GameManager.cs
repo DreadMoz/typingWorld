@@ -84,51 +84,58 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (sceneNo != (int)scene.Title)
+        try
         {
-            if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+            if (sceneNo != (int)scene.Title)
             {
-                chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+                {
+                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                }
+            }
+
+            difx = (statusRotation.eulerAngles.x - chaseRotation.eulerAngles.x) / windowOpenCount;
+            dify = (statusRotation.eulerAngles.y - chaseRotation.eulerAngles.y) / windowOpenCount;
+            difz = (statusRotation.eulerAngles.z - chaseRotation.eulerAngles.z) / windowOpenCount;
+            posx = (statusOffset.x - chaseOffset.x) / windowOpenCount;
+            posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
+            posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
+
+            // アニメーションステートが1最初のワールドの場合
+            if (sceneNo == (int)scene.World)
+            {
+                status.SetActive(false);
+                inventory.SetActive(false);
+                equipment.SetActive(false);
+                ranking.SetActive(false);
+                typingRoom.SetActive(false);
+                shopRoom.SetActive(false);
+            }
+            // アニメーションステートが3タイピング後の場合
+            else if (sceneNo == (int)scene.House)
+            {
+                recalculateKpm();
+                inventory.SetActive(false);
+                equipment.SetActive(false);
+                rankingButton.SetActive(false);
+                inventoryButton.SetActive(false);
+                status.SetActive(true);
+                ranking.SetActive(true);
+                float screenWidth = Screen.width;
+                float screenHeight = Screen.height;
+                status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
+                ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
+                typingRoom.SetActive(true);
+                shopRoom.SetActive(false);
+            }
+            if (statusWindow)
+            {
+                statusWindow.setStatus();
             }
         }
-
-        difx = (statusRotation.eulerAngles.x - chaseRotation.eulerAngles.x) / windowOpenCount;
-        dify = (statusRotation.eulerAngles.y - chaseRotation.eulerAngles.y) / windowOpenCount;
-        difz = (statusRotation.eulerAngles.z - chaseRotation.eulerAngles.z) / windowOpenCount;
-        posx = (statusOffset.x - chaseOffset.x) / windowOpenCount;
-        posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
-        posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
-
-        // アニメーションステートが1最初のワールドの場合
-        if (sceneNo == (int)scene.World)
+        catch (System.Exception ex)
         {
-            status.SetActive(false);
-            inventory.SetActive(false);
-            equipment.SetActive(false);
-            ranking.SetActive(false);
-            typingRoom.SetActive(false);
-            shopRoom.SetActive(false);
-        }
-        // アニメーションステートが3タイピング後の場合
-        else if (sceneNo == (int)scene.House)
-        {
-            recalculateKpm();
-            inventory.SetActive(false);
-            equipment.SetActive(false);
-            rankingButton.SetActive(false);
-            inventoryButton.SetActive(false);
-            status.SetActive(true);
-            ranking.SetActive(true);
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
-            status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
-            ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
-            typingRoom.SetActive(true);
-            shopRoom.SetActive(false);
-        }
-        if (statusWindow)
-        {
-            statusWindow.setStatus();
+            Debug.LogError("Startメソッドでエラーが発生しました: " + ex.Message);
         }
     }
 
@@ -161,6 +168,7 @@ public class GameManager : MonoBehaviour
                 }
                 else                        // ワールド通常表示中なら
                 {
+                    player.transform.position = player.transform.position;
                     inventoryOpen = 1;          // インベントリでてくる
                     keepInventory();
                     rankingOpen = 0;            // ランキングなんもなし
@@ -189,6 +197,7 @@ public class GameManager : MonoBehaviour
                 }
                 else                            // ワールド通常表示中なら
                 {
+                    player.transform.position = player.transform.position;
                     inventoryOpen = 0;              // インベントリなんもなし
                     rankingOpen = 1;                // ランキングでてくる
                     cameraMove = 3;                 // カメラは寄り

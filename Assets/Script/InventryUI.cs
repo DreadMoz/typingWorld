@@ -27,18 +27,36 @@ public class InventryUI : MonoBehaviour
 
     private void setAllItems()
     {
-        slots = slotsParent.GetComponentsInChildren<InventrySlot>();
-
-        int[] saveItem = gm.savedata.getInventory();
-
-        for (int i = 0; i < saveItem.Length; i++)
+        try
         {
-            if (i < slots.Length)
+            slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+            int[] saveItem = gm.savedata.getInventory();
+
+            for (int i = 0; i < saveItem.Length; i++)
             {
-                slots[i].SetItem(gm.db.GetItemList()[saveItem[i]]);
+                if (i < slots.Length)
+                {
+                    if (saveItem[i] < gm.db.GetItemList().Count)
+                    {
+                        slots[i].SetItem(gm.db.GetItemList()[saveItem[i]]);
+                    }
+                    else
+                    {
+                        Debug.LogError("不正なインデックス: " + saveItem[i]);
+                    }
+                }
+                else
+                {
+                    Debug.LogError("slotsの長さが不足しています。Index: " + i);
+                }
             }
         }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("setAllItemsでエラーが発生しました: " + ex.Message);
+        }
     }
+
     public void getAllItems()
     {
         slots = slotsParent.GetComponentsInChildren<InventrySlot>();

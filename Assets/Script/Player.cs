@@ -37,6 +37,11 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (!gm || !typingRoom || !inventoryButton || !rankButton || !itemShop || !status || !fade || !fadeDoor)
+        {
+            Debug.LogError("Playerスクリプトで必要なオブジェクトが割り当てられていません。");
+            return;
+        }
         agent = GetComponent<NavMeshAgent>();  // ナビメッシュエージェントを取得
         agent.speed = speed;
 

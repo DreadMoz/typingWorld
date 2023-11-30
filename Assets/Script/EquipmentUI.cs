@@ -25,14 +25,35 @@ public class EquipmentUI : MonoBehaviour
 
     private void setAllEquipments()
     {
-        slots = slotsParent.GetComponentsInChildren<InventrySlot>();
-        int[] saveEquip = gm.savedata.getEquipment();
-
-        for (int i = 0; i < 4; i++)
+        try
         {
-            slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);
+            slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+            int[] saveEquip = gm.savedata.getEquipment();
+
+            if (saveEquip.Length < 4 || slots.Length < 4)
+            {
+                Debug.LogError("配列の長さが不足しています。");
+                return;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (saveEquip[i] < gm.db.GetItemList().Count)
+                {
+                    slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);
+                }
+                else
+                {
+                    Debug.LogError("不正なインデックス: " + saveEquip[i]);
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("setAllEquipmentsでエラーが発生しました: " + ex.Message);
         }
     }
+
     public void getAllEquipments()
     {
         slots = slotsParent.GetComponentsInChildren<InventrySlot>();
