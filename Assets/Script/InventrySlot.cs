@@ -27,9 +27,19 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     private void Start()
     {
         canvas = GameObject.Find("Canvas");
+        if (!canvas)
+        {
+            Debug.LogError("InventrySlot: Canvasが見つかりません。");
+            return;
+        }
         canvasTransform = canvas.transform;
 
         hand = FindObjectOfType<Hand>();
+        if (!hand)
+        {
+            Debug.LogError("InventrySlot: Handコンポーネントが見つかりません。");
+            return;
+        }
     }
 
     public void SetItem(Item item)
@@ -46,6 +56,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
             itemImage.color = new Color(0, 0, 0, 0);
         }
     }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (MyItem == null) return;
@@ -67,7 +78,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     {
         if (MyItem == null) return;
 
-        draggingObj.transform.position = hand.transform.position + new Vector3(20, 20, 0);
+        draggingObj.transform.position = hand.transform.position + new Vector3(10, 10, 0);
 
     }
 
