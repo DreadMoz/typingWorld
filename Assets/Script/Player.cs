@@ -133,19 +133,19 @@ public class Player : MonoBehaviour
             animator.SetTrigger("Bow");
         }
 
-        // UI要素上でマウスカーソルがある場合は操作しない
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
 
-        // ダメージまたは"Hi"アニメーション中はプレイヤーの位置を固定
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi"))
+        // ダメージまたは"Hi"アニメーション中またなウィンドウを開いたときはプレイヤーの位置を固定
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi") || gm.getWindowOpen())
         {
-            transform.position = transform.position;
+            agent.destination = this.transform.position;
         }
         else
         {
+            // UI要素上でマウスカーソルがある場合は操作しない
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
             if (!status.activeSelf)
             {
                 if (Input.GetKey(KeyCode.UpArrow))

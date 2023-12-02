@@ -7,14 +7,20 @@ public class EquipmentUI : MonoBehaviour
     [SerializeField]
     private Transform slotsParent;
 
-    [SerializeField]
-    private GameManager gm;
+    private GameManager gm;     // WebGLのえらーにより動的取得に変更
 
     InventrySlot[] slots;
 
     // Start is called before the first frame update
     void Start()
     {
+        // GameManagerのインスタンスを動的に検索して取得
+        gm = FindObjectOfType<GameManager>();
+        if (gm == null)
+        {
+            Debug.LogError("GameManagerが見つかりませんでした。");
+            return;
+        }
         setAllEquipments();
     }
     

@@ -75,6 +75,12 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
+
+        if (!animator || !player || !db || !savedata || !connection)
+        {
+            Debug.LogError("GameManager: 必要なコンポーネントが割り当てられていません。");
+            return;
+        }
         oldInventory = new int[64];
         newInventory = new int[64];
         oldEquip = new int[10];
@@ -168,7 +174,6 @@ public class GameManager : MonoBehaviour
                 }
                 else                        // ワールド通常表示中なら
                 {
-                    player.transform.position = player.transform.position;
                     inventoryOpen = 1;          // インベントリでてくる
                     keepInventory();
                     rankingOpen = 0;            // ランキングなんもなし
@@ -197,7 +202,6 @@ public class GameManager : MonoBehaviour
                 }
                 else                            // ワールド通常表示中なら
                 {
-                    player.transform.position = player.transform.position;
                     inventoryOpen = 0;              // インベントリなんもなし
                     rankingOpen = 1;                // ランキングでてくる
                     cameraMove = 3;                 // カメラは寄り
