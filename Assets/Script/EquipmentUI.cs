@@ -36,13 +36,13 @@ public class EquipmentUI : MonoBehaviour
             slots = slotsParent.GetComponentsInChildren<InventrySlot>();
             int[] saveEquip = gm.savedata.getEquipment();
 
-            if (saveEquip.Length < 4 || slots.Length < 4)
+            if (saveEquip.Length < 7 || slots.Length < 7)
             {
                 Debug.LogError("配列の長さが不足しています。");
                 return;
             }
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 7; i++)
             {
                 if (saveEquip[i] < gm.db.GetItemList().Count)
                 {
