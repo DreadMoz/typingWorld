@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     public GameObject cam;           // カメラ
     private Animator animator;       // Playerのアニメーター
     public GameObject inventory;
-    public GameObject equipment;
+    public GameObject equip;
     public GameObject ranking;
     public GameObject status;
     public GameObject typingRoom;
@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
             {
                 status.SetActive(false);
                 inventory.SetActive(false);
-                equipment.SetActive(false);
+                equip.SetActive(false);
                 ranking.SetActive(false);
                 typingRoom.SetActive(false);
                 shopRoom.SetActive(false);
@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
             {
                 recalculateKpm();
                 inventory.SetActive(false);
-                equipment.SetActive(false);
+                equip.SetActive(false);
                 rankingButton.SetActive(false);
                 inventoryButton.SetActive(false);
                 status.SetActive(true);
@@ -230,7 +230,7 @@ public class GameManager : MonoBehaviour
                         // オブジェクトの位置を更新する
                         status.transform.position = Vector2.MoveTowards(status.transform.position, statusHidePos, Time.deltaTime * 20000 / windowOpenCount);
                         inventory.transform.position = Vector2.MoveTowards(inventory.transform.position, inventoryHidePos, Time.deltaTime * 70000 / windowOpenCount);
-                        equipment.transform.position = Vector2.MoveTowards(equipment.transform.position, equipmentHidePos, Time.deltaTime * 30000 / windowOpenCount);
+                        equip.transform.position = Vector2.MoveTowards(equip.transform.position, equipmentHidePos, Time.deltaTime * 30000 / windowOpenCount);
                     }
                     if (rankingOpen == -1)
                     {
@@ -243,14 +243,14 @@ public class GameManager : MonoBehaviour
                 {
                     status.SetActive(false);
                     inventory.SetActive(false);
-                    equipment.SetActive(false);
+                    equip.SetActive(false);
                     ranking.SetActive(false);
                     if (inventoryOpen == -1)
                     {
                         // オブジェクトの位置を確定させる
                         status.transform.position = statusHidePos;
                         inventory.transform.position = inventoryHidePos;
-                        equipment.transform.position = equipmentHidePos;
+                        equip.transform.position = equipmentHidePos;
                     }
                     if (rankingOpen == -1)
                     {
@@ -266,7 +266,7 @@ public class GameManager : MonoBehaviour
                         // オブジェクトの位置を確定させる
                         status.transform.position = statusShowPos;
                         inventory.transform.position = inventoryShowPos;
-                        equipment.transform.position = equipmentShowPos;
+                        equip.transform.position = equipmentShowPos;
                     }
                     if (rankingOpen == 1)
                     {
@@ -283,12 +283,12 @@ public class GameManager : MonoBehaviour
                         inventory.SetActive(true);
                         if (!shopRoom.activeSelf)
                         {
-                            equipment.SetActive(true);
+                            equip.SetActive(true);
                         }
                         // オブジェクトの位置を更新する
                         status.transform.position = Vector2.MoveTowards(status.transform.position, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
                         inventory.transform.position = Vector2.MoveTowards(inventory.transform.position, inventoryShowPos, Time.deltaTime * 70000 / windowOpenCount);
-                        equipment.transform.position = Vector2.MoveTowards(equipment.transform.position, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
+                        equip.transform.position = Vector2.MoveTowards(equip.transform.position, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
                     }
                     if (rankingOpen == 1)
                     {
@@ -339,7 +339,7 @@ public class GameManager : MonoBehaviour
     private void checkInventory()
     {
         InventryUI inventoryUi = inventory.GetComponentInChildren<InventryUI>();
-        EquipmentUI equipUi = equipment.GetComponentInChildren<EquipmentUI>();
+        EquipmentUI equipUi = equip.GetComponentInChildren<EquipmentUI>();
         inventoryUi.getAllItems();
         equipUi.getAllEquipments();
         newInventory = savedata.getInventory();     // 現在のインベントリの並びを保存
