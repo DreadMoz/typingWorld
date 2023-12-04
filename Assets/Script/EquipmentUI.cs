@@ -14,6 +14,7 @@ public class EquipmentUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("EquipmentUIのStartスタート。");
         // GameManagerのインスタンスを動的に検索して取得
         gm = FindObjectOfType<GameManager>();
         if (gm == null)
@@ -21,6 +22,7 @@ public class EquipmentUI : MonoBehaviour
             Debug.LogError("GameManagerが見つかりませんでした。");
             return;
         }
+        Debug.Log("setAllEquipmentsに入ります。");
         setAllEquipments();
     }
     
@@ -33,8 +35,8 @@ public class EquipmentUI : MonoBehaviour
     {
         try
         {
-            slots = slotsParent.GetComponentsInChildren<InventrySlot>();
-            int[] saveEquip = gm.savedata.getEquipment();
+            slots = slotsParent.GetComponentsInChildren<InventrySlot>();    // あやしい1
+            int[] saveEquip = gm.savedata.getEquipment();    // あやしいMAX1
 
             if (saveEquip.Length < 7 || slots.Length < 7)
             {
@@ -44,9 +46,9 @@ public class EquipmentUI : MonoBehaviour
 
             for (int i = 0; i < 7; i++)
             {
-                if (saveEquip[i] < gm.db.GetItemList().Count)
+                if (saveEquip[i] < gm.db.GetItemList().Count)    // あやしいMAX2
                 {
-                    slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);
+                    slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);    // あやしいMAX
                 }
                 else
                 {

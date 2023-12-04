@@ -339,9 +339,9 @@ public class GameManager : MonoBehaviour
     private void checkInventory()
     {
         InventryUI inventoryUi = inventory.GetComponentInChildren<InventryUI>();
-        EquipmentUI equipUi = equip.GetComponentInChildren<EquipmentUI>();
+        SoubiUI equipUi = equip.GetComponentInChildren<SoubiUI>();
         inventoryUi.getAllItems();
-        equipUi.getAllEquipments();
+        equipUi.getAllSoubi();
         newInventory = savedata.getInventory();     // 現在のインベントリの並びを保存
         newEquip = savedata.getEquipment();         // 現在の装備を保存
         var updatesInventory = new Dictionary<string, int>();
