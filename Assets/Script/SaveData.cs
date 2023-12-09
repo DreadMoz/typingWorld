@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 [CreateAssetMenu(fileName = "SaveData", menuName = "SaveData")]
 public class SaveData : ScriptableObject
@@ -68,6 +69,28 @@ public class SaveData : ScriptableObject
     public void setInventoryIndex(int index, int value)
     {
         inventory[index] = value;
+    }
+    public int getBlankInventoryIndex()
+    {
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (inventory[i] == 0)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public bool existInventory(int id)
+    {
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (inventory[i] == id)
+            {
+                return true;
+            }
+        }
+        return false;
     }
     public void setMedals(string msg)
     {

@@ -1,6 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+// エディタ固有のコード
+using static UnityEditor.Progress;
+#endif
+
 
 public class SoubiUI : MonoBehaviour
 {
@@ -26,20 +31,21 @@ public class SoubiUI : MonoBehaviour
     {
         try
         {
+            int soubiLen = 4;       // いまの装備の長さ最終的に7予定
             slots = slotsParent.GetComponentsInChildren<InventrySlot>();
             int[] saveEquip = gm.savedata.getEquipment();
 
-            if (saveEquip.Length < 7 || slots.Length < 7)
+            if (saveEquip.Length < soubiLen || slots.Length < soubiLen)
             {
                 Debug.LogError("配列の長さが不足しています。");
                 return;
             }
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < soubiLen; i++)
             {
-                if (saveEquip[i] < gm.db.GetItemList().Count)    // あやしいMAX2
+                if (saveEquip[i] < gm.db.GetItemList().Count)
                 {
-                    slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);    // あやしいMAX
+                    slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]], i+1);
                 }
                 else
                 {

@@ -16,6 +16,10 @@ public class Hand : MonoBehaviour
         grabbingItem = null;
         return oldItem;
     }
+    public ItemType GetGrabbingItemType()
+    {
+        return grabbingItem.MyItemType;
+    }
 
     public void SetGrabbingItem(Item item)
     {

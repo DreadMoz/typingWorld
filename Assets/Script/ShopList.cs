@@ -1,0 +1,141 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+#if UNITY_EDITOR
+// エディタ固有のコード
+using static UnityEditor.Progress;
+#endif
+
+public class ShopList : MonoBehaviour
+{
+    [SerializeField]
+    private GameManager gm;
+
+    [SerializeField]
+    private GameObject shopItemPrefab;
+
+    [SerializeField]
+    private TMP_Text talk;
+
+    private Transform shopItemParent;
+
+    // ここで、ShopItemParentのRectTransformを参照する
+    [SerializeField]
+    private RectTransform shopItemParentRectTransform;
+
+    [SerializeField]
+    private ShopData shopDatabase; // ShopDatabaseへの参照
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        // このスクリプトがアタッチされているオブジェクトのTransformを取得
+        shopItemParent = transform;
+
+        // 初期アイテムリストの表示
+        ShowItemList(0);
+    }
+
+    public void ShowItemListWeapons()
+    {
+        talk.text = "手にもつつどうぐですよ。";
+        ShowItemList(0);
+    }
+    public void ShowItemListGlasses()
+    {
+        talk.text = "すてきなめがねですよ。";
+        ShowItemList(1);
+    }
+    public void ShowItemListHats()
+    {
+        talk.text = "かわいいぼうしですよ。";
+        ShowItemList(2);
+    }
+
+    public void ShowItemList(int kind)
+    {
+        ClearList();
+
+        List<int> itemIDsToShow = new List<int>();
+        switch (kind)
+        {
+            case 0:
+                itemIDsToShow = shopDatabase.weaponIDs;
+                break;
+            case 1:
+                itemIDsToShow = shopDatabase.hatIDs;
+                break;
+            case 2:
+                itemIDsToShow = shopDatabase.glassesIDs;
+                break;
+            default:
+                break;
+        }
+
+        foreach (var itemId in itemIDsToShow)
+        {
+            Item item = gm.db.GetItemList()[itemId]; // 実際のアイテムをIDから取得
+            if (item != null)
+            {
+                AddItem(item);
+            }
+        }
+        // コンテンツエリアの高さをアイテム数に基づいて設定
+        float contentHeight = itemIDsToShow.Count * 83; // アイテムの高さ
+        shopItemParentRectTransform.sizeDelta = new Vector2(shopItemParentRectTransform.sizeDelta.x, contentHeight);
+    }
+
+    private void ClearList()
+    {
+        foreach (Transform child in shopItemParent)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void AddItem(Item item)
+    {
+        GameObject newItem = Instantiate(shopItemPrefab, shopItemParent);
+        string typeMes;
+
+        switch (item.MyItemType)
+        {
+            case ItemType.Weapon:
+                typeMes = "(手にもつアイテム)";
+                break;
+            case ItemType.Hat:
+                typeMes = "(あたまにかぶるアイテム)";
+                break;
+            case ItemType.Glasses:
+                typeMes = "(かおにつけるアイテム)";
+                break;
+            case ItemType.Face:
+                typeMes = "(ひょうじょうがかわるよ)";
+                break;
+            case ItemType.NickName:
+                typeMes = "(なまえのうしろにつくことば)";
+                break;
+            case ItemType.Body:
+                typeMes = "(ネコのすがたがかわる)";
+                break;
+            default:
+                typeMes = "？？？？？";
+                break;
+        }
+
+        // ShopItem個別の板プレハブにアイテムの詳細を設定
+        newItem.transform.Find("ItemIcon").GetComponent<Image>().sprite = item.MyItemImage;
+        newItem.transform.Find("ItemName").GetComponent<TextMeshProUGUI>().text = item.MyItemName;
+        newItem.transform.Find("ID").GetComponent<TextMeshProUGUI>().text = item.MyItemNo.ToString();
+        newItem.transform.Find("Type").GetComponent<TextMeshProUGUI>().text = typeMes;
+        newItem.transform.Find("Memo").GetComponent<TextMeshProUGUI>().text = item.MyItemMemo;
+        newItem.transform.Find("Price").GetComponent<TextMeshProUGUI>().text = item.MyItemPrice.ToString();
+
+        if (!gm.savedata.existInventory(item.MyItemNo))
+        {
+            newItem.transform.Find("SoldOut").GetComponent<Image>().gameObject.SetActive(false);
+        }
+    }
+}

@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        GameManager.sceneNo = (int)scene.World;
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
 
         if (!animator || !player || !db || !savedata || !connection)
@@ -216,11 +217,11 @@ public class GameManager : MonoBehaviour
             statusShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
             inventoryShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
             rankingShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
-            equipmentShowPos = new Vector2(screenWidth * 0.29f, screenHeight * 0.13f);
+            equipmentShowPos = new Vector2(screenWidth * 0.33f, screenHeight * 0.13f);
             statusHidePos = new Vector2(screenWidth * 0.79f, screenHeight * 1.15f);
             inventoryHidePos = new Vector2(screenWidth * 1.21f, screenHeight * 0.44f);
             rankingHidePos = new Vector2(screenWidth * 1.21f, screenHeight * 0.44f);
-            equipmentHidePos = new Vector2(screenWidth * 0.29f, -screenHeight * 0.12f);
+            equipmentHidePos = new Vector2(screenWidth * 0.33f, -screenHeight * 0.12f);
             if (count > 0)
             {
                 if (count > windowOpenCount / 2)    // ウィンドウひっこむ

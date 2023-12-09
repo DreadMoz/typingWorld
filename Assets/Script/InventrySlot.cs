@@ -16,6 +16,17 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     [SerializeField]
     private GameObject itemImageObj;
 
+    [SerializeField]
+    private Sprite imageTe;
+    [SerializeField]
+    private Sprite imageAtama;
+    [SerializeField]
+    private Sprite imageMe;
+
+    private int slotNo;
+
+    private bool soubiSlot;
+
     private GameObject canvas;
 
     private Transform canvasTransform;
@@ -24,8 +35,19 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
     public Item MyItem { get => item; private set => item = value; }
 
-    private void Start()
+    private bool isAnimating = false; // アニメーション中かどうか
+    private float animationDuration = 1.5f; // アニメーションにかかる時間（秒）
+    private float animationTime = 0f; // アニメーション開始からの経過時間
+
+    void Start()
     {
+        // GameObjectの兄弟の中でのインデックスを取得してslotNoに割り当てる
+        slotNo = transform.GetSiblingIndex();
+
+        soubiSlot = false;
+        // 親が'SoubiParent'タグを持っているかどうかをチェック
+        soubiSlot = transform.parent.CompareTag("SoubiParent");
+
         canvas = GameObject.Find("Canvas");
         if (!canvas)
         {
@@ -42,18 +64,88 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
         }
     }
 
-    public void SetItem(Item item)
+    void Update()
+    {
+        if (isAnimating)
+        {
+            animationTime += Time.deltaTime;
+
+            // 回転角度とスケールを計算
+            float rotationAngle = (360f / animationDuration) * Time.deltaTime;
+            float scale = 1f;
+            if (animationTime <= animationDuration / 2f)
+            {
+                // 拡大
+                scale = Mathf.Lerp(0.01f, 1f, animationTime / (animationDuration / 2f));
+            }
+
+            // 回転とスケールの適用
+            itemImage.transform.Rotate(0, 0, rotationAngle);
+            itemImage.transform.localScale = new Vector3(scale, scale, 1f);
+
+            if (animationTime >= animationDuration)
+            {
+                // アニメーションを終了
+                isAnimating = false;
+                animationTime = 0f;
+                // 画像をリセット
+                itemImage.transform.localScale = Vector3.one;
+                itemImage.transform.rotation = Quaternion.identity;
+            }
+        }
+    }
+
+    public void TurnItem()
+    {
+        if (!isAnimating)
+        {
+            // アニメーションを開始
+            isAnimating = true;
+            animationTime = 0f;
+        }
+    }
+
+    public void SetItem(Item item, int no = 0)
     {
         MyItem = item;
 
         if (item != null)
         {
+            // 画像の透明度を設定
             itemImage.color = new Color(1, 1, 1, 1);
             itemImage.sprite = item.MyItemImage;
         }
         else
         {
-            itemImage.color = new Color(0, 0, 0, 0);
+            if (!soubiSlot)
+            {
+                itemImage.color = new Color(0, 0, 0, 0);
+                return;
+            }
+            // slotNoの値に応じて異なる画像を設定
+            switch (slotNo)
+            {
+                case 0:
+                    itemImage.sprite = imageTe;
+                    itemImage.color = new Color(1, 1, 1, 0.9f);
+                    break;
+                case 1:
+                    itemImage.sprite = imageAtama;
+                    itemImage.color = new Color(1, 1, 1, 0.9f);
+                    break;
+                case 2:
+                    itemImage.sprite = imageMe;
+                    itemImage.color = new Color(1, 1, 1, 0.9f);
+                    break;
+                case 3:
+                    itemImage.sprite = imageTe;
+                    itemImage.color = new Color(1, 1, 1, 0.9f);
+                    break;
+                default:
+                    // slotNoがその他の場合は、画像を透明にする
+                    itemImage.color = new Color(0, 0, 0, 0);
+                    break;
+            }
         }
     }
 
@@ -79,11 +171,34 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
         if (MyItem == null) return;
 
         draggingObj.transform.position = hand.transform.position + new Vector3(10, 10, 0);
-
     }
 
     public void OnDrop(PointerEventData eventData)
     {
+        if (soubiSlot)
+        {
+            if (slotNo == 0 | slotNo == 3)
+            {
+                if (hand.GetGrabbingItemType() != ItemType.Weapon)
+                {
+                    return;
+                }
+            }
+            if (slotNo == 1)
+            {
+                if (hand.GetGrabbingItemType() != ItemType.Hat)
+                {
+                    return;
+                }
+            }
+            if (slotNo == 2)
+            {
+                if (hand.GetGrabbingItemType() != ItemType.Glasses)
+                {
+                    return;
+                }
+            }
+        }
         // Handにアイテムがなければ何もせずにreturn
         if (!hand.IsHavingItem()) return;
 

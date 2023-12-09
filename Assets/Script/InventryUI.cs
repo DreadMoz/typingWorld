@@ -25,7 +25,7 @@ public class InventryUI : MonoBehaviour
     {
     }
 
-    private void setAllItems()
+    public void setAllItems()
     {
         try
         {
@@ -55,6 +55,12 @@ public class InventryUI : MonoBehaviour
         {
             Debug.LogError("setAllItemsでエラーが発生しました: " + ex.Message);
         }
+    }
+
+    public void turnImage(int no)
+    {
+        slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+        slots[no].TurnItem();
     }
 
     public void getAllItems()

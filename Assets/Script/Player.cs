@@ -133,7 +133,6 @@ public class Player : MonoBehaviour
             animator.SetTrigger("Bow");
         }
 
-
         // ダメージまたは"Hi"アニメーション中またなウィンドウを開いたときはプレイヤーの位置を固定
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi") || gm.getWindowOpen())
         {
