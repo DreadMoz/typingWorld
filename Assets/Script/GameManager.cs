@@ -11,7 +11,10 @@ enum scene
     Title = 0,
     World = 1,
     Typing = 2,
-    House = 3
+    House = 3,
+    Shop = 4,
+    HouseE = 5,
+    ShopE = 6
 }
 
 public class GameManager : MonoBehaviour
@@ -77,11 +80,6 @@ public class GameManager : MonoBehaviour
         GameManager.sceneNo = (int)scene.World;
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
 
-        if (!animator || !player || !db || !savedata || !connection)
-        {
-            Debug.LogError("GameManager: 必要なコンポーネントが割り当てられていません。");
-            return;
-        }
         oldInventory = new int[64];
         newInventory = new int[64];
         oldEquip = new int[10];

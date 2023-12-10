@@ -28,6 +28,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Fade fadeDoor;
 
+    [SerializeField]
+    private SwitchCam switchCam;
+
+    [SerializeField]
+    private GameObject housePlayer;
+    private Animator pAnimator;
+
+    public Camera playerCamera; // レイキャストに使用するカメラ
+
     private Animator animator;
     private NavMeshAgent agent;
     private float speed = 8f;
@@ -42,6 +51,7 @@ public class Player : MonoBehaviour
             Debug.LogError("Playerスクリプトで必要なオブジェクトが割り当てられていません。");
             return;
         }
+        pAnimator = housePlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
         agent = GetComponent<NavMeshAgent>();  // ナビメッシュエージェントを取得
         agent.speed = speed;
 
@@ -50,11 +60,36 @@ public class Player : MonoBehaviour
 
         if (GameManager.sceneNo == (int)scene.World)
         {
+            transform.position = new Vector3(286, 1, 96);
             transform.rotation = Quaternion.Euler(0, 180, 0);
             // "Hi" トリガーアニメーションを開始
             animator.SetTrigger("Hi");
         }
         else if (GameManager.sceneNo == (int)scene.House)
+        {
+            transform.position = new Vector3(252.2f, 9, -89);
+            transform.rotation = Quaternion.Euler(0, -145, 0);
+            // "Bow" トリガーアニメーションを開始
+            animator.SetTrigger("Hi");
+
+            GameManager.sceneNo = (int)scene.World;
+        }
+        else if (GameManager.sceneNo == (int)scene.Shop)
+        {
+            // ここじゃないな
+            transform.position = new Vector3(252.2f, 9, -89);
+            transform.rotation = Quaternion.Euler(0, -145, 0);
+            // "Bow" トリガーアニメーションを開始
+            animator.SetTrigger("Hi");
+        }
+        else if (GameManager.sceneNo == (int)scene.HouseE)
+        {
+            transform.position = new Vector3(288, 1, 117);
+            transform.rotation = Quaternion.Euler(0, 35, 0);
+            // "Bow" トリガーアニメーションを開始
+            animator.SetTrigger("Bow");
+        }
+        else if (GameManager.sceneNo == (int)scene.ShopE)
         {
             transform.position = new Vector3(288, 1, 117);
             transform.rotation = Quaternion.Euler(0, 35, 0);
@@ -115,6 +150,17 @@ public class Player : MonoBehaviour
             rankButton.SetActive(false);
             inventoryButton.SetActive(false);
             inventoryButton.GetComponent<OpenButton>().forceOpen();
+
+            // ショップ画面への移動
+            transform.position = new Vector3(492, 45, 107.5f);
+            transform.rotation = Quaternion.Euler(0, -145, 0);
+
+            // カメラ切り替え
+            switchCam.SwitchCamera();
+
+            // "Bow" トリガーアニメーションを開始
+            pAnimator.SetTrigger("hi");
+
             fadeDoor.StartFadeIn();
         }
         else if (shopWindow == -1)
@@ -129,6 +175,14 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(true);
             inventoryButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
+
+            // ショップ前への移動
+            transform.position = new Vector3(236, 1, 145);
+            transform.rotation = Quaternion.Euler(0, -60, 0);
+
+            // カメラ切り替え
+            switchCam.SwitchCamera();
+
             // "Bow" トリガーアニメーションを開始
             animator.SetTrigger("Bow");
         }
@@ -199,7 +253,7 @@ public class Player : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     RaycastHit hit;
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+                    if (Physics.Raycast(playerCamera.ScreenPointToRay(Input.mousePosition), out hit, 100))
                     {
                         animator.SetBool("Run", true);
                         agent.destination = hit.point;
@@ -210,7 +264,7 @@ public class Player : MonoBehaviour
                     if (Vector3.Distance(transform.position, agent.destination) < 0.2f)
                     {
                         animator.SetBool("Run", false);
-//                        agent.destination = this.transform.position;
+                        agent.destination = this.transform.position;
                     }
                 }
             }

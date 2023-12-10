@@ -12,6 +12,14 @@ public class Confirmation : MonoBehaviour
     private GameManager gm;
 
     [SerializeField]
+    private GameObject housePlayer;
+    private Animator pAnimator;
+
+    [SerializeField]
+    private GameObject kinoko;
+    private Animator kAnimator;
+
+    [SerializeField]
     private GameObject inventory;
 
     [SerializeField]
@@ -36,6 +44,9 @@ public class Confirmation : MonoBehaviour
         inventoryui = inventory.GetComponentInChildren<InventryUI>();
         statusui = status.GetComponentInChildren<StatusUI>();
         shopListReset = shopList.GetComponentInChildren<ShopList>();
+
+        pAnimator = housePlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
+        kAnimator = kinoko.GetComponent<Animator>(); // kinokoのアニメーターを取得
     }
 
     // Update is called once per frame
@@ -53,6 +64,8 @@ public class Confirmation : MonoBehaviour
             int saifu = gm.savedata.getStatus()[0];
             if (saifu >= itemPrice)
             {
+                pAnimator.SetTrigger("yes");
+                kAnimator.SetTrigger("buy");
                 gm.savedata.setInventoryIndex(blankIndex, itemId);
                 gm.savedata.setStatusIndex(0, saifu - itemPrice);
                 talk.text = "まいどありがとうございます！";
@@ -66,20 +79,34 @@ public class Confirmation : MonoBehaviour
             }
             else
             {
+                pAnimator.SetTrigger("down");
+                kAnimator.SetTrigger("no");
                 talk.text = "シーカーがたりないようです。\nタイピングをしてためてきてください。";
                 transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
             }
         }
         else
         {
+            pAnimator.SetTrigger("down");
+            kAnimator.SetTrigger("no");
             talk.text = "もちものがいっぱいのようです。";
             Debug.Log("インベントリに空きが見つかりませんでした。Confirmation.Buy");
             transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
         }
     }
 
+    public void selectNo()
+    {
+        pAnimator.SetTrigger("no");
+        kAnimator.SetTrigger("no");
+        transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
+        talk.text = "ほかのしょうひんも見ていってくださいね。";
+    }
+
     public void Cancel()
     {
+        pAnimator.SetTrigger("cancel");
+        kAnimator.SetTrigger("cancel");
         transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
         talk.text = "ほかのしょうひんも見ていってくださいね。";
     }
@@ -91,5 +118,9 @@ public class Confirmation : MonoBehaviour
     public void setItemId(int id)
     {
         itemId = id;
+    }
+    public void setIta()
+    {
+        kAnimator.SetTrigger("ita");
     }
 }

@@ -19,6 +19,10 @@ public class ShopList : MonoBehaviour
     [SerializeField]
     private TMP_Text talk;
 
+    [SerializeField]
+    private GameObject kinoko;
+    private Animator kAnimator;
+
     private Transform shopItemParent;
 
     // ここで、ShopItemParentのRectTransformを参照する
@@ -34,22 +38,26 @@ public class ShopList : MonoBehaviour
         // このスクリプトがアタッチされているオブジェクトのTransformを取得
         shopItemParent = transform;
 
+        kAnimator = kinoko.GetComponent<Animator>(); // kinokoのアニメーターを取得
         // 初期アイテムリストの表示
         ShowItemList(0);
     }
 
     public void ShowItemListWeapons()
     {
+        kAnimator.SetTrigger("tab");
         talk.text = "手にもつつどうぐですよ。";
         ShowItemList(0);
     }
     public void ShowItemListGlasses()
     {
+        kAnimator.SetTrigger("tab");
         talk.text = "すてきなめがねですよ。";
         ShowItemList(1);
     }
     public void ShowItemListHats()
     {
+        kAnimator.SetTrigger("tab");
         talk.text = "かわいいぼうしですよ。";
         ShowItemList(2);
     }

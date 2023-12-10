@@ -42,6 +42,8 @@ public class ShopItem : MonoBehaviour
         // Commentオブジェクトを探し、そのTMP_Textコンポーネントを取得
         TMP_Text talk = GameObject.Find("Comment").GetComponent<TMP_Text>();
 
+        conf.setIta();
+
         if (talk != null)
         {
             if (soldOut.activeSelf)
@@ -65,13 +67,15 @@ public class ShopItem : MonoBehaviour
         // Commentオブジェクトを探し、そのTMP_Textコンポーネントを取得
         TMP_Text talk = GameObject.Find("Comment").GetComponent<TMP_Text>();
 
+        conf.setIta();
+
         if (talk != null)
         {
             // クリックされたアイテムのメモをtalkテキストに表示
             talk.text = memoText + "\nかっていきますか？。";
         }
 
-        confirmation.transform.position = new Vector3(700, 400, transform.position.z);
+        confirmation.transform.position = new Vector3(700, 350, transform.position.z);
         // このShopItemにあるテキストを取得
         itemName.text = transform.Find("ItemName").GetComponent<TextMeshProUGUI>().text;
         int id = int.Parse(transform.Find("ID").GetComponent<TextMeshProUGUI>().text);
