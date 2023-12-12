@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-//        GameManager.sceneNo = (int)scene.World;       // デバッグ用
+        GameManager.sceneNo = (int)scene.World;       // デバッグ用
 //        GameManager.sceneNo = (int)scene.Typing;      // デバッグ用
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
 

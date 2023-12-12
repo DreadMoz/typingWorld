@@ -92,6 +92,17 @@ public class SaveData : ScriptableObject
         }
         return false;
     }
+    public bool existEquipment(int id)
+    {
+        for (int i = 0; i < equipment.Length; i++)
+        {
+            if (equipment[i] == id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     public void setMedals(string msg)
     {
         Debug.Log("setMedals msg: " + msg);

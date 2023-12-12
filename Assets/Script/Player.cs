@@ -11,6 +11,12 @@ public class Player : MonoBehaviour
     private GameObject typingRoom;
 
     [SerializeField]
+    private GameObject tiikawa;
+
+    [SerializeField]
+    private GameObject kinoko;
+
+    [SerializeField]
     private GameObject inventoryButton;
 
     [SerializeField]
@@ -62,6 +68,9 @@ public class Player : MonoBehaviour
 
         animator = GetComponent<Animator>();  // Playerのアニメーターを取得
         animator.SetInteger("anim", 1);       // アニメーションステートを1に設定 タイトルのアニメーションを抜ける
+
+        tiikawa.SetActive(false);
+        kinoko.SetActive(false);
 
         if (GameManager.sceneNo == (int)scene.World)
         {
@@ -131,10 +140,7 @@ public class Player : MonoBehaviour
             rankButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
             exitHouse.SetActive(true);
-
-            // ショップ画面への移動
-            transform.position = new Vector3(492, 45, 107.5f);
-            transform.rotation = Quaternion.Euler(0, -145, 0);
+            tiikawa.SetActive(true);
 
             // カメラ切り替え
             switchCam.SwitchCamera();
@@ -156,6 +162,8 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(true);
             rankButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
+            exitHouse.SetActive(false);
+            tiikawa.SetActive(false);
 
             // タイピングハウス前への移動
             transform.position = new Vector3(287, 1, 117);
@@ -179,10 +187,7 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(false);
             inventoryButton.GetComponent<OpenButton>().forceOpen();
             exitShop.SetActive(true);
-
-            // ショップ前への移動
-            transform.position = new Vector3(236, 1, 145);
-            transform.rotation = Quaternion.Euler(0, -60, 0);
+            kinoko.SetActive(true);
 
             // カメラ切り替え
             switchCam.SwitchCamera();
@@ -204,10 +209,12 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(true);
             inventoryButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
+            exitShop.SetActive(false);
+            kinoko.SetActive(false);
 
             // ショップ前への移動
-            transform.position = new Vector3(285, 1, 118);
-            transform.rotation = Quaternion.Euler(0, 47, 0);
+            transform.position = new Vector3(236, 1, 145);
+            transform.rotation = Quaternion.Euler(0, -60, 0);
 
             // カメラ切り替え
             switchCam.SwitchCamera();

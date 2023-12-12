@@ -141,7 +141,7 @@ public class ShopList : MonoBehaviour
         newItem.transform.Find("Memo").GetComponent<TextMeshProUGUI>().text = item.MyItemMemo;
         newItem.transform.Find("Price").GetComponent<TextMeshProUGUI>().text = item.MyItemPrice.ToString();
 
-        if (!gm.savedata.existInventory(item.MyItemNo))
+        if (!gm.savedata.existInventory(item.MyItemNo) && !gm.savedata.existEquipment(item.MyItemNo))
         {
             newItem.transform.Find("SoldOut").GetComponent<Image>().gameObject.SetActive(false);
         }
