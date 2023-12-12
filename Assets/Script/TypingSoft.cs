@@ -281,7 +281,7 @@ public class TypingSoft : MonoBehaviour
         isTimerRunning = true;
         isInputValid = true;
 
-        animator.SetBool("walk", true);
+        animator.SetBool("move", true);
     }
 
     void Update()
@@ -290,7 +290,7 @@ public class TypingSoft : MonoBehaviour
         if (isTimerRunning)
         {
             // 進んでいく フレームに依存しないTime.deltaTime
-            player.transform.position += new Vector3(1.7f * Time.deltaTime, 0, 0);
+            player.transform.position += new Vector3(0.15f * Time.deltaTime, 0, 0);
             player.transform.LookAt(targetCam.transform);   // カメラを向く
             player.transform.rotation *= Quaternion.Euler(0, -60, 0);
 
@@ -529,7 +529,7 @@ public class TypingSoft : MonoBehaviour
             animator.SetBool("walk", true);
 
             float run = animator.GetFloat("runSpeed");
-            if (run > 3)
+            if (run > 2)
             {
                 animator.SetTrigger("die2");
             }

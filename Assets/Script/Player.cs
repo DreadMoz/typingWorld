@@ -37,6 +37,11 @@ public class Player : MonoBehaviour
 
     public Camera playerCamera; // レイキャストに使用するカメラ
 
+    [SerializeField]
+    private GameObject exitHouse;
+    [SerializeField]
+    private GameObject exitShop;
+
     private Animator animator;
     private NavMeshAgent agent;
     private float speed = 8f;
@@ -60,6 +65,8 @@ public class Player : MonoBehaviour
 
         if (GameManager.sceneNo == (int)scene.World)
         {
+            exitHouse.SetActive(false);
+            exitShop.SetActive(false);
             transform.position = new Vector3(286, 1, 96);
             transform.rotation = Quaternion.Euler(0, 180, 0);
             // "Hi" トリガーアニメーションを開始
@@ -123,6 +130,19 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(false);
             rankButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
+            exitHouse.SetActive(true);
+
+            // ショップ画面への移動
+            transform.position = new Vector3(492, 45, 107.5f);
+            transform.rotation = Quaternion.Euler(0, -145, 0);
+
+            // カメラ切り替え
+            switchCam.SwitchCamera();
+
+            // "Bow" トリガーアニメーションを開始
+            pAnimator.SetTrigger("hi");
+
+            fadeDoor.StartFadeIn();
         }
         else if (typingWindow == -1)
         {
@@ -136,6 +156,14 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(true);
             rankButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
+
+            // タイピングハウス前への移動
+            transform.position = new Vector3(287, 1, 117);
+            transform.rotation = Quaternion.Euler(0, 47, 0);
+
+            // カメラ切り替え
+            switchCam.SwitchCamera();
+
             // "Bow" トリガーアニメーションを開始
             animator.SetTrigger("Bow");
         }
@@ -150,10 +178,11 @@ public class Player : MonoBehaviour
             rankButton.SetActive(false);
             inventoryButton.SetActive(false);
             inventoryButton.GetComponent<OpenButton>().forceOpen();
+            exitShop.SetActive(true);
 
-            // ショップ画面への移動
-            transform.position = new Vector3(492, 45, 107.5f);
-            transform.rotation = Quaternion.Euler(0, -145, 0);
+            // ショップ前への移動
+            transform.position = new Vector3(236, 1, 145);
+            transform.rotation = Quaternion.Euler(0, -60, 0);
 
             // カメラ切り替え
             switchCam.SwitchCamera();
@@ -177,8 +206,8 @@ public class Player : MonoBehaviour
             fadeDoor.StartFadeIn();
 
             // ショップ前への移動
-            transform.position = new Vector3(236, 1, 145);
-            transform.rotation = Quaternion.Euler(0, -60, 0);
+            transform.position = new Vector3(285, 1, 118);
+            transform.rotation = Quaternion.Euler(0, 47, 0);
 
             // カメラ切り替え
             switchCam.SwitchCamera();
