@@ -88,7 +88,7 @@ public class TitleSky : MonoBehaviour
         // 画面遷移
         if (!goNextScene && fade.IsFadeOutComplete())
         {
-            GameManager.sceneNo = (int)scene.World;      // ワールドシーンスタート
+            GameManager.SceneNo = (int)scene.World;      // ワールドシーンスタート
             SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             goNextScene = true;                   // 2回目以降の遷移を防ぐためのフラグを立てる
         }

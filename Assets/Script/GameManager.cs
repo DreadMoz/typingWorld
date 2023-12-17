@@ -11,10 +11,7 @@ enum scene
     Title = 0,
     World = 1,
     Typing = 2,
-    House = 3,
-    Shop = 4,
-    HouseE = 5,
-    ShopE = 6
+    House = 3
 }
 
 public class GameManager : MonoBehaviour
@@ -23,9 +20,12 @@ public class GameManager : MonoBehaviour
     public SaveData savedata;
     public Connection connection;
 
-    static public int sceneNo;      // ワールドシーンの状態番号
-    static public int kpm;          // 現在のkpm
-    static public int newKpm;       // 直近のタイピング結果のkpm
+    static public int SceneNo;              // ワールドシーンの状態番号
+    static public int Kpm;                  // 現在のkpm
+    static public int NewKpm;               // 直近のタイピング結果のkpm
+    static private int TypingDataId;        // タイピングデータのJson呼び出しID練習のファイル名は数字
+    static private string TypingDataName;   // タイピングデータのJson呼び出し用ファイル名
+    static private bool TypingRandom;       // タイピングをランダムでするかどうか
 
     [SerializeField]
     private StatusUI statusWindow;
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject player;        // プレイヤーオブジェクト
     public ChibiCat chibiCat;        // 猫ボディ 
+    public ChibiCat chibiCat2D;      // 猫ボディ 
     public GameObject cam;           // カメラ
     private Animator animator;       // Playerのアニメーター
     public GameObject inventory;
@@ -77,8 +78,25 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.sceneNo = (int)scene.World;       // デバッグ用
-//        GameManager.sceneNo = (int)scene.Typing;      // デバッグ用
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+
+        if (sceneName == "TitleScene")
+        {
+            GameManager.SceneNo = (int)scene.Title;
+        }
+        else if (sceneName == "WorldScene")
+        {
+            if (GameManager.SceneNo != (int)scene.House)
+            {
+                GameManager.SceneNo = (int)scene.World;
+            }
+        }
+        else if (sceneName == "TypingStage")
+        {
+            GameManager.SceneNo = (int)scene.Typing;
+        }
+        
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
 
         oldInventory = new int[64];
@@ -86,17 +104,48 @@ public class GameManager : MonoBehaviour
         oldEquip = new int[10];
         newEquip = new int[10];
 
+        // アニメーションステートが1最初のワールドの場合
+        if (SceneNo == (int)scene.World)
+        {
+            status.SetActive(false);
+            inventory.SetActive(false);
+            equip.SetActive(false);
+            ranking.SetActive(false);
+            typingRoom.SetActive(false);
+            shopRoom.SetActive(false);
+        }
+        // アニメーションステートが3タイピング後の場合
+        else if (SceneNo == (int)scene.House)
+        {
+            recalculateKpm();
+            inventory.SetActive(false);
+            equip.SetActive(false);
+            rankingButton.SetActive(false);
+            inventoryButton.SetActive(false);
+            status.SetActive(true);
+            ranking.SetActive(true);
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
+            ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
+            typingRoom.SetActive(true);
+            shopRoom.SetActive(false);
+        }
     }
     // Start is called before the first frame update
     void Start()
     {
         try
         {
-            if (sceneNo != (int)scene.Title)
+            if (SceneNo != (int)scene.Title)
             {
                 if (savedata.getEquipment()[(int)eq.CatBody] != 0)
                 {
                     chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                    if (chibiCat2D != null)
+                    {
+                        chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                    }
                 }
             }
 
@@ -107,33 +156,6 @@ public class GameManager : MonoBehaviour
             posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
             posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
 
-            // アニメーションステートが1最初のワールドの場合
-            if (sceneNo == (int)scene.World)
-            {
-                status.SetActive(false);
-                inventory.SetActive(false);
-                equip.SetActive(false);
-                ranking.SetActive(false);
-                typingRoom.SetActive(false);
-                shopRoom.SetActive(false);
-            }
-            // アニメーションステートが3タイピング後の場合
-            else if (sceneNo == (int)scene.House)
-            {
-                recalculateKpm();
-                inventory.SetActive(false);
-                equip.SetActive(false);
-                rankingButton.SetActive(false);
-                inventoryButton.SetActive(false);
-                status.SetActive(true);
-                ranking.SetActive(true);
-                float screenWidth = Screen.width;
-                float screenHeight = Screen.height;
-                status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
-                ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
-                typingRoom.SetActive(true);
-                shopRoom.SetActive(false);
-            }
             if (statusWindow)
             {
                 statusWindow.setStatus();
@@ -149,12 +171,12 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // アニメーションステートが1最初のワールドの場合
-        if (sceneNo == (int)scene.World)
+        if (SceneNo == (int)scene.World)
         {
             // インベントリボタンまたはIキーが押され、カウンタが0の場合
          //   if ((Input.GetKeyDown(KeyCode.I) || inventoryButton.isOpen()) && (count == 0))
             if (inventoryButton.GetComponent<OpenButton>().isOpen() && (count == 0))
-                {
+            {
                 count = windowOpenCount;
                 inventoryButton.GetComponent<OpenButton>().resetOpen();
 
@@ -316,7 +338,7 @@ public class GameManager : MonoBehaviour
             }
         }
         // アニメーションステートが0タイトルシーンの場合
-        if (sceneNo == (int)scene.Title)
+        if (SceneNo == (int)scene.Title)
         {
             // 1秒ごとにアニメーションを切り替える
             if (Time.time % 60 > 50)
@@ -382,9 +404,9 @@ public class GameManager : MonoBehaviour
 
     public void recalculateKpm()
     {
-        if (kpm > newKpm * kpmRatio)    // 今回の成績が一定の成績以上であれば
+        if (Kpm > NewKpm * kpmRatio)    // 今回の成績が一定の成績以上であれば
         {
-            kpm = savedata.updateKpm(newKpm);   // kpm更新
+            Kpm = savedata.updateKpm(NewKpm);   // kpm更新
 
             var fbKpms = new Dictionary<string, int>();
             for (int i = 0; i < savedata.getKpms().Length; i++)
@@ -405,6 +427,44 @@ public class GameManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public static void SetTypingDataId(int id)
+    {
+        TypingDataId = id * 3;
+    }
+
+    public static void SetTypingDataLevel(int no)
+    {
+        if (no == 0)
+        {
+            TypingRandom = false;
+        }
+        else
+        {
+            TypingRandom = true;
+            if (no == 1)
+            {
+                no = 0;
+            }
+        }
+        TypingDataId += no;
+        TypingDataName = TypingDataId.ToString();
+    }
+
+    public static int GetTypingDataId()
+    {
+        return TypingDataId;
+    }
+
+    public static string GetTypingDataName()
+    {
+        return TypingDataName;
+    }
+
+    public static bool IsTypingRandom()
+    {
+        return TypingRandom;
     }
 
     //htmlから直でsavedataにアクセスできないため

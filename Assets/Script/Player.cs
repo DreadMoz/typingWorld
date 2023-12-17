@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -48,13 +49,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject exitShop;
 
+    [SerializeField]
+    private TMP_Text talk;
+
+    [SerializeField]
+    private GameObject inventoryFilter;
+
     private Animator animator;
     private NavMeshAgent agent;
     private float speed = 8f;
     private int typingWindow = 0;
     private int shopWindow = 0;
 
-    // Start is called before the first frame update
     void Start()
     {
         if (!gm || !typingRoom || !inventoryButton || !rankButton || !itemShop || !status || !fade || !fadeDoor)
@@ -72,47 +78,30 @@ public class Player : MonoBehaviour
         tiikawa.SetActive(false);
         kinoko.SetActive(false);
 
-        if (GameManager.sceneNo == (int)scene.World)
+        if (GameManager.SceneNo == (int)scene.World)
         {
             exitHouse.SetActive(false);
             exitShop.SetActive(false);
+            inventoryFilter.SetActive(false);
             transform.position = new Vector3(286, 1, 96);
             transform.rotation = Quaternion.Euler(0, 180, 0);
-            // "Hi" トリガーアニメーションを開始
-            animator.SetTrigger("Hi");
+        
+            animator.SetTrigger("Hi");    // "Hi" トリガーアニメーションを開始
         }
-        else if (GameManager.sceneNo == (int)scene.House)
+        else if (GameManager.SceneNo == (int)scene.House)
         {
-            transform.position = new Vector3(252.2f, 9, -89);
-            transform.rotation = Quaternion.Euler(0, -145, 0);
-            // "Bow" トリガーアニメーションを開始
-            animator.SetTrigger("Hi");
+            if (GameManager.GetTypingDataId() < 0)
+            {
+                talk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
+            }
+            transform.position = new Vector3(287, 1, 117);   // タイピングハウス前位置
+            transform.rotation = Quaternion.Euler(0, 47, 0); // タイピングハウス前角度
+            exitHouse.SetActive(true);
+            exitShop.SetActive(false);
+            tiikawa.SetActive(true);
 
-            GameManager.sceneNo = (int)scene.World;
-        }
-        else if (GameManager.sceneNo == (int)scene.Shop)
-        {
-            // ここじゃないな
-            transform.position = new Vector3(252.2f, 9, -89);
-            transform.rotation = Quaternion.Euler(0, -145, 0);
-            // "Bow" トリガーアニメーションを開始
-            animator.SetTrigger("Hi");
-        }
-        else if (GameManager.sceneNo == (int)scene.HouseE)
-        {
-            transform.position = new Vector3(288, 1, 117);
-            transform.rotation = Quaternion.Euler(0, 35, 0);
-            // "Bow" トリガーアニメーションを開始
-            animator.SetTrigger("Bow");
-        }
-        else if (GameManager.sceneNo == (int)scene.ShopE)
-        {
-            transform.position = new Vector3(288, 1, 117);
-            transform.rotation = Quaternion.Euler(0, 35, 0);
-            // "Bow" トリガーアニメーションを開始
-            animator.SetTrigger("Bow");
-
-            GameManager.sceneNo = (int)scene.World;
+            switchCam.SwitchCamera();               // カメラ切り替え
+            GameManager.SceneNo = (int)scene.World; // ワールドシーン状態へ
         }
     }
 
@@ -165,9 +154,8 @@ public class Player : MonoBehaviour
             exitHouse.SetActive(false);
             tiikawa.SetActive(false);
 
-            // タイピングハウス前への移動
-            transform.position = new Vector3(287, 1, 117);
-            transform.rotation = Quaternion.Euler(0, 47, 0);
+            transform.position = new Vector3(287, 1, 117);   // タイピングハウス前位置
+            transform.rotation = Quaternion.Euler(0, 47, 0); // タイピングハウス前角度
 
             // カメラ切り替え
             switchCam.SwitchCamera();
@@ -212,9 +200,8 @@ public class Player : MonoBehaviour
             exitShop.SetActive(false);
             kinoko.SetActive(false);
 
-            // ショップ前への移動
-            transform.position = new Vector3(236, 1, 145);
-            transform.rotation = Quaternion.Euler(0, -60, 0);
+            transform.position = new Vector3(236, 1, 145);      // ショップ前場所
+            transform.rotation = Quaternion.Euler(0, -60, 0);   // ショップ前角度
 
             // カメラ切り替え
             switchCam.SwitchCamera();
@@ -314,6 +301,7 @@ public class Player : MonoBehaviour
         {
             if (!gm.getWindowOpen())
             {
+                talk.text = "タイピング練習場へようこそ！";
                 // "Hi" トリガーアニメーションを開始
                 animator.SetTrigger("Hi");
                 agent.destination = this.transform.position;
@@ -326,6 +314,8 @@ public class Player : MonoBehaviour
         {
             if (!gm.getWindowOpen())
             {
+                inventoryFilter.SetActive(true);
+                talk.text = "いらっしゃいませ！\nアイテムやさんだよ";
                 // "Hi" トリガーアニメーションを開始
                 animator.SetTrigger("Hi");
                 agent.destination = this.transform.position;
@@ -348,6 +338,7 @@ public class Player : MonoBehaviour
     }
     public void CloseShopDoor()
     {
+        inventoryFilter.SetActive(false);
         fadeDoor.StartFadeOut();
         shopWindow = -1;
     }

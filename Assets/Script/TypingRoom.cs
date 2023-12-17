@@ -20,7 +20,7 @@ public class TypingRoom : MonoBehaviour
 
     public void gotoTypingState()
     {
-        GameManager.sceneNo = (int)scene.Typing;
+        GameManager.SceneNo = (int)scene.Typing;
         SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
     }
 }

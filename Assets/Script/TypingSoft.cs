@@ -10,6 +10,7 @@ using System.Globalization;
 using static TypingSoft;
 using System.IO;
 using UnityEngine.Networking;
+using TMPro;
 
 public class TypingSoft : MonoBehaviour
 {
@@ -52,7 +53,7 @@ public class TypingSoft : MonoBehaviour
     //　ひらがな表示テキスト
     private Text UIH;
     //　ローマ字表示テキスト
-    private Text UIR;
+    private TMP_Text UIR;
     //　終了表示テキスト
     private Text END;
     //　カウントダウン表示テキスト
@@ -74,7 +75,7 @@ public class TypingSoft : MonoBehaviour
     private int indexOfString;
 
     //　入力した文字列テキスト
-    private Text UII;
+    private TMP_Text UII;
     //　正解キー数
     private int correctN;
     //　コンボ数
@@ -142,8 +143,8 @@ public class TypingSoft : MonoBehaviour
         //　テキストUIを取得
         UIJ = transform.Find("InputPanel/QuestionJ").GetComponent<Text>();
         UIH = transform.Find("InputPanel/QuestionH").GetComponent<Text>();
-        UIR = transform.Find("InputPanel/QuestionR").GetComponent<Text>();
-        UII = transform.Find("InputPanel/Input").GetComponent<Text>();
+        UIR = transform.Find("InputPanel/QuestionR").GetComponent<TMP_Text>();
+        UII = transform.Find("InputPanel/Input").GetComponent<TMP_Text>();
         END = transform.Find("InputPanel/End").GetComponent<Text>();
         UICountDown = transform.Find("InputPanel/CountDown").GetComponent<Text>();
         UIcorrect = transform.Find("DataPanel/Correct").GetComponent<Text>();
@@ -166,34 +167,45 @@ public class TypingSoft : MonoBehaviour
 
         AssistKeyboardObj.SetNextHighlight(" ");
 
-        LoadThemes();
-        ShuffleThemes();
+        if (LoadThemes(GameManager.GetTypingDataName()))
+        {
+            ShuffleThemes(GameManager.IsTypingRandom());
+        }
     }
 
-    void LoadThemes()
+    private bool LoadThemes(string fileName)
     {
-        TextAsset textAsset = Resources.Load<TextAsset>("TextPrompts/nara");
+        string typingDataName = "TextPrompts/" + fileName;
+        TextAsset textAsset = Resources.Load<TextAsset>(typingDataName);
         if (textAsset != null)
         {
             themeCollection = JsonUtility.FromJson<ThemeCollection>(textAsset.text);
+            return true;
         }
         else
         {
-            Debug.LogError("Cannot find file!");
+            Debug.Log("Cannot find file!");
+            GameManager.SetTypingDataId(-1);
+            GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
+            SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+            return false;
         }
     }
 
-    void ShuffleThemes()
+    private void ShuffleThemes(bool shuffle = true)
     {
         if (themeCollection != null && themeCollection.themes.Length > 0)
         {
             shuffledThemes = new List<Theme>(themeCollection.themes);
-            for (int i = 0; i < shuffledThemes.Count; i++)
+            if (shuffle)
             {
-                Theme temp = shuffledThemes[i];
-                int randomIndex = UnityEngine.Random.Range(i, shuffledThemes.Count);
-                shuffledThemes[i] = shuffledThemes[randomIndex];
-                shuffledThemes[randomIndex] = temp;
+                for (int i = 0; i < shuffledThemes.Count; i++)
+                {
+                    Theme temp = shuffledThemes[i];
+                    int randomIndex = UnityEngine.Random.Range(i, shuffledThemes.Count);
+                    shuffledThemes[i] = shuffledThemes[randomIndex];
+                    shuffledThemes[randomIndex] = temp;
+                }
             }
         }
         else
@@ -290,7 +302,7 @@ public class TypingSoft : MonoBehaviour
         if (isTimerRunning)
         {
             // 進んでいく フレームに依存しないTime.deltaTime
-            player.transform.position += new Vector3(0.15f * Time.deltaTime, 0, 0);
+            player.transform.position += new Vector3(1f * Time.deltaTime, 0, 0);
             player.transform.LookAt(targetCam.transform);   // カメラを向く
             player.transform.rotation *= Quaternion.Euler(0, -60, 0);
 
@@ -372,8 +384,8 @@ public class TypingSoft : MonoBehaviour
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
             if (inputStr.Equals(" "))
             {
-                int.TryParse(UIkpm.text, out GameManager.newKpm);
-                GameManager.sceneNo = (int)scene.House;   // ワールドシーンショップ前
+                int.TryParse(UIkpm.text, out GameManager.NewKpm);
+                GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
                 SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             }
         }

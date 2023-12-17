@@ -5,6 +5,9 @@ using UnityEngine;
 public class Hand : MonoBehaviour
 {
     private Item grabbingItem;
+    private bool equip;
+    private int slotNo;
+
     void Update()
     {
         this.transform.position = Input.mousePosition;
@@ -29,5 +32,25 @@ public class Hand : MonoBehaviour
     public bool IsHavingItem()
     {
         return grabbingItem != null;
+    }
+
+    public void setEquip(bool equipFlg)
+    {
+        equip = equipFlg;
+    }
+
+    public void setSlotNo(int no)
+    {
+        slotNo = no;
+    }
+
+    public bool IsEquip()
+    {
+        return equip;
+    }
+
+    public int ItemSlotNo()
+    {
+        return slotNo;
     }
 }

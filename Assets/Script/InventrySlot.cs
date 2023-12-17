@@ -41,13 +41,6 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
     void Start()
     {
-        // GameObjectの兄弟の中でのインデックスを取得してslotNoに割り当てる
-        slotNo = transform.GetSiblingIndex();
-
-        soubiSlot = false;
-        // 親が'SoubiParent'タグを持っているかどうかをチェック
-        soubiSlot = transform.parent.CompareTag("SoubiParent");
-
         canvas = GameObject.Find("Canvas");
         if (!canvas)
         {
@@ -109,6 +102,13 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     {
         MyItem = item;
 
+        // GameObjectの兄弟の中でのインデックスを取得してslotNoに割り当てる
+        slotNo = transform.GetSiblingIndex();
+
+        soubiSlot = false;
+        // 親が'SoubiParent'タグを持っているかどうかをチェック
+        soubiSlot = transform.parent.CompareTag("SoubiParent");
+
         if (item != null)
         {
             // 画像の透明度を設定
@@ -164,6 +164,10 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
         // Handにアイテムを設定
         hand.SetGrabbingItem(MyItem);
+
+        hand.setEquip(soubiSlot);
+
+        hand.setSlotNo(slotNo);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -173,8 +177,12 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
         draggingObj.transform.position = hand.transform.position + new Vector3(10, 10, 0);
     }
 
+    // ドラッグが終わって特定の枠上でドロップをした
     public void OnDrop(PointerEventData eventData)
     {
+        // Handにアイテムがなければ何もせずにreturn
+        if (!hand.IsHavingItem()) return;
+
         if (soubiSlot)
         {
             if (slotNo == 0 | slotNo == 3)
@@ -199,13 +207,22 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
                 }
             }
         }
-        // Handにアイテムがなければ何もせずにreturn
-        if (!hand.IsHavingItem()) return;
+        // Hnadが装備から持ってきていたら
+        if (hand.IsEquip())
+        {
+            if (MyItem)    // Drop先にアイテムがある場合
+            {
+                if (hand.GetGrabbingItemType() != MyItem.MyItemType)   // 同じ種別のアイテムとしか交換できない
+                {
+                    return;
+                }
+            }
+        }
 
         // Handからアイテムを取得
         Item gotItem = hand.GetGrabbingItem();
 
-        // 交換先としてアイテムをHandに設定
+        // Drop先のアイテムMyItemをHandに持ち替え
         hand.SetGrabbingItem(MyItem);
 
         SetItem(gotItem);
