@@ -9,6 +9,8 @@ public class DetailMenu : MonoBehaviour
     private int level;
 
     [SerializeField]
+    private GameObject memo;
+    [SerializeField]
     private GameObject star0;
     [SerializeField]
     private GameObject star1;
@@ -23,10 +25,7 @@ public class DetailMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        star0.SetActive(true);
-        star1.SetActive(false);
-        star2.SetActive(false);
-        star3.SetActive(false);
+        resetStars();
     }
 
     // Update is called once per frame
@@ -40,9 +39,11 @@ public class DetailMenu : MonoBehaviour
         id = GameManager.GetTypingDataId();
         level = transform.GetSiblingIndex();    // GameObjectの兄弟の中でのインデックスを取得
         int medal = gm.savedata.getMedals()[id + level];
+
         switch (medal)
         {
             case 0:
+                memo.SetActive(false);
                 star0.SetActive(false);
                 break;
             case 1:

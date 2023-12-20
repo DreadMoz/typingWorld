@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class TypingDetail : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class TypingDetail : MonoBehaviour
     private GameObject stage2;
     [SerializeField]
     private GameObject stage3;
+    [SerializeField]
+    private TextMeshProUGUI memo;
 
     private DetailMenu menu1;
     private DetailMenu menu2;
@@ -30,12 +33,17 @@ public class TypingDetail : MonoBehaviour
         
     }
 
+    public void setComment(string comment)
+    {
+        memo.text = comment + "\nのれんしゅう";
+    }
+
     public void show()
     {
-        transform.position = new Vector3(700, 1500, transform.position.z);
         menu1.setStars();
         menu2.setStars();
         menu3.setStars();
+        transform.position = new Vector3(700, 350, transform.position.z);
     }
 
     public void hide()

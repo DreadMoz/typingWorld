@@ -2,13 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;  // UI関連のクラスを使用するための名前空間
+using TMPro;
 
 public class RoomMenu : MonoBehaviour
 {
     private TypingDetail typingDetail;
-
+    private Button thisButton;
     private int id;
 
+    [SerializeField]
+    private GameObject memo;
     [SerializeField]
     private GameObject star0;
     [SerializeField]
@@ -20,32 +24,42 @@ public class RoomMenu : MonoBehaviour
 
     [SerializeField]
     private GameManager gm;
-    [SerializeField]
-    private GameObject MenuParent;
+
     private Practice practice;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        thisButton = this.GetComponent<Button>();
         resetStars();
         typingDetail = FindObjectOfType<TypingDetail>();
+        practice = GetComponentInParent<Practice>();
         id = transform.GetSiblingIndex();    // GameObjectの兄弟の中でのインデックスを取得
-        practice = MenuParent.GetComponent<Practice>();
     }
 
-    // Update is called once per frame
+    private void Start()
+    {
+        int starNum = practice.getMedalTop(id);
+        setStars(starNum);
+    }
     void Update()
     {
 
     }
 
-    public void setStars()
+    public void setStars(int stars)
     {
-        
-        switch (practice.medalTop[id])
+        if (thisButton == null)
+        {
+            thisButton = GetComponent<Button>();
+        }
+        resetStars();
+
+        switch (stars)
         {
             case 0:
+                memo.SetActive(false);
                 star0.SetActive(false);
+                thisButton.interactable = false;
                 break;
             case 1:
                 break;
@@ -66,16 +80,19 @@ public class RoomMenu : MonoBehaviour
 
     public void resetStars()
     {
+        memo.SetActive(true);
         star0.SetActive(true);
         star1.SetActive(false);
         star2.SetActive(false);
         star3.SetActive(false);
+        thisButton.interactable = true;
     }
 
     public void showDetail()
     {
         GameManager.SetTypingDataId(id);
+        TextMeshProUGUI comment = this.GetComponentInChildren<TextMeshProUGUI>();
+        typingDetail.setComment(comment.text);
         typingDetail.show();
-        typingDetail.transform.position = new Vector3(700, 350, transform.position.z);
     }
 }
