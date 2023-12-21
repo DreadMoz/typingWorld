@@ -92,6 +92,7 @@ public class RoomMenu : MonoBehaviour
     {
         GameManager.SetTypingDataId(id);
         TextMeshProUGUI comment = this.GetComponentInChildren<TextMeshProUGUI>();
+        typingDetail = FindObjectOfType<TypingDetail>();
         typingDetail.setComment(comment.text);
         typingDetail.show();
     }

@@ -19,8 +19,7 @@ public class TypingDetail : MonoBehaviour
     private DetailMenu menu2;
     private DetailMenu menu3;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         menu1 = stage1.GetComponent<DetailMenu>();
         menu2 = stage2.GetComponent<DetailMenu>();

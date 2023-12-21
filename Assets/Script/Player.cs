@@ -39,6 +39,9 @@ public class Player : MonoBehaviour
     private SwitchCam switchCam;
 
     [SerializeField]
+    private Practice practice;
+
+    [SerializeField]
     private GameObject housePlayer;
     private Animator pAnimator;
 
@@ -99,6 +102,7 @@ public class Player : MonoBehaviour
             exitHouse.SetActive(true);
             exitShop.SetActive(false);
             tiikawa.SetActive(true);
+            practice.startOpenDetail();     // 練習モードの時詳細画面を表示させる
 
             switchCam.SwitchCamera();               // カメラ切り替え
             GameManager.SceneNo = (int)scene.World; // ワールドシーン状態へ

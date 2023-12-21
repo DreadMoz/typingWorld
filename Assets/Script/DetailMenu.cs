@@ -25,7 +25,6 @@ public class DetailMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        resetStars();
     }
 
     // Update is called once per frame
@@ -39,6 +38,8 @@ public class DetailMenu : MonoBehaviour
         id = GameManager.GetTypingDataId();
         level = transform.GetSiblingIndex();    // GameObjectの兄弟の中でのインデックスを取得
         int medal = gm.savedata.getMedals()[id + level];
+
+        resetStars();
 
         switch (medal)
         {
@@ -73,7 +74,6 @@ public class DetailMenu : MonoBehaviour
 
     public void chooseTypingLevel()
     {
-        resetStars();
         GameManager.SetTypingDataLevel(level);
 
         GameManager.SceneNo = (int)scene.Typing;

@@ -59,4 +59,17 @@ public class Practice : MonoBehaviour
     {
         return medalTop[id];
     }
+
+    // タイピング終了後の詳細画面表示
+    public void startOpenDetail()
+    {
+        int id = GameManager.GetTypingDataId();
+        if ( id >= 0)
+        {
+            int roomId = id / 3;
+            Transform childTransform = gameObject.transform.GetChild(roomId);
+            RoomMenu roommenu = childTransform.GetComponent<RoomMenu>();
+            roommenu.showDetail();
+        }
+    }
 }
