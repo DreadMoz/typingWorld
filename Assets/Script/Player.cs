@@ -5,58 +5,26 @@ using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    private GameManager gm;
+    [SerializeField] private GameManager gm;
+    [SerializeField] private GameObject typingRoom;
+    [SerializeField] private GameObject tiikawa;
+    [SerializeField] private GameObject kinoko;
+    [SerializeField] private GameObject inventoryButton;
+    [SerializeField] private GameObject rankButton;
+    [SerializeField] private GameObject itemShop;
+    [SerializeField] private GameObject status;
+    [SerializeField] private Fade fade;
+    [SerializeField] private Fade fadeDoor;
+    [SerializeField] private SwitchCam switchCam;
+    [SerializeField] private Practice practice;
+    [SerializeField] private GameObject housePlayer;
+    [SerializeField] private GameObject exitHouse;
+    [SerializeField] private GameObject exitShop;
+    [SerializeField] private TMP_Text talk;
+    [SerializeField] private GameObject inventoryFilter;
 
-    [SerializeField]
-    private GameObject typingRoom;
-
-    [SerializeField]
-    private GameObject tiikawa;
-
-    [SerializeField]
-    private GameObject kinoko;
-
-    [SerializeField]
-    private GameObject inventoryButton;
-
-    [SerializeField]
-    private GameObject rankButton;
-
-    [SerializeField]
-    private GameObject itemShop;
-
-    [SerializeField]
-    private GameObject status;
-
-    [SerializeField]
-    private Fade fade;
-
-    [SerializeField]
-    private Fade fadeDoor;
-
-    [SerializeField]
-    private SwitchCam switchCam;
-
-    [SerializeField]
-    private Practice practice;
-
-    [SerializeField]
-    private GameObject housePlayer;
     private Animator pAnimator;
-
     public Camera playerCamera; // レイキャストに使用するカメラ
-
-    [SerializeField]
-    private GameObject exitHouse;
-    [SerializeField]
-    private GameObject exitShop;
-
-    [SerializeField]
-    private TMP_Text talk;
-
-    [SerializeField]
-    private GameObject inventoryFilter;
 
     private Animator animator;
     private NavMeshAgent agent;
@@ -93,12 +61,12 @@ public class Player : MonoBehaviour
         }
         else if (GameManager.SceneNo == (int)scene.House)
         {
-            if (GameManager.GetTypingDataId() < 0)
+            if (GameManager.TypingDataId < 0)
             {
                 talk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
             }
-            transform.position = new Vector3(287, 1, 117);   // タイピングハウス前位置
-            transform.rotation = Quaternion.Euler(0, 47, 0); // タイピングハウス前角度
+            transform.position = new Vector3(288, 1, 113);   // タイピングハウス前位置
+            transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
             exitHouse.SetActive(true);
             exitShop.SetActive(false);
             tiikawa.SetActive(true);
@@ -158,8 +126,8 @@ public class Player : MonoBehaviour
             exitHouse.SetActive(false);
             tiikawa.SetActive(false);
 
-            transform.position = new Vector3(287, 1, 117);   // タイピングハウス前位置
-            transform.rotation = Quaternion.Euler(0, 47, 0); // タイピングハウス前角度
+            transform.position = new Vector3(288, 1, 113);   // タイピングハウス前位置
+            transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
 
             // カメラ切り替え
             switchCam.SwitchCamera();
@@ -204,8 +172,8 @@ public class Player : MonoBehaviour
             exitShop.SetActive(false);
             kinoko.SetActive(false);
 
-            transform.position = new Vector3(236, 1, 145);      // ショップ前場所
-            transform.rotation = Quaternion.Euler(0, -60, 0);   // ショップ前角度
+            transform.position = new Vector3(238.5f, 1, 141.4f);      // ショップ前場所
+            transform.rotation = Quaternion.Euler(0, -57, 0);   // ショップ前角度
 
             // カメラ切り替え
             switchCam.SwitchCamera();
@@ -328,6 +296,10 @@ public class Player : MonoBehaviour
                 shopWindow = 1;
             }
         }
+        else if (col.gameObject.CompareTag("InvisibleFence"))
+        {
+
+        }
         else if (col.gameObject.name != "Terrain")
         {
             // "Damage" トリガーアニメーションを開始
@@ -335,6 +307,27 @@ public class Player : MonoBehaviour
             agent.destination = this.transform.position;
         }
     }
+
+    void OnCollisionStay(Collision col)
+    {
+        // 接触している間中行いたい処理
+        if (col.gameObject.CompareTag("InvisibleFence"))
+        {
+            animator.SetBool("Walk", true);
+            agent.speed = speed/4;
+        }
+    }
+
+    void OnCollisionExit(Collision col)
+    {
+        if (col.gameObject.CompareTag("InvisibleFence"))
+        {
+            // 通り抜け不可処理解除追加予定
+            animator.SetBool("Walk", false);
+            agent.speed = speed;
+        }
+    }
+
     public void CloseTypingDoor()
     {
         fadeDoor.StartFadeOut();

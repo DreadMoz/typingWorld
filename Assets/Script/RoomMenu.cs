@@ -38,16 +38,16 @@ public class RoomMenu : MonoBehaviour
 
     private void Start()
     {
-        int starNum = practice.getMedalTop(id);
-        setStars(starNum);
+        showStars();
     }
     void Update()
     {
 
     }
 
-    public void setStars(int stars)
+    public void showStars()
     {
+        int stars = practice.getMedalTop(id);
         if (thisButton == null)
         {
             thisButton = GetComponent<Button>();
@@ -80,17 +80,17 @@ public class RoomMenu : MonoBehaviour
 
     public void resetStars()
     {
+        thisButton.interactable = true;
         memo.SetActive(true);
         star0.SetActive(true);
         star1.SetActive(false);
         star2.SetActive(false);
         star3.SetActive(false);
-        thisButton.interactable = true;
     }
 
     public void showDetail()
     {
-        GameManager.SetTypingDataId(id);
+        GameManager.TypingDataId = id * 3;
         TextMeshProUGUI comment = this.GetComponentInChildren<TextMeshProUGUI>();
         typingDetail = FindObjectOfType<TypingDetail>();
         typingDetail.setComment(comment.text);

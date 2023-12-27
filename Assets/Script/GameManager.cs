@@ -20,17 +20,26 @@ public class GameManager : MonoBehaviour
     public SaveData savedata;
     public Connection connection;
 
-    static public int SceneNo;              // ワールドシーンの状態番号
-    static public int Kpm;                  // 現在のkpm
-    static public int NewKpm;               // 直近のタイピング結果のkpm
-    static private int TypingDataId;        // タイピングデータのJson呼び出しID練習のファイル名は数字
-    static private string TypingDataName;   // タイピングデータのJson呼び出し用ファイル名
-    static private bool TypingRandom;       // タイピングをランダムでするかどうか
+    static private int sceneNo;             // ワールドシーンの状態番号
+    static private int kpm;                 // 現在のkpm
+    static private int newKpm;              // 直近のタイピング結果のkpm
+    static private int numAnswers;          // 回答数
+    static private float answerRate;        // 解答率
+    static private int typingDataId;        // タイピングデータのJson呼び出しID練習のファイル名は数字
+    static private string typingDataName;   // タイピングデータのJson呼び出し用ファイル名
+    static private bool typingRandom;       // タイピングをランダムでするかどうか
 
-    [SerializeField]
-    private StatusUI statusWindow;
-    [SerializeField]
-    private float kpmRatio = 0.8f;
+    static public int SceneNo { get => sceneNo; set => sceneNo = value; }
+    static public int Kpm { get => kpm; set => kpm = value; }
+    static public int NewKpm { get => newKpm; set => newKpm = value; }
+    static public int NumAnswers { get => numAnswers; set => numAnswers = value; }
+    static public float AnswerRate { get => answerRate; set => answerRate = value; }
+    static public int TypingDataId { get => typingDataId; set => typingDataId = value; }
+    static public string TypingDataName { get => typingDataName; set => typingDataName = value; }
+    static public bool TypingRandom { get => typingRandom; set => typingRandom = value; }
+
+    [SerializeField] private StatusUI statusWindow;
+    [SerializeField] private float kpmRatio = 0.8f;
 
     public GameObject player;        // プレイヤーオブジェクト
     public ChibiCat chibiCat;        // 猫ボディ 
@@ -118,6 +127,8 @@ public class GameManager : MonoBehaviour
         else if (SceneNo == (int)scene.House)
         {
             recalculateKpm();
+            updateStars();
+
             inventory.SetActive(false);
             equip.SetActive(false);
             rankingButton.SetActive(false);
@@ -416,6 +427,35 @@ public class GameManager : MonoBehaviour
             connection.saveFbKpm(fbKpms);
         }
     }
+    private void updateStars()
+    {
+        int stars = judgeStar(AnswerRate);
+        if (savedata.getMedals()[TypingDataId] < stars)
+        {
+            savedata.setMedalIndex(TypingDataId, stars);
+        }
+    }
+
+    private int judgeStar(float rate)
+    {
+        if (rate > 0.95)
+        {
+            return 4;       // 星3つ
+        }
+        else if (rate > 0.75)
+        {
+            return 3;       // 星2つ
+        }
+        else if (rate > 0.4)
+        {
+            return 2;       // 星1つ
+        }
+        else
+        {
+            return 1;       // 星0こ
+        }
+    }
+
     public int getCameraMove()
     {
         return cameraMove;
@@ -429,13 +469,10 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    public static void SetTypingDataId(int id)
-    {
-        TypingDataId = id * 3;
-    }
-
     public static void SetTypingDataLevel(int no)
     {
+        TypingDataId += no;
+        int fileNameId = TypingDataId;
         if (no == 0)
         {
             TypingRandom = false;
@@ -445,33 +482,17 @@ public class GameManager : MonoBehaviour
             TypingRandom = true;
             if (no == 1)
             {
-                no = 0;
+                fileNameId--;
             }
         }
-        TypingDataId += no;
-        TypingDataName = TypingDataId.ToString();
-    }
-
-    public static int GetTypingDataId()
-    {
-        return TypingDataId;
-    }
-
-    public static string GetTypingDataName()
-    {
-        return TypingDataName;
-    }
-
-    public static bool IsTypingRandom()
-    {
-        return TypingRandom;
+        TypingDataName = fileNameId.ToString();
     }
 
     //htmlから直でsavedataにアクセスできないため
-    public void setUserName(string msg) { savedata.setUserName(msg);}
-    public void setStatus(string msg) { savedata.setStatus(msg);}
-    public void setEquipment(string msg) { savedata.setEquipment(msg);}
-    public void setInventory(string msg) { savedata.setInventory(msg);}
-    public void setMedals(string msg) { savedata.setMedals(msg);}
-    public void setKpm(string msg) { savedata.setKpm(msg);}
+    public void setUserName(string msg) { savedata.setUserNameFromFireBase(msg);}
+    public void setStatus(string msg) { savedata.setStatusFromFireBase(msg);}
+    public void setEquipment(string msg) { savedata.setEquipmentFromFireBase(msg);}
+    public void setInventory(string msg) { savedata.setInventoryFromFireBase(msg);}
+    public void setMedals(string msg) { savedata.setMedalsFromFireBase(msg);}
+    public void setKpm(string msg) { savedata.setKpmFromFireBase(msg);}
 }

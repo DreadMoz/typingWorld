@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;  // UI関連のクラスを使用するための名前空間
 
 public class DetailMenu : MonoBehaviour
 {
+    private Button thisButton;
     private int id;
     private int level;
 
@@ -22,9 +24,9 @@ public class DetailMenu : MonoBehaviour
     [SerializeField]
     private GameManager gm;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        thisButton = this.GetComponent<Button>();
     }
 
     // Update is called once per frame
@@ -33,11 +35,11 @@ public class DetailMenu : MonoBehaviour
 
     }
 
-    public void setStars()
+    public void showStars()
     {
-        id = GameManager.GetTypingDataId();
+        id = GameManager.TypingDataId / 3;
         level = transform.GetSiblingIndex();    // GameObjectの兄弟の中でのインデックスを取得
-        int medal = gm.savedata.getMedals()[id + level];
+        int medal = gm.savedata.getMedals()[id * 3 + level];
 
         resetStars();
 
@@ -46,6 +48,7 @@ public class DetailMenu : MonoBehaviour
             case 0:
                 memo.SetActive(false);
                 star0.SetActive(false);
+                thisButton.interactable = false;
                 break;
             case 1:
                 break;
@@ -66,6 +69,7 @@ public class DetailMenu : MonoBehaviour
 
     public void resetStars()
     {
+        thisButton.interactable = true;
         star0.SetActive(true);
         star1.SetActive(false);
         star2.SetActive(false);

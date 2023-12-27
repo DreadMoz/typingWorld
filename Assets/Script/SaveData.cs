@@ -27,15 +27,11 @@ public class SaveData : ScriptableObject
     private int[] kpms = new int[10];
 
 
-    public void setUserName(string msg)
+    public void setUserNameFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
     {
         userName = msg;
     }
-    public void setStatusIndex(int index, int value)
-    {
-        status[index] = value;
-    }
-    public void setStatus(string msg)       //htmlからデータロード時に真っ先に呼ばれる
+    public void setStatusFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
     {
         Debug.Log("setStatus msg: " + msg);
         string[] intStrings = msg.Split(',');
@@ -44,7 +40,7 @@ public class SaveData : ScriptableObject
             status[i] = int.Parse(intStrings[i]);
         }
     }
-    public void setEquipment(string msg)       //htmlからデータロード時に真っ先に呼ばれる
+    public void setEquipmentFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
     {
         Debug.Log("setEquipment msg: " + msg);
         string[] intStrings = msg.Split(',');
@@ -53,11 +49,7 @@ public class SaveData : ScriptableObject
             equipment[i] = int.Parse(intStrings[i]);
         }
     }
-    public void setEquipmentIndex(int index, int value)       //htmlからデータロード時に真っ先に呼ばれる
-    {
-        equipment[index] = value;
-    }
-    public void setInventory(string msg)
+    public void setInventoryFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
     {
         Debug.Log("setInventory msg: " + msg);
         string[] intStrings = msg.Split(',');
@@ -66,10 +58,45 @@ public class SaveData : ScriptableObject
             inventory[i] = int.Parse(intStrings[i]);
         }
     }
+    public void setMedalsFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
+    {
+        Debug.Log("setMedals msg: " + msg);
+        string[] intStrings = msg.Split(',');
+        for (int i = 0; i < intStrings.Length; i++)
+        {
+            medals[i] = int.Parse(intStrings[i]);
+        }
+    }
+    public void setKpmFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
+    {
+        Debug.Log("setKpm msg: " + msg);
+        string[] intStrings = msg.Split(',');
+        for (int i = 0; i < intStrings.Length; i++)
+        {
+            kpms[i] = int.Parse(intStrings[i]);
+        }
+    }
+
+    public void setStatusIndex(int index, int value)
+    {
+        status[index] = value;
+    }
+
+    public void setEquipmentIndex(int index, int value)
+    {
+        equipment[index] = value;
+    }
+
     public void setInventoryIndex(int index, int value)
     {
         inventory[index] = value;
     }
+
+    public void setMedalIndex(int index, int value)
+    {
+        medals[index] = value;
+    }
+
     public int getBlankInventoryIndex()
     {
         for (int i = 0; i < inventory.Length; i++)
@@ -80,46 +107,6 @@ public class SaveData : ScriptableObject
             }
         }
         return -1;
-    }
-    public bool existInventory(int id)
-    {
-        for (int i = 0; i < inventory.Length; i++)
-        {
-            if (inventory[i] == id)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool existEquipment(int id)
-    {
-        for (int i = 0; i < equipment.Length; i++)
-        {
-            if (equipment[i] == id)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void setMedals(string msg)
-    {
-        Debug.Log("setMedals msg: " + msg);
-        string[] intStrings = msg.Split(',');
-        for (int i = 0; i < intStrings.Length; i++)
-        {
-            medals[i] = int.Parse(intStrings[i]);
-        }
-    }
-    public void setKpm(string msg)
-    {
-        Debug.Log("setKpm msg: " + msg);
-        string[] intStrings = msg.Split(',');
-        for (int i = 0; i < intStrings.Length; i++)
-        {
-            kpms[i] = int.Parse(intStrings[i]);
-        }
     }
     public string getUserName()
     {
@@ -145,6 +132,31 @@ public class SaveData : ScriptableObject
     {
         return kpms;
     }
+
+    public bool existInventory(int id)
+    {
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (inventory[i] == id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool existEquipment(int id)
+    {
+        for (int i = 0; i < equipment.Length; i++)
+        {
+            if (equipment[i] == id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int updateKpm(int newKpm)
     {
         // 要素1から9までを0から8に移動

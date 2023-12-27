@@ -98,6 +98,8 @@ public class TypingSoft : MonoBehaviour
     //　コンボ表示用テキストUI
     private Text UIcombo;
 
+    // 回答数
+    private int answers;
     //　正解率
     private float correctAR;
     //　正解率表示用テキストUI
@@ -163,13 +165,14 @@ public class TypingSoft : MonoBehaviour
         correctN = 0;
         comboN = 0;
         mistakeN = 0;
+        answers = 0;
         //        UIcorrectAR.text = correctAR.ToString();
 
         AssistKeyboardObj.SetNextHighlight(" ");
 
-        if (LoadThemes(GameManager.GetTypingDataName()))
+        if (LoadThemes(GameManager.TypingDataName))
         {
-            ShuffleThemes(GameManager.IsTypingRandom());
+            ShuffleThemes(GameManager.TypingRandom);
         }
     }
 
@@ -185,7 +188,7 @@ public class TypingSoft : MonoBehaviour
         else
         {
             Debug.Log("Cannot find file!");
-            GameManager.SetTypingDataId(-1);
+            GameManager.TypingDataId = -1;
             GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
             SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             return false;
@@ -384,7 +387,9 @@ public class TypingSoft : MonoBehaviour
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
             if (inputStr.Equals(" "))
             {
-                int.TryParse(UIkpm.text, out GameManager.NewKpm);
+                GameManager.NewKpm = (int)kpm;
+                GameManager.NumAnswers = answers;
+                GameManager.AnswerRate = correctAR;
                 GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
                 SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             }
@@ -672,7 +677,7 @@ public class TypingSoft : MonoBehaviour
     {
         // タイプした文字を緑色に
         UII.text = $"<color=#20A01D>{UII.text}</color>";
-
+        answers++;
         // 次の文章
         StartCoroutine(ChangeSentence());
     }

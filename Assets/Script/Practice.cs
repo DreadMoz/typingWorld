@@ -21,6 +21,18 @@ public class Practice : MonoBehaviour
     private void setStars()
     {
         int[] medals = gm.savedata.getMedals();
+        for (int i=0; i < medals.Length; i++)
+        {
+            if (i < medals.Length - 1)    // 次があればステージオープン
+            {
+                if ((medals[i] > 2) && (medals[i + 1] == 0))    // 星2つ以上で次がクローズだったら
+                {
+                    gm.savedata.setMedalIndex(i + 1, 1);        // オープン
+                    medals[i + 1] = 1;
+                    Debug.Log("Oepned detail id:" + (i + 1));
+                }
+            }
+        }
         medalTop = new int[medalTopNum];
         medalSum = new int[medalTopNum];
 
@@ -33,11 +45,20 @@ public class Practice : MonoBehaviour
             {
                 medalTop[i] = 4;    // 星3つ
             }
-            else if (medalSum[i] > 7)
+            else if (medalSum[i] > 9)
             {
                 medalTop[i] = 3;    // 星2つ
+                if (i < medalTopNum - 1)    // 次があればステージオープン
+                {
+                    if (medalTop[i+1] == 0)
+                    {
+                        medalTop[i + 1] = 1;
+                        gm.savedata.setMedalIndex((i + 1) * 3, 1);
+                        Debug.Log("Opend stage id:" + (i + 1));
+                    }
+                }
             }
-            else if (medalSum[i] > 1)
+            else if (medalSum[i] > 2)
             {
                 medalTop[i] = 2;    // 星1つ
             }
@@ -63,13 +84,26 @@ public class Practice : MonoBehaviour
     // タイピング終了後の詳細画面表示
     public void startOpenDetail()
     {
-        int id = GameManager.GetTypingDataId();
+        int id = GameManager.TypingDataId;
+        float answerRate = GameManager.AnswerRate;
+        
         if ( id >= 0)
         {
             int roomId = id / 3;
             Transform childTransform = gameObject.transform.GetChild(roomId);
             RoomMenu roommenu = childTransform.GetComponent<RoomMenu>();
             roommenu.showDetail();
+            updateRoomMenu();
+        }
+    }
+
+    private void updateRoomMenu()       // ルームメニューの更新
+    {
+        for (int no = 0; no < medalTopNum; no++)
+        {
+            Transform childTransform = gameObject.transform.GetChild(no);
+            RoomMenu roommenu = childTransform.GetComponent<RoomMenu>();
+            roommenu.showStars();
         }
     }
 }

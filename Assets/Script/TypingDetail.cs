@@ -39,9 +39,9 @@ public class TypingDetail : MonoBehaviour
 
     public void show()
     {
-        menu1.setStars();
-        menu2.setStars();
-        menu3.setStars();
+        menu1.showStars();
+        menu2.showStars();
+        menu3.showStars();
         transform.position = new Vector3(700, 350, transform.position.z);
     }
 
