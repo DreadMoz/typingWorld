@@ -106,6 +106,7 @@ public class Player : MonoBehaviour
                 return;
             }
             typingWindow = 0;
+            tiikawa.SetActive(true);
             typingRoom.SetActive(true);
             rankButton.SetActive(false);
             inventoryButton.SetActive(false);
@@ -113,7 +114,6 @@ public class Player : MonoBehaviour
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);
             exitHouse.SetActive(true);
-            tiikawa.SetActive(true);
 
             // カメラ切り替え
             switchCam.SwitchCamera();
