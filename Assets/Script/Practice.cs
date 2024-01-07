@@ -15,10 +15,12 @@ public class Practice : MonoBehaviour
     void Awake()
     {
         medalTopNum = transform.childCount;
-        setStars();
+        medalTop = new int[medalTopNum];
+        medalSum = new int[medalTopNum];
+        showRoomMenu();
     }
 
-    private void setStars()
+    public void calcStars()
     {
         int[] medals = gm.savedata.getMedals();
         for (int i=0; i < medals.Length; i++)
@@ -27,34 +29,39 @@ public class Practice : MonoBehaviour
             {
                 if ((medals[i] > 2) && (medals[i + 1] == 0))    // 星2つ以上で次がクローズだったら
                 {
-                    gm.savedata.setMedalIndex(i + 1, 1);        // オープン
-                    medals[i + 1] = 1;
+                    gm.savedata.setMedalIndex(i + 1, -1);        // Detailオープン
+                    medals[i + 1] = -1;
                     Debug.Log("Oepned detail id:" + (i + 1));
                 }
             }
         }
-        medalTop = new int[medalTopNum];
-        medalSum = new int[medalTopNum];
 
         for (int i = 0; i < medalTopNum; i++)
         {
             // ３つのステージの星の合計
             medalSum[i] = medals[i * 3] + medals[i * 3 + 1] + medals[i * 3 + 2];
 
-            if (medalSum[i] == 12)
+            if (medalSum[i] > 9)
             {
-                medalTop[i] = 4;    // 星3つ
-            }
-            else if (medalSum[i] > 9)
-            {
-                medalTop[i] = 3;    // 星2つ
-                if (i < medalTopNum - 1)    // 次があればステージオープン
+                if (medalSum[i] == 12)
                 {
-                    if (medalTop[i+1] == 0)
+                    medalTop[i] = 4;    // 星3つ
+                }
+                else
+                {
+                    medalTop[i] = 3;    // 星2つ
+                }
+                if (i < medalTopNum - 1)    // 次があればRoomオープンチェック
+                {
+                    if (medalTop[i + 1] == 0) // 次が錠状態なら
                     {
-                        medalTop[i + 1] = 1;
-                        gm.savedata.setMedalIndex((i + 1) * 3, 1);
-                        Debug.Log("Opend stage id:" + (i + 1));
+                        medalTop[i + 1] = -1; // Room花火打ち上げセット
+                        Debug.Log("Opend room id:" + (i + 1));
+                        if (gm.savedata.getMedals()[(i + 1) * 3] == 0)
+                        {
+                            gm.savedata.setMedalIndex((i + 1) * 3, -1); // Detail花火打ち上げセット
+                            Debug.Log("Opend detail id:" + (i + 1) * 3);
+                        }
                     }
                 }
             }
@@ -62,7 +69,7 @@ public class Practice : MonoBehaviour
             {
                 medalTop[i] = 2;    // 星1つ
             }
-            else
+            else if (medalSum[i] != -1)     // 花火セット以外
             {
                 medalTop[i] = 1;    // 星0こ
             }
@@ -81,11 +88,15 @@ public class Practice : MonoBehaviour
         return medalTop[id];
     }
 
-    // タイピング終了後の詳細画面表示
-    public void startOpenDetail()
+    public void setMedalTop(int id, int star)
+    {
+        medalTop[id] = star;
+    }
+
+    // 詳細画面表示
+    public void showDetail()
     {
         int id = GameManager.TypingDataId;
-        float answerRate = GameManager.AnswerRate;
         
         if ( id >= 0)
         {
@@ -93,11 +104,10 @@ public class Practice : MonoBehaviour
             Transform childTransform = gameObject.transform.GetChild(roomId);
             RoomMenu roommenu = childTransform.GetComponent<RoomMenu>();
             roommenu.showDetail();
-            updateRoomMenu();
         }
     }
 
-    private void updateRoomMenu()       // ルームメニューの更新
+    public void showRoomMenu()       // ルームメニュー表示
     {
         for (int no = 0; no < medalTopNum; no++)
         {

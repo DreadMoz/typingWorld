@@ -21,14 +21,28 @@ public class RoomMenu : MonoBehaviour
     private GameObject star2;
     [SerializeField]
     private GameObject star3;
+    [SerializeField]
+    private GameObject magicProof;
 
     [SerializeField]
     private GameManager gm;
+
+    [SerializeField]
+    private GameObject housePlayer;
+    private Animator pAnimator;
+
+    [SerializeField]
+    private GameObject littleCat;
+    private Animator lAnimator;
 
     private Practice practice;
 
     void Awake()
     {
+        housePlayer = GameObject.Find("PlayerHouse");
+        littleCat = GameObject.Find("LittleCat");
+        pAnimator = housePlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
+        lAnimator = littleCat.GetComponent<Animator>(); // littleCatのアニメーターを取得
         thisButton = this.GetComponent<Button>();
         resetStars();
         typingDetail = FindObjectOfType<TypingDetail>();
@@ -38,7 +52,7 @@ public class RoomMenu : MonoBehaviour
 
     private void Start()
     {
-        showStars();
+//        showStars();
     }
     void Update()
     {
@@ -47,6 +61,10 @@ public class RoomMenu : MonoBehaviour
 
     public void showStars()
     {
+        if (practice == null)
+        {
+            Awake();
+        }
         int stars = practice.getMedalTop(id);
         if (thisButton == null)
         {
@@ -70,6 +88,12 @@ public class RoomMenu : MonoBehaviour
                 star1.SetActive(true);
                 star2.SetActive(true);
                 break;
+            case -1:
+                practice.setMedalTop(id, 1);       // 新規Room表示から1へ
+                magicProof.SetActive(true);
+                ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
+                particleSystem.Play();
+                break;
             default:
                 star1.SetActive(true);
                 star2.SetActive(true);
@@ -90,6 +114,13 @@ public class RoomMenu : MonoBehaviour
 
     public void showDetail()
     {
+        if (pAnimator == null)
+        {
+            Awake();
+        }
+        pAnimator.SetTrigger("fuda");
+        lAnimator.SetTrigger("down");
+
         GameManager.TypingDataId = id * 3;
         TextMeshProUGUI comment = this.GetComponentInChildren<TextMeshProUGUI>();
         typingDetail = FindObjectOfType<TypingDetail>();

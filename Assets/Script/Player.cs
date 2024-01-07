@@ -65,15 +65,20 @@ public class Player : MonoBehaviour
             {
                 talk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
             }
-            transform.position = new Vector3(288, 1, 113);   // タイピングハウス前位置
-            transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
+            // 直近のタイピングデータ前の情報を表示
+            practice.calcStars();           // 表示する星を計算
+            practice.showRoomMenu();        // ルームメニュー表示
             exitHouse.SetActive(true);
             exitShop.SetActive(false);
             tiikawa.SetActive(true);
-            practice.startOpenDetail();     // 練習モードの時詳細画面を表示させる
 
-            switchCam.SwitchCamera();               // カメラ切り替え
-            GameManager.SceneNo = (int)scene.World; // ワールドシーン状態へ
+            // ここで直近のタイピングデータをセット
+            if (GameManager.TypingTab == 2)
+            {
+                gm.registerRecentTypingResult();
+            }
+
+            switchCam.SwitchCamera();           // カメラ切り替え
         }
     }
 
@@ -87,7 +92,13 @@ public class Player : MonoBehaviour
             transform.rotation = transform.rotation;
             return;
         }
-
+        if (GameManager.SceneNo == (int)scene.House)
+        {
+            practice.calcStars();       // 表示する星を計算
+            practice.showRoomMenu();    // ルームメニュー表示
+            practice.showDetail();      // 詳細画面表示
+            GameManager.SceneNo = (int)scene.World; // ワールドシーン状態へ
+        }
         if (typingWindow == 1)
         {
             if (!fadeDoor.IsFadeOutComplete())
@@ -100,6 +111,7 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(false);
             rankButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
+            exitShop.SetActive(false);
             exitHouse.SetActive(true);
             tiikawa.SetActive(true);
 
@@ -108,6 +120,9 @@ public class Player : MonoBehaviour
 
             // "Bow" トリガーアニメーションを開始
             pAnimator.SetTrigger("hi");
+
+            practice.calcStars();       // 表示する星を計算
+            practice.showRoomMenu();    // ルームメニュー表示
 
             fadeDoor.StartFadeIn();
         }
@@ -123,6 +138,7 @@ public class Player : MonoBehaviour
             inventoryButton.SetActive(true);
             rankButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
+            exitShop.SetActive(false);
             exitHouse.SetActive(false);
             tiikawa.SetActive(false);
 

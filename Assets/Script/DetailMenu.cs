@@ -20,6 +20,8 @@ public class DetailMenu : MonoBehaviour
     private GameObject star2;
     [SerializeField]
     private GameObject star3;
+    [SerializeField]
+    private GameObject magicProof;
 
     [SerializeField]
     private GameManager gm;
@@ -59,6 +61,12 @@ public class DetailMenu : MonoBehaviour
                 star1.SetActive(true);
                 star2.SetActive(true);
                 break;
+            case -1:
+                gm.savedata.setMedalIndex(id * 3 + level, 1);       // 新規Detail表示から1へ
+                magicProof.SetActive(true);
+                ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
+                particleSystem.Play();
+                break;
             default:
                 star1.SetActive(true);
                 star2.SetActive(true);
@@ -74,6 +82,7 @@ public class DetailMenu : MonoBehaviour
         star1.SetActive(false);
         star2.SetActive(false);
         star3.SetActive(false);
+        memo.SetActive(true);
     }
 
     public void chooseTypingLevel()
@@ -82,6 +91,5 @@ public class DetailMenu : MonoBehaviour
 
         GameManager.SceneNo = (int)scene.Typing;
         SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
-
     }
 }

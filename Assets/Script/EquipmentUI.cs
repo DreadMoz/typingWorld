@@ -35,8 +35,8 @@ public class EquipmentUI : MonoBehaviour
     {
         try
         {
-            slots = slotsParent.GetComponentsInChildren<InventrySlot>();    // あやしい1
-            int[] saveEquip = gm.savedata.getEquipment();    // あやしいMAX1
+            slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+            int[] saveEquip = gm.savedata.getEquipment();
 
             if (saveEquip.Length < 7 || slots.Length < 7)
             {
@@ -46,9 +46,9 @@ public class EquipmentUI : MonoBehaviour
 
             for (int i = 0; i < 7; i++)
             {
-                if (saveEquip[i] < gm.db.GetItemList().Count)    // あやしいMAX2
+                if (saveEquip[i] < gm.db.GetItemList().Count)
                 {
-                    slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);    // あやしいMAX
+                    slots[i].SetItem(gm.db.GetItemList()[saveEquip[i]]);
                 }
                 else
                 {

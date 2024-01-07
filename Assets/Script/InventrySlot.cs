@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler, IEndDragHandler
 {
+    private GameObject gameObject;
+    private GameManager gm;
     private Item item;
 
     [SerializeField]
@@ -39,8 +41,14 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     private float animationDuration = 1.5f; // アニメーションにかかる時間（秒）
     private float animationTime = 0f; // アニメーション開始からの経過時間
 
+    void Awake()
+    {
+        gameObject = GameObject.Find("GameManager");
+        gm = gameObject.GetComponent<GameManager>();
+    }
     void Start()
     {
+
         canvas = GameObject.Find("Canvas");
         if (!canvas)
         {
@@ -185,26 +193,39 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
         if (soubiSlot)
         {
-            if (slotNo == 0 | slotNo == 3)
+            gm.savedata.setEquipmentIndex(slotNo, hand.GetGrabbingItemNo());
+            switch(slotNo)
             {
-                if (hand.GetGrabbingItemType() != ItemType.Weapon)
-                {
-                    return;
-                }
-            }
-            if (slotNo == 1)
-            {
-                if (hand.GetGrabbingItemType() != ItemType.Hat)
-                {
-                    return;
-                }
-            }
-            if (slotNo == 2)
-            {
-                if (hand.GetGrabbingItemType() != ItemType.Glasses)
-                {
-                    return;
-                }
+                case 0:
+                    if (hand.GetGrabbingItemType() != ItemType.Weapon)
+                    {
+                        return;
+                    }
+                    gm.changeEquip(0);
+                    break;
+                case 1:
+                    if (hand.GetGrabbingItemType() != ItemType.Hat)
+                    {
+                        return;
+                    }
+                    gm.changeEquip(1);
+                    break;
+                case 2:
+                    if (hand.GetGrabbingItemType() != ItemType.Glasses)
+                    {
+                        return;
+                    }
+                    gm.changeEquip(2);
+                    break;
+                case 3:
+                    if (hand.GetGrabbingItemType() != ItemType.Weapon)
+                    {
+                        return;
+                    }
+                    gm.changeEquip(0);
+                    break;
+                default:
+                    break;
             }
         }
         // Hnadが装備から持ってきていたら
@@ -216,6 +237,23 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
                 {
                     return;
                 }
+                gm.savedata.setEquipmentIndex(hand.ItemSlotNo(), MyItem.MyItemNo);
+            }
+            else
+            {
+                gm.savedata.setEquipmentIndex(hand.ItemSlotNo(), 0);    // 装備解除
+            }
+            switch(hand.GetGrabbingItemType())
+            {
+                case ItemType.Weapon:
+                    gm.changeEquip(0);
+                    break;
+                case ItemType.Hat:
+                    gm.changeEquip(1);
+                    break;
+                case ItemType.Glasses:
+                    gm.changeEquip(2);
+                    break;
             }
         }
 

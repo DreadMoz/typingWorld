@@ -42,12 +42,12 @@ public class TypingDetail : MonoBehaviour
         menu1.showStars();
         menu2.showStars();
         menu3.showStars();
-        transform.position = new Vector3(700, 350, transform.position.z);
+        transform.position = new Vector3(252, 222, transform.position.z);
     }
 
     public void hide()
     {
-        transform.position = new Vector3(700, 1500, transform.position.z);
+        transform.position = new Vector3(252, 999, transform.position.z);
         menu1.resetStars();
         menu2.resetStars();
         menu3.resetStars();

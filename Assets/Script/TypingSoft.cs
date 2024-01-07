@@ -105,7 +105,8 @@ public class TypingSoft : MonoBehaviour
     //　正解率表示用テキストUI
     private Text UIcorrectAR;
     private bool firstEnd = true;
-
+    // お題が一巡した回数
+    private int returnCount;
 
     private ThemeCollection themeCollection;
     private List<Theme> shuffledThemes = new List<Theme>();
@@ -237,7 +238,33 @@ public class TypingSoft : MonoBehaviour
             currentThemeIndex++;
             if (currentThemeIndex >= shuffledThemes.Count)
             {
+                if (GameManager.TypingRandom)
+                {
+                    ShuffleThemes(GameManager.TypingRandom);
+                }
                 currentThemeIndex = 0; // リストの最初に戻る
+                returnCount++;
+                if (returnCount > 5)
+                {
+                    currentTime = 0;
+                    isTimerRunning = false;
+                    isInputValid = false;
+
+                    END.text = "おしまい！";
+                    UIJ.text = "";
+                    UIH.text = "";
+                    UIR.text = "";
+                    UII.text = "";
+
+                    // キーカラークリア
+                    AssistKeyboardObj.SetAllKeyColorWhite();
+                    AssistKeyboardObj.SetNextHighlight(" ");
+                    string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
+                    animator.SetTrigger(randEnd);
+                    player.transform.LookAt(targetCam.transform);   // カメラを向く
+
+                    spaceEnd = true;
+                }
             }
         }
         else
@@ -282,7 +309,7 @@ public class TypingSoft : MonoBehaviour
         // キーカラークリア
         AssistKeyboardObj.SetAllKeyColorWhite();
         player.transform.rotation *= Quaternion.Euler(0, -60, 0);
-        var count = 3;
+        var count = 1;
         while (count > 0)
         {
             UICountDown.text = count.ToString();

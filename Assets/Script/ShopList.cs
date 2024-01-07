@@ -46,7 +46,7 @@ public class ShopList : MonoBehaviour
     public void ShowItemListWeapons()
     {
         kAnimator.SetTrigger("tab");
-        talk.text = "手にもつつどうぐですよ。";
+        talk.text = "手にもつどうぐですよ。";
         ShowItemList(0);
     }
     public void ShowItemListGlasses()
