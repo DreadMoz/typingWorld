@@ -309,7 +309,7 @@ public class TypingSoft : MonoBehaviour
         // キーカラークリア
         AssistKeyboardObj.SetAllKeyColorWhite();
         player.transform.rotation *= Quaternion.Euler(0, -60, 0);
-        var count = 1;
+        var count = 3;
         while (count > 0)
         {
             UICountDown.text = count.ToString();

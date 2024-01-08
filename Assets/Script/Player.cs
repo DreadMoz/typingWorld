@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject exitShop;
     [SerializeField] private TMP_Text talk;
     [SerializeField] private GameObject inventoryFilter;
+    [SerializeField] private TypingDetail typingDetail;
+    [SerializeField] private ChibiCat chibiCat;
 
     private Animator pAnimator;
     public Camera playerCamera; // レイキャストに使用するカメラ
@@ -48,12 +50,12 @@ public class Player : MonoBehaviour
 
         tiikawa.SetActive(false);
         kinoko.SetActive(false);
+        inventoryFilter.SetActive(false);
 
         if (GameManager.SceneNo == (int)scene.World)
         {
             exitHouse.SetActive(false);
             exitShop.SetActive(false);
-            inventoryFilter.SetActive(false);
             transform.position = new Vector3(286, 1, 96);
             transform.rotation = Quaternion.Euler(0, 180, 0);
         
@@ -346,11 +348,13 @@ public class Player : MonoBehaviour
 
     public void CloseTypingDoor()
     {
+        typingDetail.hide();
         fadeDoor.StartFadeOut();
         typingWindow = -1;
     }
     public void CloseShopDoor()
     {
+        gm.changeEquip(0);
         inventoryFilter.SetActive(false);
         fadeDoor.StartFadeOut();
         shopWindow = -1;

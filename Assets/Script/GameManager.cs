@@ -45,8 +45,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float kpmRatio = 0.8f;
 
     public GameObject player;        // プレイヤーオブジェクト
-    public ChibiCat chibiCat;        // 猫ボディ 
-    public ChibiCat chibiCat2D;      // 猫ボディ 
+    public ChibiCat chibiCat;        // 猫ボディ
+    public ChibiCat chibiCat2D;      // 猫ボディ
     public GameObject cam;           // カメラ
     private Animator animator;       // Playerのアニメーター
     public GameObject inventory;
@@ -88,46 +88,16 @@ public class GameManager : MonoBehaviour
     private int[] oldEquip;
     private int[] newEquip;
 
-    [SerializeField] private GameObject hikingHat;
-    [SerializeField] private GameObject grassARed;
-    [SerializeField] private GameObject battonWoodR;
-    [SerializeField] private GameObject spadR;
-    [SerializeField] private GameObject whirligigR;
-    [SerializeField] private GameObject panR;
-    [SerializeField] private GameObject driedFishR;
-    [SerializeField] private GameObject meatR;
-    [SerializeField] private GameObject battonWoodL;
-    [SerializeField] private GameObject spadL;
-    [SerializeField] private GameObject whirligigL;
-    [SerializeField] private GameObject panL;
-    [SerializeField] private GameObject driedFishL;
-    [SerializeField] private GameObject meatL;
-    [SerializeField] private GameObject spadB;
-    [SerializeField] private GameObject panB;
-    [SerializeField] private GameObject driedFishB;
-    [SerializeField] private GameObject meatB;
+    private float screenWidth;
+    private float screenHeight;
 
-    [SerializeField] private GameObject hikingHatHouse;
-    [SerializeField] private GameObject grassARedHouse;
-    [SerializeField] private GameObject battonWoodRHouse;
-    [SerializeField] private GameObject spadRHouse;
-    [SerializeField] private GameObject whirligigRHouse;
-    [SerializeField] private GameObject panRHouse;
-    [SerializeField] private GameObject driedFishRHouse;
-    [SerializeField] private GameObject meatRHouse;
-    [SerializeField] private GameObject battonWoodLHouse;
-    [SerializeField] private GameObject spadLHouse;
-    [SerializeField] private GameObject whirligigLHouse;
-    [SerializeField] private GameObject panLHouse;
-    [SerializeField] private GameObject driedFishLHouse;
-    [SerializeField] private GameObject meatLHouse;
-    [SerializeField] private GameObject spadBHouse;
-    [SerializeField] private GameObject panBHouse;
-    [SerializeField] private GameObject driedFishBHouse;
-    [SerializeField] private GameObject meatBHouse;
 
     private void Awake()
     {
+        // 画面サイズ
+        screenWidth = Screen.width;
+        screenHeight = Screen.height;
+
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
 
@@ -154,8 +124,12 @@ public class GameManager : MonoBehaviour
         oldEquip = new int[10];
         newEquip = new int[10];
 
+        // アニメーションステートがタイトルの場合
+        if (SceneNo == (int)scene.Title)
+        {
+        }
         // アニメーションステートが1最初のワールドの場合
-        if (SceneNo == (int)scene.World)
+        else if (SceneNo == (int)scene.World)
         {
             status.SetActive(false);
             inventory.SetActive(false);
@@ -174,8 +148,6 @@ public class GameManager : MonoBehaviour
             inventoryButton.SetActive(false);
             status.SetActive(true);
             ranking.SetActive(true);
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
             status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
             ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
             typingRoom.SetActive(true);
@@ -189,14 +161,6 @@ public class GameManager : MonoBehaviour
         {
             if (SceneNo != (int)scene.Title)
             {
-                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
-                {
-                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                    if (chibiCat2D != null)
-                    {
-                        chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                    }
-                }
             }
 
             difx = (statusRotation.eulerAngles.x - chaseRotation.eulerAngles.x) / windowOpenCount;
@@ -210,9 +174,51 @@ public class GameManager : MonoBehaviour
             {
                 statusWindow.setStatus();
             }
-            changeEquip(0);
-            changeEquip(1);
-            changeEquip(2);
+            // シーンがタイトルの場合
+            if (SceneNo == (int)scene.Title)
+            {
+            }
+            // シーンが1最初のワールドの場合
+            else if (SceneNo == (int)scene.World)
+            {
+                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+                {
+                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                    chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                }
+                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
+                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
+                chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+                chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
+                chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
+            }
+            // シーンが3タイピング後の場合
+            else if (SceneNo == (int)scene.House)
+            {
+                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+                {
+                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                    chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                }
+                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
+                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
+                chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+                chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
+                chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
+            }
+            // シーンが2タイピングの場合
+            else if (SceneNo == (int)scene.Typing)
+            {
+                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+                {
+                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                }
+                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
+                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
+            }
         }
         catch (System.Exception ex)
         {
@@ -282,10 +288,6 @@ public class GameManager : MonoBehaviour
                     cameraMove = 3;                 // カメラは寄り
                 }
             }
-
-            // 画面サイズに基づいてUI要素の位置を計算
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
 
             // 目標位置
             statusShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
@@ -535,196 +537,42 @@ public class GameManager : MonoBehaviour
         switch (parts)
         {
             case 0:     // 両手
-                spadB.SetActive(true);          // 全てかばんに付ける
-                panB.SetActive(true);
-                driedFishB.SetActive(true);
-                meatB.SetActive(true);
-
-                battonWoodR.SetActive(false);   // 右手解除
-                spadR.SetActive(false);
-                whirligigR.SetActive(false);
-                panR.SetActive(false);
-                driedFishR.SetActive(false);
-                meatR.SetActive(false);
-
-                battonWoodL.SetActive(false);   // 左手解除
-                spadL.SetActive(false);
-                whirligigL.SetActive(false);
-                panL.SetActive(false);
-                driedFishL.SetActive(false);
-                meatL.SetActive(false);
-
-                switch (savedata.getEquipment()[0])     // 右手
-                {
-                    case 1:
-                        spadR.SetActive(true);
-                        spadB.SetActive(false);
-                        break;
-                    case 2:
-                        driedFishR.SetActive(true);
-                        driedFishB.SetActive(false);
-                        break;
-                    case 3:
-                        meatR.SetActive(true);
-                        meatB.SetActive(false);
-                        break;
-                    case 4:
-                        battonWoodR.SetActive(true);
-                        break;
-                    case 5:
-                        whirligigR.SetActive(true);
-                        break;
-                    case 6:
-                        panR.SetActive(true);
-                        panB.SetActive(false);
-                        break;
-                }
-                switch (savedata.getEquipment()[3])     // 左手
-                {
-                    case 1:
-                        spadL.SetActive(true);
-                        spadB.SetActive(false);
-                        break;
-                    case 2:
-                        driedFishL.SetActive(true);
-                        driedFishB.SetActive(false);
-                        break;
-                    case 3:
-                        meatL.SetActive(true);
-                        meatB.SetActive(false);
-                        break;
-                    case 4:
-                        battonWoodL.SetActive(true);
-                        break;
-                    case 5:
-                        whirligigL.SetActive(true);
-                        break;
-                    case 6:
-                        panL.SetActive(true);
-                        panB.SetActive(false);
-                        break;
-                }
+                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+                chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
                 break;
 
             case 1:     // 頭
-                hikingHat.SetActive(false);
-                switch (savedata.getEquipment()[1])
-                {
-                    case 151:
-                        hikingHat.SetActive(true);
-                        break;
-                }
+                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
+                chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
                 break;
 
             case 2:     // メガネ
-                grassARed.SetActive(false);
-                switch (savedata.getEquipment()[2])
-                {
-                    case 121:
-                        grassARed.SetActive(true);
-                        break;
-                }
+                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
+                chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
                 break;
         }
-        if (spadBHouse == null)
+    }
+
+    private int checkBagItem()
+    {
+        int ret = 0;
+        if (savedata.existInventory(6))
         {
-            return;
+            ret += 0x01;
         }
-
-        switch (parts)
+        if (savedata.existInventory(1))
         {
-            case 0:     // 両手
-                spadBHouse.SetActive(true);          // 全てかばんに付ける
-                panBHouse.SetActive(true);
-                driedFishBHouse.SetActive(true);
-                meatBHouse.SetActive(true);
-
-                battonWoodRHouse.SetActive(false);   // 右手解除
-                spadRHouse.SetActive(false);
-                whirligigRHouse.SetActive(false);
-                panRHouse.SetActive(false);
-                driedFishRHouse.SetActive(false);
-                meatRHouse.SetActive(false);
-
-                battonWoodLHouse.SetActive(false);   // 左手解除
-                spadLHouse.SetActive(false);
-                whirligigLHouse.SetActive(false);
-                panLHouse.SetActive(false);
-                driedFishLHouse.SetActive(false);
-                meatLHouse.SetActive(false);
-
-                switch (savedata.getEquipment()[0])     // 右手
-                {
-                    case 1:
-                        spadRHouse.SetActive(true);
-                        spadBHouse.SetActive(false);
-                        break;
-                    case 2:
-                        driedFishRHouse.SetActive(true);
-                        driedFishBHouse.SetActive(false);
-                        break;
-                    case 3:
-                        meatRHouse.SetActive(true);
-                        meatBHouse.SetActive(false);
-                        break;
-                    case 4:
-                        battonWoodRHouse.SetActive(true);
-                        break;
-                    case 5:
-                        whirligigRHouse.SetActive(true);
-                        break;
-                    case 6:
-                        panRHouse.SetActive(true);
-                        panBHouse.SetActive(false);
-                        break;
-                }
-                switch (savedata.getEquipment()[3])     // 左手
-                {
-                    case 1:
-                        spadLHouse.SetActive(true);
-                        spadBHouse.SetActive(false);
-                        break;
-                    case 2:
-                        driedFishLHouse.SetActive(true);
-                        driedFishBHouse.SetActive(false);
-                        break;
-                    case 3:
-                        meatLHouse.SetActive(true);
-                        meatBHouse.SetActive(false);
-                        break;
-                    case 4:
-                        battonWoodLHouse.SetActive(true);
-                        break;
-                    case 5:
-                        whirligigLHouse.SetActive(true);
-                        break;
-                    case 6:
-                        panLHouse.SetActive(true);
-                        panBHouse.SetActive(false);
-                        break;
-                }
-                break;
-
-            case 1:     // 頭
-                hikingHatHouse.SetActive(false);
-                switch (savedata.getEquipment()[1])
-                {
-                    case 151:
-                        hikingHatHouse.SetActive(true);
-                        break;
-                }
-                break;
-
-            case 2:     // メガネ
-                grassARedHouse.SetActive(false);
-                switch (savedata.getEquipment()[2])
-                {
-                    case 121:
-                        grassARedHouse.SetActive(true);
-                        break;
-                }
-                break;
+            ret += 0x02;
         }
+        if (savedata.existInventory(2))
+        {
+            ret += 0x04;
+        }
+        if (savedata.existInventory(3))
+        {
+            ret += 0x08;
+        }
+        return ret;
     }
 
     //htmlから直でsavedataにアクセスできないため
