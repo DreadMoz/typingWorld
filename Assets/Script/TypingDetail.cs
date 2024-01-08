@@ -42,7 +42,11 @@ public class TypingDetail : MonoBehaviour
         menu1.showStars();
         menu2.showStars();
         menu3.showStars();
-        transform.position = new Vector3(252, 222, transform.position.z);
+        // 画面サイズ
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+        // 目標位置
+        transform.position = new Vector2(screenWidth * 0.4f, screenHeight * 0.5f);
     }
 
     public void hide()
@@ -51,5 +55,10 @@ public class TypingDetail : MonoBehaviour
         menu1.resetStars();
         menu2.resetStars();
         menu3.resetStars();
+        // 画面サイズ
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+        // 目標位置
+        transform.position = new Vector2(screenWidth * 0.4f, screenHeight * 2f);
     }
 }

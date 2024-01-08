@@ -75,7 +75,7 @@ public class ShopItem : MonoBehaviour
             talk.text = memoText + "\nかっていきますか？。";
         }
 
-        confirmation.transform.position = new Vector3(700, 350, transform.position.z);
+        conf.show();
         // このShopItemにあるテキストを取得
         itemName.text = transform.Find("ItemName").GetComponent<TextMeshProUGUI>().text;
         int id = int.Parse(transform.Find("ID").GetComponent<TextMeshProUGUI>().text);

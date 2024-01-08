@@ -40,7 +40,7 @@ public class Confirmation : MonoBehaviour
 
     void Awake()
     {
-        transform.position = new Vector3(800, 2000, transform.position.z);
+        hide();
         inventoryui = inventory.GetComponentInChildren<InventryUI>();
         statusui = status.GetComponentInChildren<StatusUI>();
         shopListReset = shopList.GetComponentInChildren<ShopList>();
@@ -69,7 +69,7 @@ public class Confirmation : MonoBehaviour
                 gm.savedata.setInventoryIndex(blankIndex, itemId);
                 gm.savedata.setStatusIndex(0, saifu - itemPrice);
                 talk.text = "まいどありがとうございます！";
-                transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
+                hide();
 
                 inventoryui.setAllItems();
                 statusui.setStatus();
@@ -82,7 +82,7 @@ public class Confirmation : MonoBehaviour
                 pAnimator.SetTrigger("down");
                 kAnimator.SetTrigger("no");
                 talk.text = "シーカーがたりないようです。\nタイピングをしてためてきてください。";
-                transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
+                hide();
             }
         }
         else
@@ -91,7 +91,7 @@ public class Confirmation : MonoBehaviour
             kAnimator.SetTrigger("no");
             talk.text = "もちものがいっぱいのようです。";
             Debug.Log("インベントリに空きが見つかりませんでした。Confirmation.Buy");
-            transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
+            hide();
         }
     }
 
@@ -99,7 +99,7 @@ public class Confirmation : MonoBehaviour
     {
         pAnimator.SetTrigger("no");
         kAnimator.SetTrigger("no");
-        transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
+        hide();
         talk.text = "ほかのしょうひんも見ていってくださいね。";
     }
 
@@ -107,8 +107,24 @@ public class Confirmation : MonoBehaviour
     {
         pAnimator.SetTrigger("cancel");
         kAnimator.SetTrigger("cancel");
-        transform.position = new Vector3(transform.position.x, 2000, transform.position.z);
+        hide();
         talk.text = "ほかのしょうひんも見ていってくださいね。";
+    }
+
+    private void hide()
+    {
+        // 画面サイズを都度取得しないと途中での最大化などに対応できない
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+        transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
+    }
+
+    public void show()
+    {
+        // 画面サイズを都度取得しないと途中での最大化などに対応できない
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+        transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 0.5f);
     }
 
     public void setItemPrice()
