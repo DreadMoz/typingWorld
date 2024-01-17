@@ -29,7 +29,7 @@ public class TypingRoom : MonoBehaviour
 
     // ここで、ShopItemParentのRectTransformを参照する
     [SerializeField]
-    private RectTransform shopItemParentRectTransform;
+    private RectTransform listParent;
 
     void Start()
     {
@@ -117,11 +117,11 @@ public class TypingRoom : MonoBehaviour
                 break;
         }
         // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
-        double childLines = Math.Ceiling((double)shopItemParentRectTransform.transform.childCount / 4);
+        double childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
 
         // コンテンツエリアの高さをアイテム数に基づいて設定
         contentHeight = (int)childLines * 200; // アイテムの高さ
 
-        shopItemParentRectTransform.sizeDelta = new Vector2(shopItemParentRectTransform.sizeDelta.x, contentHeight);
+        listParent.sizeDelta = new Vector2(listParent.sizeDelta.x, contentHeight);
     }
 }

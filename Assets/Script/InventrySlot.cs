@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler, IEndDragHandler
 {
-    private GameObject gameObject;
+    private GameObject gameManager;
     private GameManager gm;
     private Item item;
 
@@ -43,8 +43,8 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
     void Awake()
     {
-        gameObject = GameObject.Find("GameManager");
-        gm = gameObject.GetComponent<GameManager>();
+        gameManager = GameObject.Find("GameManager");
+        gm = gameManager.GetComponent<GameManager>();
     }
     void Start()
     {

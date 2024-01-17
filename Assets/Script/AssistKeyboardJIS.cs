@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Shapes2D;
 using TMPro;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 public class AssistKeyboardJIS : MonoBehaviour
 {
-  [SerializeField] GameObject AKParent;
+    [SerializeField] GameObject AKParent;
 
     [SerializeField]
     private GameObject lHand;        // Lハンドオブジェクト
@@ -492,32 +493,36 @@ public class AssistKeyboardJIS : MonoBehaviour
   };
 
   // キーの色
-  private static Color colorGray = new Color(180f / 255f, 180f / 255f, 180f / 255f, 1);
-  private static Color colorWhite = new Color(1, 1, 1, 1);
-  private static Color colorBlack = new Color(0, 0, 0, 1);
-  private static Color colorBlackFill = new Color(24f / 255f, 24f / 255f, 24f / 255f, 1);
-  private static Color colorPink = new Color(1, 40f / 255f, 70f / 255f, 1);
-  private static Color colorLightPink = new Color(1, 194f / 255f, 217f / 255f, 1);
-  private static Color colorOrange = new Color(251f / 255f, 83f / 255f, 30f / 255f, 1);
-  private static Color colorLightOrange = new Color(1, 220f / 255f, 160f / 255f, 1);
-  private static Color colorGreen = new Color(49f / 255f, 83f / 255f, 30f / 255f, 1);
-  private static Color colorLightGreen = new Color(180f / 255f, 1, 190f / 255f, 1);
-  private static Color colorBlue = new Color(28f / 255f, 95f / 255f, 166f / 255f, 1);
-  private static Color colorLightBlue = new Color(141f / 255f, 240f / 255f, 1, 1);
-  private static Color colorViolet = new Color(140f / 255f, 64f / 255f, 1, 1);
-  private static Color colorLightViolet = new Color(234f / 255f, 198f / 255f, 1, 1);
+    private static float darkenFactor = 0.8f;
 
-  /// <summary>
-  /// 初期化処理
-  /// </summary>
-  void Awake()
+    private static Color colorGray = new Color(180f / 255f, 180f / 255f, 180f / 255f, 1);
+    private static Color colorWhite = new Color(1, 1, 1, 1);
+    private static Color colorBlack = new Color(0, 0, 0, 1);
+    private static Color colorBlackFill = new Color(24f / 255f * darkenFactor, 24f / 255f * darkenFactor, 24f / 255f * darkenFactor, 1);
+    private static Color colorPink = new Color(1 * darkenFactor, 40f / 255f * darkenFactor, 70f / 255f * darkenFactor, 1);
+    private static Color colorLightPink = new Color(1 * darkenFactor, 194f / 255f * darkenFactor, 217f / 255f * darkenFactor, 1);
+    private static Color colorOrange = new Color(251f / 255f * darkenFactor, 83f / 255f * darkenFactor, 30f / 255f * darkenFactor, 1);
+    private static Color colorLightOrange = new Color(1 * darkenFactor, 220f / 255f * darkenFactor, 160f / 255f * darkenFactor, 1);
+    private static Color colorGreen = new Color(49f / 255f * darkenFactor, 83f / 255f * darkenFactor, 30f / 255f * darkenFactor, 1);
+    private static Color colorLightGreen = new Color(180f / 255f * darkenFactor, 1 * darkenFactor, 190f / 255f * darkenFactor, 1);
+    private static Color colorBlue = new Color(28f / 255f * darkenFactor, 95f / 255f * darkenFactor, 166f / 255f * darkenFactor, 1);
+    private static Color colorLightBlue = new Color(141f / 255f * darkenFactor, 240f / 255f * darkenFactor, 1 * darkenFactor, 1);
+    private static Color colorViolet = new Color(140f / 255f * darkenFactor, 64f / 255f * darkenFactor, 1 * darkenFactor, 1);
+    private static Color colorLightViolet = new Color(234f / 255f * darkenFactor, 198f / 255f * darkenFactor, 1 * darkenFactor, 1);
+
+
+
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
+    void Awake()
     {
         rightHandAnim = rHand.GetComponent<Animator>(); // rightHandのアニメーターを取得
         leftHandAnim = lHand.GetComponent<Animator>(); // leftHandのアニメーターを取得
 
         GetAllKeys(ConfigScript.InputMode, ConfigScript.InputArray);
-    SetAllKeyColorWhite();
-  }
+        SetAllKeyColorWhite();
+    }
 
   /// <summary>
   /// キーのオブジェクトを取得する
@@ -558,25 +563,42 @@ public class AssistKeyboardJIS : MonoBehaviour
     }
   }
 
+    /// <summary>
+    /// 指定したキーにエフェクト表示
+    /// <param name="keyName">キー名</param>
+    /// </summary>
+    public void pushKeyAction(string keyStr)
+    {
+        if (keyMappingJIS.TryGetValue(keyStr, out string[] value))
+        {
+            GameObject keyObject = AKKeys[value[0]];
+            ParticleSystem particleSystem = keyObject.GetComponentInChildren<ParticleSystem>();
+            particleSystem.Play();
+        }
+        else
+        {
+            Console.WriteLine("Key not found");
+        }
+    }
 
-  /// <summary>
-  /// 指定したキーの色を白に設定する
-  /// <param name="keyName">キー名</param>
-  /// </summary>
-  private void SetKeyColorWhite(string keyName)
-  {
-    var shape = AKKeys[keyName].GetComponent<Shape>();
-//        shape.settings.outlineColor = colorGray;
-//        shape.settings.fillColor = colorWhite;
+    /// <summary>
+    /// 指定したキーの色を白に設定する
+    /// <param name="keyName">キー名</param>
+    /// </summary>
+    private void SetKeyColorWhite(string keyName)
+    {
+        var shape = AKKeys[keyName].GetComponent<Shape>();
+        //        shape.settings.outlineColor = colorGray;
+        //        shape.settings.fillColor = colorWhite;
         shape.settings.outlineColor = colorBlack;
         shape.settings.fillColor = colorBlackFill;
     }
 
-  /// <summary>
-  /// 指定したキーの色を変更する
-  /// <param name="keyName">キー名</param>
-  /// </summary>
-  private void SetKeyColorHighlight(string keyName)
+    /// <summary>
+    /// 指定したキーの色を変更する
+    /// <param name="keyName">キー名</param>
+    /// </summary>
+    private void SetKeyColorHighlight(string keyName)
   {
     var shape = AKKeys[keyName].GetComponent<Shape>();
     switch (keyFingering[keyName].Item1)
@@ -841,25 +863,26 @@ public class AssistKeyboardJIS : MonoBehaviour
     /// <param name="nextHighlightChar">次に打つ文字</param>
     /// </summary>
     public void SetNextHighlight(string nextStr)
-  {
-    handAnimation(nextStr);
+    {
+        handAnimation(nextStr);
 
-    // 一度指、キーの色をリセットする
-    SetAllKeyColorWhite();
-    var keyList = new List<string>();
-    if (ConfigScript.InputArray == (int)ConfigScript.KeyArrayType.japanese)
-    {
-      keyList = new List<string>(keyMappingJIS[nextStr]);
+        // 一度指、キーの色をリセットする
+        SetAllKeyColorWhite();
+        var keyList = new List<string>();
+
+        if (ConfigScript.InputArray == (int)ConfigScript.KeyArrayType.japanese)
+        {
+            keyList = new List<string>(keyMappingJIS[nextStr]);
+        }
+        else if (ConfigScript.InputArray == (int)ConfigScript.KeyArrayType.us)
+        {
+            keyList = new List<string>(keyMappingUS[nextStr]);
+        }
+        foreach (var keyName in keyList)
+        {
+            SetKeyColorHighlight(keyName);
+        }
     }
-    else if (ConfigScript.InputArray == (int)ConfigScript.KeyArrayType.us)
-    {
-      keyList = new List<string>(keyMappingUS[nextStr]);
-    }
-    foreach (var keyName in keyList)
-    {
-      SetKeyColorHighlight(keyName);
-    }
-  }
 
   /// <summary>
   /// 複数のキーと指をハイライトする

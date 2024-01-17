@@ -18,6 +18,8 @@ public class TypingSoft : MonoBehaviour
     private static AssistKeyboardJIS AssistKeyboardObj;
 
     [SerializeField]
+    private GameObject lPlayer;       // プレイヤーオブジェクト
+    [SerializeField]
     private GameObject player;        // プレイヤーオブジェクト
     private Animator animator;
     public GameObject targetCam;
@@ -108,9 +110,25 @@ public class TypingSoft : MonoBehaviour
     // お題が一巡した回数
     private int returnCount;
 
-    private ThemeCollection themeCollection;
+    private ThemeCollection theme;
     private List<Theme> shuffledThemes = new List<Theme>();
     private int currentThemeIndex = 0;
+
+    private List<Message> messages = new List<Message>();
+    private int nextMessageNo;
+    private Message nextMessage;
+
+    [SerializeField] private GameObject ObjKPM;
+    [SerializeField] private GameObject Objkpm;
+    [SerializeField] private GameObject ObjTimer;
+    [SerializeField] private GameObject Objnokori;
+    [SerializeField] private GameObject Combo;
+    [SerializeField] private GameObject konbo;
+    [SerializeField] private GameObject input;
+
+    [SerializeField] private GameObject Fukidashi;
+    [SerializeField] private Text messageText;
+
 
     [Serializable]
     public class Theme
@@ -119,16 +137,29 @@ public class TypingSoft : MonoBehaviour
         public string kanji;
         public string hiragana;
     }
+    [Serializable]
+    public class Message
+    {
+        public int count;
+        public string description;
+    }
 
     [Serializable]
     public class ThemeCollection
     {
+        public int timer;
+        public int random;
+        public int hide;
+        public Message[] messages;
         public Theme[] themes;
     }
 
 
     void Start()
     {
+        lPlayer.SetActive(false);
+        Fukidashi.SetActive(false);
+
         // スペースでスタート状態にする
         spaceStart = true;
         // スペースでエンド状態を解除する
@@ -158,9 +189,6 @@ public class TypingSoft : MonoBehaviour
         UITimer = transform.Find("DataPanel/Timer").GetComponent<Text>();
         AssistKeyboardObj = GameObject.Find("AssistKeyboard").GetComponent<AssistKeyboardJIS>();
 
-        // タイマーを初期化
-        currentTime = totalTime;
-        UpdateTimerText();
 
         //　データ初期化処理
         correctN = 0;
@@ -173,48 +201,130 @@ public class TypingSoft : MonoBehaviour
 
         if (LoadThemes(GameManager.TypingDataName))
         {
-            ShuffleThemes(GameManager.TypingRandom);
+            setMessage();
+            ShuffleThemes(theme.random);
+
+            if (theme.timer > 0)
+            {
+                // タイマーを初期化
+                totalTime = theme.timer;
+                currentTime = totalTime;
+                UpdateTimerText();
+            }
+            else
+            {
+                player.transform.position = new Vector3(-1 * player.transform.position.x, player.transform.position.y, player.transform.position.z);
+                player.transform.LookAt(targetCam.transform);   // カメラを向く
+                lPlayer.SetActive(true);
+                currentTime = 0;        // タイマーはゼロにしておく。
+                ObjKPM.SetActive(false);
+                Objkpm.SetActive(false);
+                ObjTimer.SetActive(false);
+                Objnokori.SetActive(false);
+                Combo.SetActive(false);
+                konbo.SetActive(false);
+                input.SetActive(false);
+                spaceStart = false;     // 時間制限なしならスペースでスタート状態を解除
+                UIH.text = "";
+                NoTimerStart();     // タイマーなしスタート
+            }
         }
     }
+
+    private void setMessage()
+    {
+        if (theme.messages == null)
+        {
+            return;
+        }
+        messages = new List<Message>(theme.messages);
+        if (messages != null)
+        {
+            nextMessageNo = 0;
+            nextMessage = messages[nextMessageNo];
+        }
+    }
+
+    private void setDescriptionByNo(int targetCount)
+    {
+        if (theme.messages == null)
+        {
+            return;
+        }
+        if (nextMessage.count == targetCount)     // 回答数がメッセージ表示番号になったら
+        {
+            Fukidashi.SetActive(true);
+            messageText.text = nextMessage.description;      // メッセージ表示
+            string randAtk = "atk" + (new System.Random().Next(1, 3)).ToString();
+            animator.SetTrigger(randAtk);
+            nextMessageNo++;
+            if (nextMessageNo < messages.Count)              // 次のメッセージがあればセット
+            {
+                nextMessage = messages[nextMessageNo];
+            }
+        }
+    }
+
 
     private bool LoadThemes(string fileName)
     {
         string typingDataName = "TextPrompts/" + fileName;
         TextAsset textAsset = Resources.Load<TextAsset>(typingDataName);
-        if (textAsset != null)
+
+        try
         {
-            themeCollection = JsonUtility.FromJson<ThemeCollection>(textAsset.text);
-            return true;
+            if (textAsset != null)
+            {
+                theme = JsonUtility.FromJson<ThemeCollection>(textAsset.text);
+                if (theme == null)
+                {
+                    Debug.Log("JSONファイルの取得に失敗しました。");
+                    return false;
+                }
+                return true;
+            }
+            else
+            {
+                Debug.Log("Cannot find file!");
+                GameManager.TypingDataId = -1;
+                GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
+                SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+                return false;
+            }
         }
-        else
+        catch(Exception ex)
         {
-            Debug.Log("Cannot find file!");
-            GameManager.TypingDataId = -1;
-            GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
-            SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+            Debug.Log("不正なJSONファイルです。");
+            Debug.Log("Exception occurred: " + ex.Message);
             return false;
         }
     }
 
-    private void ShuffleThemes(bool shuffle = true)
+    private void ShuffleThemes(int shuffle)
     {
-        if (themeCollection != null && themeCollection.themes.Length > 0)
+        if (theme != null && theme.themes.Length > 0)
         {
-            shuffledThemes = new List<Theme>(themeCollection.themes);
-            if (shuffle)
+            int firstData = shuffle;       // 前半のランダム部分の開始id1なら全て
+
+            shuffledThemes = new List<Theme>(theme.themes);
+            if (shuffle == 0)
             {
-                for (int i = 0; i < shuffledThemes.Count; i++)
-                {
-                    Theme temp = shuffledThemes[i];
-                    int randomIndex = UnityEngine.Random.Range(i, shuffledThemes.Count);
-                    shuffledThemes[i] = shuffledThemes[randomIndex];
-                    shuffledThemes[randomIndex] = temp;
-                }
+                return;                     // theme.random = 0ならシャッフルしない
             }
-        }
-        else
-        {
-            Debug.LogError("No themes loaded!");
+            for (int i = 0; i < firstData; i++)             // 前半部分をシャッフル
+            {
+                Theme temp = shuffledThemes[i];
+                int randomIndex = UnityEngine.Random.Range(i, firstData-1);
+                shuffledThemes[i] = shuffledThemes[randomIndex];
+                shuffledThemes[randomIndex] = temp;
+            }
+            for (int i = firstData; i < shuffledThemes.Count; i++)  // 後半部分をシャッフル
+            {
+                Theme temp = shuffledThemes[i];
+                int randomIndex = UnityEngine.Random.Range(i, shuffledThemes.Count);
+                shuffledThemes[i] = shuffledThemes[randomIndex];
+                shuffledThemes[randomIndex] = temp;
+            }
         }
     }
 
@@ -234,37 +344,14 @@ public class TypingSoft : MonoBehaviour
             nQJ = currentTheme.kanji;
             nQH = currentTheme.hiragana;
 
+            setDescriptionByNo(currentThemeIndex);
             // 次のお題に移動
             currentThemeIndex++;
-            if (currentThemeIndex >= shuffledThemes.Count)
+            if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random > 0))
             {
-                if (GameManager.TypingRandom)
-                {
-                    ShuffleThemes(GameManager.TypingRandom);
-                }
+                ShuffleThemes(theme.random);
                 currentThemeIndex = 0; // リストの最初に戻る
                 returnCount++;
-                if (returnCount > 5)
-                {
-                    currentTime = 0;
-                    isTimerRunning = false;
-                    isInputValid = false;
-
-                    END.text = "おしまい！";
-                    UIJ.text = "";
-                    UIH.text = "";
-                    UIR.text = "";
-                    UII.text = "";
-
-                    // キーカラークリア
-                    AssistKeyboardObj.SetAllKeyColorWhite();
-                    AssistKeyboardObj.SetNextHighlight(" ");
-                    string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
-                    animator.SetTrigger(randEnd);
-                    player.transform.LookAt(targetCam.transform);   // カメラを向く
-
-                    spaceEnd = true;
-                }
             }
         }
         else
@@ -279,9 +366,12 @@ public class TypingSoft : MonoBehaviour
         // 判定器などの初期化
         InitSentenceData();
 
-        UIJ.text = nQJ;
-        UIH.text = nQH;
-        UIR.text = nQR;
+        if (theme.hide < currentThemeIndex)
+        {
+            UIJ.text = nQJ;
+            UIH.text = nQH;
+            UIR.text = nQR;
+        }
         // 変数等の初期化
         isRecMistype = false;
         isSentenceMistyped = false;
@@ -326,6 +416,20 @@ public class TypingSoft : MonoBehaviour
         animator.SetBool("move", true);
     }
 
+    /// <summary>
+    /// 時間制限なしスタート演出
+    /// </summary>
+    private void NoTimerStart()
+    {
+        animator.SetTrigger("atk");
+
+        UICountDown.text = "";
+
+        // 次の文章
+        StartCoroutine(ChangeSentence());
+        isInputValid = true;
+    }
+
     void Update()
     {
         // タイマーが実行中の場合、時間を減少させる
@@ -343,6 +447,7 @@ public class TypingSoft : MonoBehaviour
                 currentTime = 0;
                 isTimerRunning = false;
                 isInputValid = false;
+                Fukidashi.SetActive(false);
 
                 END.text = "おしまい！";
                 UIJ.text = "";
@@ -371,20 +476,20 @@ public class TypingSoft : MonoBehaviour
                 System.Threading.Thread.Sleep(100);     // 連続実行防止
             }
         }
-        if (currentTime == 0)
+        if (spaceEnd)
         {
             // アニメーションを切り替える
             if (Time.time % 12 > 11.9)
             {
                 if (firstEnd)
                 {
-                    END.text = "";
-                    UIH.text = "スペースキーでしゅうりょう";
                     firstEnd = false;
                     System.Threading.Thread.Sleep(100);     // 連続実行防止
                 }
                 else
                 {
+                    END.text = "";
+                    UIH.text = "スペースキーでしゅうりょう";
                     animator.SetTrigger("make");
                     System.Threading.Thread.Sleep(100);     // 連続実行防止
                 }
@@ -400,12 +505,13 @@ public class TypingSoft : MonoBehaviour
         if (spaceStart)
         {
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
-            if (inputStr.Equals(" "))
+            if (e.type == EventType.KeyDown && inputStr.Equals(" "))
             {
+                AssistKeyboardObj.pushKeyAction(inputStr);
                 // スペースでスタート状態を解除する
                 spaceStart = false;
                 UIH.text = "";
-                StartCoroutine(CountDown());
+                StartCoroutine(CountDown());    // カウントダウンからのスタート
                 return;
             }
         }
@@ -414,6 +520,7 @@ public class TypingSoft : MonoBehaviour
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
             if (inputStr.Equals(" "))
             {
+                AssistKeyboardObj.pushKeyAction(inputStr);
                 GameManager.NewKpm = (int)kpm;
                 GameManager.NumAnswers = answers;
                 GameManager.AnswerRate = correctAR;
@@ -425,6 +532,8 @@ public class TypingSoft : MonoBehaviour
         && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
+            AssistKeyboardObj.pushKeyAction(inputStr);
+
             double currentTime = Time.realtimeSinceStartup;
             // タイピングで使用する文字以外は受け付けない
             // Esc など画面遷移などで使うキーと競合を避ける
@@ -557,7 +666,30 @@ public class TypingSoft : MonoBehaviour
         bool isMistype = JudgeTyping(nextString);
         if (!isMistype)
         {
-            Correct(nextString);
+            if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))
+            {
+                currentTime = 0;
+                isTimerRunning = false;
+                isInputValid = false;
+                Fukidashi.SetActive(false);
+
+                END.text = "よくできました！";
+                UIJ.text = "";
+                UIH.text = "";
+                UIR.text = "";
+                UII.text = "";
+
+                // キーカラークリア
+                AssistKeyboardObj.SetAllKeyColorWhite();
+                AssistKeyboardObj.SetNextHighlight(" ");
+                animator.SetTrigger("end3");
+
+                spaceEnd = true;
+            }
+            else
+            {
+                Correct(nextString);
+            }
         }
         else
         {

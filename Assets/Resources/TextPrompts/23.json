@@ -1,45 +1,407 @@
 {
-    "description": "らりるれろ・わをんの練習だよ！",
+    "timer": 60,
+    "random": 30,
+    "hide": 0,
     "themes": [
         {
             "id": 1,
             "kanji": "",
-            "hiragana": "ら"
+            "hiragana": "みなみ"
         },
         {
             "id": 2,
             "kanji": "",
-            "hiragana": "り"
+            "hiragana": "みなと"
         },
         {
             "id": 3,
-            "kanji": "",
-            "hiragana": "る"
+            "kanji": "マウス",
+            "hiragana": "まうす"
         },
         {
             "id": 4,
             "kanji": "",
-            "hiragana": "れ"
+            "hiragana": "まき"
         },
         {
             "id": 5,
             "kanji": "",
-            "hiragana": "ろ"
+            "hiragana": "もしも"
         },
         {
             "id": 6,
-            "kanji": "",
-            "hiragana": "わ"
+            "kanji": "ママ",
+            "hiragana": "まま"
         },
         {
             "id": 7,
-            "kanji": "",
-            "hiragana": "を"
+            "kanji": "メモ",
+            "hiragana": "めも"
         },
         {
             "id": 8,
             "kanji": "",
-            "hiragana": "ん"
+            "hiragana": "まあまあ"
+        },
+        {
+            "id": 9,
+            "kanji": "",
+            "hiragana": "まめ"
+        },
+        {
+            "id": 10,
+            "kanji": "",
+            "hiragana": "まと"
+        },
+        {
+            "id": 11,
+            "kanji": "トマト",
+            "hiragana": "とまと"
+        },
+        {
+            "id": 12,
+            "kanji": "",
+            "hiragana": "みみ"
+        },
+        {
+            "id": 13,
+            "kanji": "",
+            "hiragana": "ふうみ"
+        },
+        {
+            "id": 14,
+            "kanji": "",
+            "hiragana": "みうち"
+        },
+        {
+            "id": 15,
+            "kanji": "",
+            "hiragana": "みえ"
+        },
+        {
+            "id": 16,
+            "kanji": "",
+            "hiragana": "むみ"
+        },
+        {
+            "id": 17,
+            "kanji": "",
+            "hiragana": "むむむ"
+        },
+        {
+            "id": 18,
+            "kanji": "ミス",
+            "hiragana": "みす"
+        },
+        {
+            "id": 19,
+            "kanji": "",
+            "hiragana": "みそ"
+        },
+        {
+            "id": 20,
+            "kanji": "",
+            "hiragana": "みち"
+        },
+        {
+            "id": 21,
+            "kanji": "",
+            "hiragana": "むき"
+        },
+        {
+            "id": 22,
+            "kanji": "",
+            "hiragana": "むし"
+        },
+        {
+            "id": 23,
+            "kanji": "",
+            "hiragana": "むすめ"
+        },
+        {
+            "id": 24,
+            "kanji": "",
+            "hiragana": "むすこ"
+        },
+        {
+            "id": 25,
+            "kanji": "",
+            "hiragana": "むてき"
+        },
+        {
+            "id": 26,
+            "kanji": "",
+            "hiragana": "ようふく"
+        },
+        {
+            "id": 27,
+            "kanji": "",
+            "hiragana": "めい"
+        },
+        {
+            "id": 28,
+            "kanji": "メカ",
+            "hiragana": "めか"
+        },
+        {
+            "id": 29,
+            "kanji": "",
+            "hiragana": "めし"
+        },
+        {
+            "id": 30,
+            "kanji": "メス",
+            "hiragana": "めす"
+        },
+        {
+            "id": 31,
+            "kanji": "メキシコ",
+            "hiragana": "めきしこ"
+        },
+        {
+            "id": 32,
+            "kanji": "",
+            "hiragana": "めまい"
+        },
+        {
+            "id": 33,
+            "kanji": "",
+            "hiragana": "めあて"
+        },
+        {
+            "id": 34,
+            "kanji": "",
+            "hiragana": "よさ"
+        },
+        {
+            "id": 35,
+            "kanji": "",
+            "hiragana": "もうけ"
+        },
+        {
+            "id": 36,
+            "kanji": "モアイ",
+            "hiragana": "もあい"
+        },
+        {
+            "id": 37,
+            "kanji": "",
+            "hiragana": "もうふ"
+        },
+        {
+            "id": 38,
+            "kanji": "",
+            "hiragana": "もも"
+        },
+        {
+            "id": 39,
+            "kanji": "",
+            "hiragana": "もち"
+        },
+        {
+            "id": 40,
+            "kanji": "",
+            "hiragana": "もちもの"
+        },
+        {
+            "id": 41,
+            "kanji": "",
+            "hiragana": "ものまね"
+        },
+        {
+            "id": 42,
+            "kanji": "",
+            "hiragana": "ゆみや"
+        },
+        {
+            "id": 43,
+            "kanji": "",
+            "hiragana": "やおや"
+        },
+        {
+            "id": 44,
+            "kanji": "",
+            "hiragana": "やきにく"
+        },
+        {
+            "id": 45,
+            "kanji": "",
+            "hiragana": "やくめ"
+        },
+        {
+            "id": 46,
+            "kanji": "",
+            "hiragana": "やさい"
+        },
+        {
+            "id": 47,
+            "kanji": "",
+            "hiragana": "やすみ"
+        },
+        {
+            "id": 48,
+            "kanji": "",
+            "hiragana": "やね"
+        },
+        {
+            "id": 49,
+            "kanji": "",
+            "hiragana": "やま"
+        },
+        {
+            "id": 50,
+            "kanji": "",
+            "hiragana": "ゆうき"
+        },
+        {
+            "id": 51,
+            "kanji": "",
+            "hiragana": "ゆうひ"
+        },
+        {
+            "id": 52,
+            "kanji": "",
+            "hiragana": "ゆか"
+        },
+        {
+            "id": 53,
+            "kanji": "",
+            "hiragana": "ゆき"
+        },
+        {
+            "id": 54,
+            "kanji": "",
+            "hiragana": "ゆめ"
+        },
+        {
+            "id": 55,
+            "kanji": "",
+            "hiragana": "ゆれ"
+        },
+        {
+            "id": 56,
+            "kanji": "",
+            "hiragana": "ゆうやけ"
+        },
+        {
+            "id": 57,
+            "kanji": "",
+            "hiragana": "よゆう"
+        },
+        {
+            "id": 58,
+            "kanji": "",
+            "hiragana": "よあけ"
+        },
+        {
+            "id": 59,
+            "kanji": "",
+            "hiragana": "ようき"
+        },
+        {
+            "id": 60,
+            "kanji": "",
+            "hiragana": "よこ"
+        },
+        {
+            "id": 61,
+            "kanji": "",
+            "hiragana": "よてい"
+        },
+        {
+            "id": 62,
+            "kanji": "",
+            "hiragana": "よやく"
+        },
+        {
+            "id": 63,
+            "kanji": "",
+            "hiragana": "よち"
+        },
+        {
+            "id": 64,
+            "kanji": "",
+            "hiragana": "よそく"
+        },
+        {
+            "id": 65,
+            "kanji": "",
+            "hiragana": "ようせい"
+        },
+        {
+            "id": 66,
+            "kanji": "",
+            "hiragana": "むね"
+        },
+        {
+            "id": 67,
+            "kanji": "",
+            "hiragana": "むいか"
+        },
+        {
+            "id": 68,
+            "kanji": "",
+            "hiragana": "よむ"
+        },
+        {
+            "id": 69,
+            "kanji": "",
+            "hiragana": "やむ"
+        },
+        {
+            "id": 70,
+            "kanji": "",
+            "hiragana": "むかえ"
+        },
+        {
+            "id": 71,
+            "kanji": "",
+            "hiragana": "むかし"
+        },
+        {
+            "id": 72,
+            "kanji": "",
+            "hiragana": "まもの"
+        },
+        {
+            "id": 73,
+            "kanji": "みんなの南の港",
+            "hiragana": "みんなのみなみのみなと"
+        },
+        {
+            "id": 74,
+            "kanji": "良く読む娘",
+            "hiragana": "よくよむよむすめ"
+        },
+        {
+            "id": 75,
+            "kanji": "",
+            "hiragana": "まくら"
+        },
+        {
+            "id": 76,
+            "kanji": "",
+            "hiragana": "まゆ"
+        },
+        {
+            "id": 77,
+            "kanji": "",
+            "hiragana": "やみ"
+        },
+        {
+            "id": 78,
+            "kanji": "米屋や八百屋は良い役目",
+            "hiragana": "こめやややおやはよいやくめ"
+        },
+        {
+            "id": 79,
+            "kanji": "ママのトマトもママの山桃もうまい",
+            "hiragana": "ままのとまともままのやまもももうまい"
+        },
+        {
+            "id": 80,
+            "kanji": "",
+            "hiragana": "みのむし"
         }
     ]
 }

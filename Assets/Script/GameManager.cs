@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour
     static private float answerRate;        // 解答率
     static private int typingDataId;        // タイピングデータのJson呼び出しID練習のファイル名は数字
     static private string typingDataName;   // タイピングデータのJson呼び出し用ファイル名
-    static private bool typingRandom;       // タイピングをランダムでするかどうか
 
     static public int SceneNo { get => sceneNo; set => sceneNo = value; }
     static public int TypingTab { get => typingTab; set => typingTab = value; }
@@ -39,7 +38,6 @@ public class GameManager : MonoBehaviour
     static public float AnswerRate { get => answerRate; set => answerRate = value; }
     static public int TypingDataId { get => typingDataId; set => typingDataId = value; }
     static public string TypingDataName { get => typingDataName; set => typingDataName = value; }
-    static public bool TypingRandom { get => typingRandom; set => typingRandom = value; }
 
     [SerializeField] private StatusUI statusWindow;
     [SerializeField] private float kpmRatio = 0.8f;
@@ -88,16 +86,8 @@ public class GameManager : MonoBehaviour
     private int[] oldEquip;
     private int[] newEquip;
 
-    private float screenWidth;
-    private float screenHeight;
-
-
     private void Awake()
     {
-        // 画面サイズ
-        screenWidth = Screen.width;
-        screenHeight = Screen.height;
-
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
 
@@ -148,6 +138,9 @@ public class GameManager : MonoBehaviour
             inventoryButton.SetActive(false);
             status.SetActive(true);
             ranking.SetActive(true);
+            // 画面サイズ
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
             status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
             ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
             typingRoom.SetActive(true);
@@ -157,72 +150,65 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        try
+        if (SceneNo != (int)scene.Title)
         {
-            if (SceneNo != (int)scene.Title)
-            {
-            }
-
-            difx = (statusRotation.eulerAngles.x - chaseRotation.eulerAngles.x) / windowOpenCount;
-            dify = (statusRotation.eulerAngles.y - chaseRotation.eulerAngles.y) / windowOpenCount;
-            difz = (statusRotation.eulerAngles.z - chaseRotation.eulerAngles.z) / windowOpenCount;
-            posx = (statusOffset.x - chaseOffset.x) / windowOpenCount;
-            posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
-            posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
-
-            if (statusWindow)
-            {
-                statusWindow.setStatus();
-            }
-            // シーンがタイトルの場合
-            if (SceneNo == (int)scene.Title)
-            {
-            }
-            // シーンが1最初のワールドの場合
-            else if (SceneNo == (int)scene.World)
-            {
-                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
-                {
-                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                    chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                }
-                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
-                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
-                chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-                chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
-                chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
-            }
-            // シーンが3タイピング後の場合
-            else if (SceneNo == (int)scene.House)
-            {
-                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
-                {
-                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                    chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                }
-                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
-                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
-                chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-                chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
-                chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
-            }
-            // シーンが2タイピングの場合
-            else if (SceneNo == (int)scene.Typing)
-            {
-                if (savedata.getEquipment()[(int)eq.CatBody] != 0)
-                {
-                    chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                }
-                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
-                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
-            }
         }
-        catch (System.Exception ex)
+
+        difx = (statusRotation.eulerAngles.x - chaseRotation.eulerAngles.x) / windowOpenCount;
+        dify = (statusRotation.eulerAngles.y - chaseRotation.eulerAngles.y) / windowOpenCount;
+        difz = (statusRotation.eulerAngles.z - chaseRotation.eulerAngles.z) / windowOpenCount;
+        posx = (statusOffset.x - chaseOffset.x) / windowOpenCount;
+        posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
+        posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
+
+        if (statusWindow)
         {
-            Debug.LogError("Startメソッドでエラーが発生しました: " + ex.Message);
+            statusWindow.setStatus();
+        }
+        // シーンがタイトルの場合
+        if (SceneNo == (int)scene.Title)
+        {
+        }
+        // シーンが1最初のワールドの場合
+        else if (SceneNo == (int)scene.World)
+        {
+            if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+            {
+                chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+            }
+            chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+            chibiCat.changeEquipHead(savedata.getEquipment()[1]);
+            chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
+            chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+            chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
+            chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
+        }
+        // シーンが3タイピング後の場合
+        else if (SceneNo == (int)scene.House)
+        {
+            if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+            {
+                chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+            }
+            chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+            chibiCat.changeEquipHead(savedata.getEquipment()[1]);
+            chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
+            chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+            chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
+            chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
+        }
+        // シーンが2タイピングの場合
+        else if (SceneNo == (int)scene.Typing)
+        {
+            if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+            {
+                chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+            }
+            chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+            chibiCat.changeEquipHead(savedata.getEquipment()[1]);
+            chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
         }
     }
 
@@ -289,6 +275,9 @@ public class GameManager : MonoBehaviour
                 }
             }
 
+            // 画面サイズ
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
             // 目標位置
             statusShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
             inventoryShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
@@ -516,20 +505,7 @@ public class GameManager : MonoBehaviour
     public static void SetTypingDataLevel(int no)
     {
         TypingDataId += no;
-        int fileNameId = TypingDataId;
-        if (no == 0)
-        {
-            TypingRandom = false;
-        }
-        else
-        {
-            TypingRandom = true;
-            if (no == 1)
-            {
-                fileNameId--;
-            }
-        }
-        TypingDataName = fileNameId.ToString();
+        TypingDataName = TypingDataId.ToString();
     }
 
     public void changeEquip(int parts)
