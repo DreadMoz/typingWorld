@@ -304,7 +304,15 @@ public class TypingSoft : MonoBehaviour
     {
         if (theme != null && theme.themes.Length > 0)
         {
-            int firstData = shuffle;       // 前半のランダム部分の開始id1なら全て
+            int firstData;
+            if (shuffledThemes.Count < shuffle)
+            {
+                firstData = shuffledThemes.Count;      // 項目数を超えていたら項目数を上限に
+            }
+            else
+            {
+                firstData = shuffle;      // 前半のランダム部分の開始id1なら全て
+            }
 
             shuffledThemes = new List<Theme>(theme.themes);
             if (shuffle == 0)
@@ -421,7 +429,7 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void NoTimerStart()
     {
-        animator.SetTrigger("atk");
+        string randAtk = "atk" + (new System.Random().Next(1, 3)).ToString();
 
         UICountDown.text = "";
 

@@ -139,8 +139,11 @@ public class GameManager : MonoBehaviour
             status.SetActive(true);
             ranking.SetActive(true);
             // 画面サイズ
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
+            // float screenWidth = Screen.width;
+            // float screenHeight = Screen.height;
+            float screenWidth = 1366;
+            float screenHeight = 768;
+            Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
             status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
             ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
             typingRoom.SetActive(true);
@@ -276,8 +279,10 @@ public class GameManager : MonoBehaviour
             }
 
             // 画面サイズ
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
+            // float screenWidth = Screen.width;
+            // float screenHeight = Screen.height;
+            float screenWidth = 1366;
+            float screenHeight = 768;
             // 目標位置
             statusShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
             inventoryShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);

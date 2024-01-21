@@ -114,16 +114,20 @@ public class Confirmation : MonoBehaviour
     private void hide()
     {
         // 画面サイズを都度取得しないと途中での最大化などに対応できない
-        float screenWidth = Screen.width;
-        float screenHeight = Screen.height;
+        // float screenWidth = Screen.width;
+        // float screenHeight = Screen.height;
+        float screenWidth = 1366;
+        float screenHeight = 768;
         transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
     }
 
     public void show()
     {
         // 画面サイズを都度取得しないと途中での最大化などに対応できない
-        float screenWidth = Screen.width;
-        float screenHeight = Screen.height;
+        // float screenWidth = Screen.width;
+        // float screenHeight = Screen.height;
+        float screenWidth = 1366;
+        float screenHeight = 768;
         transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 0.5f);
     }
 

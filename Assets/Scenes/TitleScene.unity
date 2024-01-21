@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.10419428, g: 0.15655747, b: 0.27769616, a: 1}
+  m_IndirectSpecularColor: {r: 0.1298731, g: 0.20024246, b: 0.35992482, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -552,9 +552,9 @@ RectTransform:
   - {fileID: 177935986}
   - {fileID: 1983870275}
   - {fileID: 1452724558}
+  - {fileID: 315727013}
   - {fileID: 1205886609}
   - {fileID: 1820588911}
-  - {fileID: 315727013}
   - {fileID: 796799185}
   - {fileID: 1981573551}
   - {fileID: 288632615}
@@ -839,7 +839,7 @@ RectTransform:
   m_Children:
   - {fileID: 172241938}
   m_Father: {fileID: 195278424}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -935,7 +935,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: SetData
+  m_Text: ForceStart
 --- !u!222 &351176047
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1058,9 +1058,10 @@ MonoBehaviour:
   kpmRatio: 0.8
   player: {fileID: 994566807}
   chibiCat: {fileID: 2121987580}
+  chibiCat2D: {fileID: 0}
   cam: {fileID: 0}
   inventory: {fileID: 0}
-  equipment: {fileID: 0}
+  equip: {fileID: 0}
   ranking: {fileID: 0}
   status: {fileID: 0}
   typingRoom: {fileID: 0}
@@ -2471,9 +2472,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 133407441}
-        m_TargetAssemblyTypeName: Connection, Assembly-CSharp
-        m_MethodName: initFbData
+      - m_Target: {fileID: 992936578}
+        m_TargetAssemblyTypeName: TitleSky, Assembly-CSharp
+        m_MethodName: forceStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2535,7 +2536,7 @@ RectTransform:
   m_Children:
   - {fileID: 351176045}
   m_Father: {fileID: 195278424}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4858,7 +4859,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
       propertyPath: m_AnchorMax.x

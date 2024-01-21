@@ -111,6 +111,15 @@ public class TitleSky : MonoBehaviour
         }
     }
 
+    public void forceStart()
+    {
+        if (!firstPush)
+        {
+            fade.StartFadeOut();
+            firstPush = true;
+        }
+    }
+
     public void finishAuth()
     {
         userData.SetActive(true);
