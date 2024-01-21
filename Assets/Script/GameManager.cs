@@ -139,13 +139,11 @@ public class GameManager : MonoBehaviour
             status.SetActive(true);
             ranking.SetActive(true);
             // 画面サイズ
-            // float screenWidth = Screen.width;
-            // float screenHeight = Screen.height;
-            float screenWidth = 1366;
-            float screenHeight = 768;
-            Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
-            status.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
-            ranking.transform.position = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            Debug.Log("Width:"+screenWidth+"  Height:"+screenHeight);
+            status.transform.position = new Vector2(screenWidth - 290, screenHeight - 80);
+            ranking.transform.position = new Vector2(screenWidth - 290, screenHeight - 426);
             typingRoom.SetActive(true);
             shopRoom.SetActive(false);
         }
@@ -279,14 +277,12 @@ public class GameManager : MonoBehaviour
             }
 
             // 画面サイズ
-            // float screenWidth = Screen.width;
-            // float screenHeight = Screen.height;
-            float screenWidth = 1366;
-            float screenHeight = 768;
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
             // 目標位置
-            statusShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.89f);
-            inventoryShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
-            rankingShowPos = new Vector2(screenWidth * 0.79f, screenHeight * 0.44f);
+            statusShowPos = new Vector2(screenWidth - 290, screenHeight - 80);
+            inventoryShowPos = new Vector2(screenWidth - 290, screenHeight - 426);
+            rankingShowPos = new Vector2(screenWidth - 290, screenHeight - 426);
             equipmentShowPos = new Vector2(screenWidth * 0.33f, screenHeight * 0.13f);
             statusHidePos = new Vector2(screenWidth * 0.79f, screenHeight * 1.15f);
             inventoryHidePos = new Vector2(screenWidth * 1.21f, screenHeight * 0.44f);

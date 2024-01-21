@@ -22,6 +22,7 @@ public class TypingSoft : MonoBehaviour
     [SerializeField]
     private GameObject player;        // プレイヤーオブジェクト
     private Animator animator;
+    private Animator lAnimator;
     public GameObject targetCam;
 
     public float totalTime = 60.0f; // タイマーの総時間（秒）
@@ -168,6 +169,8 @@ public class TypingSoft : MonoBehaviour
         isInputValid = false;
 
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
+        lAnimator = lPlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
+        lAnimator.SetTrigger("jump");
         player.transform.LookAt(targetCam.transform);   // カメラを向く
 
         animator.SetFloat("walkSpeed", 1.0f);
@@ -253,15 +256,16 @@ public class TypingSoft : MonoBehaviour
         }
         if (nextMessage.count == targetCount)     // 回答数がメッセージ表示番号になったら
         {
+            lAnimator.SetTrigger("jump");
             Fukidashi.SetActive(true);
             messageText.text = nextMessage.description;      // メッセージ表示
-            string randAtk = "atk" + (new System.Random().Next(1, 3)).ToString();
-            animator.SetTrigger(randAtk);
             nextMessageNo++;
             if (nextMessageNo < messages.Count)              // 次のメッセージがあればセット
             {
                 nextMessage = messages[nextMessageNo];
             }
+            string randAtk = "atk" + (new System.Random().Next(1, 3)).ToString();
+            animator.SetTrigger(randAtk);
         }
     }
 
