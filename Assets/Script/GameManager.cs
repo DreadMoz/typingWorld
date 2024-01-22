@@ -141,9 +141,12 @@ public class GameManager : MonoBehaviour
             // 画面サイズ
             float screenWidth = Screen.width;
             float screenHeight = Screen.height;
-            Debug.Log("Width:"+screenWidth+"  Height:"+screenHeight);
-            status.transform.position = new Vector2(screenWidth - 290, screenHeight - 80);
-            ranking.transform.position = new Vector2(screenWidth - 290, screenHeight - 426);
+
+            Vector3 statusWindow = status.gameObject.GetComponent<RectTransform>().rect.size;
+            Vector3 rankingWindow = ranking.gameObject.GetComponent<RectTransform>().rect.size;
+
+            status.transform.position = new Vector2(screenWidth - statusWindow.x / 2 - 20, screenHeight - statusWindow.y / 2 - 20);
+            ranking.transform.position = new Vector2(screenWidth - rankingWindow.x / 2 - 20, screenHeight - statusWindow.y - rankingWindow.y / 2 - 20);
             typingRoom.SetActive(true);
             shopRoom.SetActive(false);
         }
@@ -279,14 +282,17 @@ public class GameManager : MonoBehaviour
             // 画面サイズ
             float screenWidth = Screen.width;
             float screenHeight = Screen.height;
+            Vector3 statusWindow = status.gameObject.GetComponent<RectTransform>().rect.size;
+            Vector3 rankingWindow = ranking.gameObject.GetComponent<RectTransform>().rect.size;
+            Vector3 inventoryWindow = inventory.gameObject.GetComponent<RectTransform>().rect.size;
             // 目標位置
-            statusShowPos = new Vector2(screenWidth - 290, screenHeight - 80);
-            inventoryShowPos = new Vector2(screenWidth - 290, screenHeight - 426);
-            rankingShowPos = new Vector2(screenWidth - 290, screenHeight - 426);
+            statusShowPos = new Vector2(screenWidth - statusWindow.x/ 2 - 20, screenHeight - statusWindow.y/2 - 20);
+            statusHidePos = new Vector2(screenWidth - statusWindow.x/ 2 - 20, screenHeight * 1.15f);
+            inventoryShowPos = new Vector2(screenWidth - inventoryWindow.x/ 2 - 20, screenHeight - statusWindow.y - inventoryWindow.y/ 2 - 20);
+            inventoryHidePos = new Vector2(screenWidth, screenHeight - statusWindow.y - inventoryWindow.y/ 2 - 20);
+            rankingHidePos = new Vector2(screenWidth, screenHeight - statusWindow.y - rankingWindow.y/ 2 - 20);
+            rankingShowPos = new Vector2(screenWidth - rankingWindow.x/ 2 - 20, screenHeight - statusWindow.y - rankingWindow.y/ 2 - 20);
             equipmentShowPos = new Vector2(screenWidth * 0.33f, screenHeight * 0.13f);
-            statusHidePos = new Vector2(screenWidth * 0.79f, screenHeight * 1.15f);
-            inventoryHidePos = new Vector2(screenWidth * 1.21f, screenHeight * 0.44f);
-            rankingHidePos = new Vector2(screenWidth * 1.21f, screenHeight * 0.44f);
             equipmentHidePos = new Vector2(screenWidth * 0.33f, -screenHeight * 0.12f);
             if (count > 0)
             {
@@ -318,6 +324,8 @@ public class GameManager : MonoBehaviour
                         status.transform.position = statusHidePos;
                         inventory.transform.position = inventoryHidePos;
                         equip.transform.position = equipmentHidePos;
+                        Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
+                        Debug.Log("statusWindow:" + statusWindow + "  inventoryWindow:" + inventoryWindow + "  rankingWindow:" + rankingWindow);
                     }
                     if (rankingOpen == -1)
                     {
