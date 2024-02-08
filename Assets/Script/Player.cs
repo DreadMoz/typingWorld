@@ -24,9 +24,11 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject inventoryFilter;
     [SerializeField] private TypingDetail typingDetail;
     [SerializeField] private ChibiCat chibiCat;
+    [SerializeField] private float hitBackForce = 50f;
 
     private Animator pAnimator;
     public Camera playerCamera; // レイキャストに使用するカメラ
+    private Rigidbody rb;
 
     private Animator animator;
     private NavMeshAgent agent;
@@ -41,6 +43,7 @@ public class Player : MonoBehaviour
             Debug.LogError("Playerスクリプトで必要なオブジェクトが割り当てられていません。");
             return;
         }
+        rb = GetComponent<Rigidbody>();
         pAnimator = housePlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
         agent = GetComponent<NavMeshAgent>();  // ナビメッシュエージェントを取得
         agent.speed = speed;
@@ -316,10 +319,16 @@ public class Player : MonoBehaviour
         }
         else if (col.gameObject.CompareTag("InvisibleFence"))
         {
+            Vector3 hitBackDirection = transform.position - col.transform.position;
+            hitBackDirection.y = 0; // Y軸方向の影響を無視（必要に応じて）
+            rb.AddForce(hitBackDirection.normalized * hitBackForce, ForceMode.Impulse);
 
         }
         else if (col.gameObject.name != "Terrain")
         {
+            Vector3 hitBackDirection = transform.position - col.transform.position;
+            hitBackDirection.y = 0; // Y軸方向の影響を無視（必要に応じて）
+            rb.AddForce(hitBackDirection.normalized * hitBackForce, ForceMode.Impulse);
             // "Damage" トリガーアニメーションを開始
             animator.SetTrigger("Damage");
             agent.destination = this.transform.position;
