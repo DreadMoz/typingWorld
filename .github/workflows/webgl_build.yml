@@ -24,6 +24,9 @@ jobs:
         with:
           targetPlatform: WebGL
           unityVersion: 2021.3.24f1
+          
+      - name: Copy necoOAuthDesktop.json to Build Folder
+        run: cp Assets/StreamingAssets/necoOAuthDesktop.json build/necoOAuthDesktop.json
 
       # WebGLビルドをGitHub Pagesにデプロイ
       - name: Deploy to GitHub Pages
