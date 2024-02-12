@@ -29,7 +29,7 @@ public class GoogleAuth : MonoBehaviour
 #if UNITY_WEBGL && !UNITY_EDITOR
     private IEnumerator LoadCredentialsWebGL()
     {
-        string url = "ここにファイルが置かれているサーバーのURL/necoOAuthDesktop.json";
+        string url = "https://DreadMoz.github.io/typingWorld/necoOAuthDesktop.json";
 
         using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
         {
@@ -111,6 +111,7 @@ public class GoogleAuth : MonoBehaviour
                 scopes,
                 "user",
                 CancellationToken.None);
+            Debug.LogError("GoogleWebAuthorizationBroker.AuthorizeAsync done.");
 
             // アクセストークンを取得
             string accessToken = credential.Token.AccessToken;
@@ -121,8 +122,10 @@ public class GoogleAuth : MonoBehaviour
                 HttpClientInitializer = credential,
                 ApplicationName = "Unity Google Auth"
             });
+            Debug.LogError("Oauth2Service done.");
 
             Userinfo userInfo = await service.Userinfo.Get().ExecuteAsync();
+            Debug.LogError("service.Userinfo.Get().ExecuteAsync() done.");
 
             // ユーザー情報とアクセストークンの両方を返します。
             return (userInfo, accessToken);
