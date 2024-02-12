@@ -17,14 +17,14 @@ public class GoogleAuth : MonoBehaviour
     private string clientId;
     private string clientSecret;
 
-    void Start()
+    private void Awake()
     {
         LoadCredentials();
     }
 
     private void LoadCredentials()
     {
-        string filePath = Path.Combine(Application.streamingAssetsPath, "credentials.json");
+        string filePath = Path.Combine(Application.streamingAssetsPath, "necoOAuthDesktop.json");
 
         if (File.Exists(filePath))
         {
@@ -38,12 +38,6 @@ public class GoogleAuth : MonoBehaviour
         {
             Debug.LogError("Cannot find credentials file.");
         }
-    }
-
-    // 認証とユーザー情報の取得
-    public async void AuthenticateAndDisplayUserInfo()
-    {
-        Userinfo userInfo = await Authenticate();
     }
 
     // プロフィール画像をロードして表示
@@ -64,11 +58,54 @@ public class GoogleAuth : MonoBehaviour
         }
     }
 
+    // 認証プロセスを非同期で行い、アクセストークンを含むユーザー情報を返します。
+    public async Task<(Userinfo userInfo, string accessToken)> Authenticate()
+    {
+        try
+        {
+            // スコープを設定
+            string[] scopes = new string[] { Oauth2Service.Scope.UserinfoEmail, Oauth2Service.Scope.UserinfoProfile, "https://www.googleapis.com/auth/drive" };
 
-    public async Task<Userinfo> Authenticate()
+            // ClientSecrets オブジェクトを作成
+            ClientSecrets secrets = new ClientSecrets
+            {
+                ClientId = clientId,
+                ClientSecret = clientSecret
+            };
+
+            UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                secrets,
+                scopes,
+                "user",
+                CancellationToken.None);
+
+            // アクセストークンを取得
+            string accessToken = credential.Token.AccessToken;
+
+            // Oauth2サービスを初期化してユーザー情報を取得
+            var service = new Oauth2Service(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "Unity Google Auth"
+            });
+
+            Userinfo userInfo = await service.Userinfo.Get().ExecuteAsync();
+
+            // ユーザー情報とアクセストークンの両方を返します。
+            return (userInfo, accessToken);
+        }
+        catch (Exception ex)
+        {
+            // 例外をキャッチした場合、エラーメッセージをログに記録またはコンソールに出力
+            Console.WriteLine($"Authentication failed: {ex.Message}");
+            // 必要に応じて、エラー情報を含む例外をスロー
+            throw new ApplicationException("Authentication failed.", ex);
+        }
+    }
+    public async Task<(Userinfo userInfo, string accessToken)> ReAuthenticate()
     {
         // スコープを設定
-        string[] scopes = new string[] { Oauth2Service.Scope.UserinfoEmail, Oauth2Service.Scope.UserinfoProfile };
+        string[] scopes = new string[] { Oauth2Service.Scope.UserinfoEmail, Oauth2Service.Scope.UserinfoProfile, "https://www.googleapis.com/auth/drive" };
 
         // ClientSecrets オブジェクトを作成
         ClientSecrets secrets = new ClientSecrets
@@ -77,34 +114,44 @@ public class GoogleAuth : MonoBehaviour
             ClientSecret = clientSecret
         };
 
-        // ユーザー認証リクエストを生成
-        UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-            secrets,
-            scopes,
-            "user",
-            CancellationToken.None);
+        // 既存の認証情報を破棄して新しい認証プロセスを強制
+        var initializer = new GoogleAuthorizationCodeFlow.Initializer
+        {
+            ClientSecrets = secrets
+        };
+        var flow = new GoogleAuthorizationCodeFlow(initializer);
+        var token = await flow.LoadTokenAsync("user", CancellationToken.None);
+        if (token != null)
+        {
+            await flow.DeleteTokenAsync("user", CancellationToken.None);
+        }
 
-        // ここで NullDataStore を使用してキャッシュされた認証情報を使用しないように設定
-/*        UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+        UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
             secrets,
             scopes,
             "user",
             CancellationToken.None,
             new NullDataStore());
-*/
-        // Oauth2サービスを初期化
+
+        // アクセストークンを取得
+        string accessToken = credential.Token.AccessToken;
+
+        // Oauth2サービスを初期化してユーザー情報を取得
         var service = new Oauth2Service(new BaseClientService.Initializer()
         {
             HttpClientInitializer = credential,
             ApplicationName = "Unity Google Auth"
         });
 
-        // ユーザー情報を取得
         Userinfo userInfo = await service.Userinfo.Get().ExecuteAsync();
-        return userInfo;
+
+        // ユーザー情報とアクセストークンを返します。
+        return (userInfo, accessToken);
     }
+
 }
 
+// ここで NullDataStore を使用してキャッシュされた認証情報を使用しないように設定
 [System.Serializable]
 public class GoogleCredentials
 {
@@ -117,4 +164,28 @@ public class GoogleCredentials
         public string client_secret;
         // 他のフィールドも必要に応じて追加...
     }
+}
+
+[System.Serializable]
+public class GASResponse
+{
+    public string email;
+    public string orgUnitPath;
+    public string contentSheet;
+}
+
+[System.Serializable]
+public class ServiceAccountData
+{
+    public string type;
+    public string project_id;
+    public string private_key_id;
+    public string private_key;
+    public string client_email;
+    public string client_id;
+    public string auth_uri;
+    public string token_uri;
+    public string auth_provider_x509_cert_url;
+    public string client_x509_cert_url;
+    public string universe_domain;
 }

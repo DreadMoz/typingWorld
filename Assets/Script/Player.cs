@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
         kinoko.SetActive(false);
         inventoryFilter.SetActive(false);
 
-        if (GameManager.SceneNo == (int)scene.World)
+        if (GameManager.SceneNo == scene.World)
         {
             exitHouse.SetActive(false);
             exitShop.SetActive(false);
@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
         
             animator.SetTrigger("Hi");    // "Hi" トリガーアニメーションを開始
         }
-        else if (GameManager.SceneNo == (int)scene.House)
+        else if (GameManager.SceneNo == scene.House)
         {
             if (GameManager.TypingDataId < 0)
             {
@@ -97,12 +97,12 @@ public class Player : MonoBehaviour
             transform.rotation = transform.rotation;
             return;
         }
-        if (GameManager.SceneNo == (int)scene.House)
+        if (GameManager.SceneNo == scene.House)
         {
             practice.calcStars();       // 表示する星を計算
             practice.showRoomMenu();    // ルームメニュー表示
             practice.showDetail();      // 詳細画面表示
-            GameManager.SceneNo = (int)scene.World; // ワールドシーン状態へ
+            GameManager.SceneNo = scene.World; // ワールドシーン状態へ
         }
         if (typingWindow == 1)
         {

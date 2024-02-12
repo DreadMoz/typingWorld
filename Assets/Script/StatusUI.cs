@@ -2,27 +2,6 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 
-// Gold,Server,Rank,Kpm,userName
-enum st
-{
-    Gold = 0,
-    Server = 1,
-    Rank = 2,
-    Kpm = 3
-}
-
-// RightHnad,Glasses(121),Head(151),LeftHand,CatBody(201)あえて0,CatFace(101),NickName(211)
-enum eq
-{
-    RightHnad = 0,
-    Glasses = 1,
-    Head = 2,
-    LeftHand = 3,
-    CatBody = 4,
-    CatFace = 5,
-    NickName = 6
-}
-
 public class StatusUI : MonoBehaviour
 {
     [SerializeField]

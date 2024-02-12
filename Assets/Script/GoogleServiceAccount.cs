@@ -1,10 +1,13 @@
 using System.IO;
+using System.Net;
+using System.Text;
 using Google.Apis.Auth.OAuth2;
 using UnityEngine;
 
 public static class GoogleServiceAccount
 {
-    static string KeyPath => Path.Combine(Application.streamingAssetsPath, "necotapu-e78171719743.json");
+    // GASから取得したSheetInfoを格納する静的プロパティ
+    public static string SheetInfo { get; set; }
 
     private static ICredential _credential;
 
@@ -15,10 +18,13 @@ public static class GoogleServiceAccount
             return _credential;
         }
 
-        using (var stream = new FileStream(KeyPath, FileMode.Open, FileAccess.Read))
+        // JSON 文字列から MemoryStream を生成
+        using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(SheetInfo)))
         {
+            // ストリームから GoogleCredential を生成
             _credential = GoogleCredential.FromStream(stream)
-                .CreateScoped(scopes).UnderlyingCredential;
+                            .CreateScoped(scopes)
+                            .UnderlyingCredential;
         }
 
         return _credential;

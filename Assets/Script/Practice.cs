@@ -29,8 +29,8 @@ public class Practice : MonoBehaviour
             {
                 if ((medals[i] > 2) && (medals[i + 1] == 0))    // 星2つ以上で次がクローズだったら
                 {
-                    gm.savedata.setMedalIndex(i + 1, -1);        // Detailオープン
-                    medals[i + 1] = -1;
+                    gm.savedata.setMedalIndex(i + 1, -1);       // Detailオープン
+                    medals[i + 1] = -1;                         // 花火セット
                     Debug.Log("Oepned detail id:" + (i + 1));
                 }
             }

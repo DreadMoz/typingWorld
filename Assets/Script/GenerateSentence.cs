@@ -51,7 +51,7 @@ public class GenerateSentence
     {"の", new string[1] {"no"}},
     {"は", new string[1] {"ha"}},
     {"ひ", new string[1] {"hi"}},
-    {"ふ", new string[2] {"fu", "hu"}},
+    {"ふ", new string[2] {"hu", "fu"}},
     {"へ", new string[1] {"he"}},
     {"ほ", new string[1] {"ho"}},
     {"ま", new string[1] {"ma"}},
