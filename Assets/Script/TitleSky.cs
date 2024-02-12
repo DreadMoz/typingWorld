@@ -127,26 +127,26 @@ public class TitleSky : MonoBehaviour
                 }
                 userData.SetActive(true);
 
-                // ここでいいネットなら判定
-                message.SetActive(true);
-                Text messageText = message.GetComponentInChildren<Text>();
-                if (userInfo.Hd == "e-net.nara.jp")
-                {
-                    messageText.text = userInfo.GivenName + "さんはいいネットならのなかまだね。データをロードするね。";
-                }
-                else
-                {
-                    messageText.text = "いいネットなら専用のアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
-                }
-
-                if (string.IsNullOrEmpty(accessToken))
-                {
-                    Debug.LogError("Error: " + "アカウントトークンが得られませんでした。");
-                    return;
-                }
-
                 for (int i = 0; i < 3; i++)
                 {
+                    // ここでいいネットなら判定
+                    message.SetActive(true);
+                    Text messageText = message.GetComponentInChildren<Text>();
+                    if (userInfo.Hd == "e-net.nara.jp")
+                    {
+                        messageText.text = userInfo.GivenName + "さんはいいネットならのなかまだね。データをロードするね。";
+                    }
+                    else
+                    {
+                        messageText.text = "いいネットなら専用のアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
+                    }
+
+                    if (string.IsNullOrEmpty(accessToken))
+                    {
+                        Debug.LogError("Error: " + "アカウントトークンが得られませんでした。");
+                        return;
+                    }
+
                     // アクセストークンを使用してGASにリクエストを送信
                     await SendRequestToGAS(userInfo.Email, accessToken);
 
@@ -177,7 +177,7 @@ public class TitleSky : MonoBehaviour
         {
             message.SetActive(true);
             Text messageText = message.GetComponentInChildren<Text>();
-            messageText.text = "ネットワークせつぞくエラーです。インターネットにはつながっているかな？";
+            messageText.text = "ネットワークエラーです。";
 
             // 例外をキャッチした場合、エラーメッセージをログに記録またはコンソールに出力
             Console.WriteLine($"Authentication failed: {ex.Message}");

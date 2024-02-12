@@ -19,25 +19,58 @@ public class GoogleAuth : MonoBehaviour
 
     private void Awake()
     {
-        LoadCredentials();
+#if UNITY_WEBGL && !UNITY_EDITOR
+        StartCoroutine(LoadCredentialsWebGL());
+#else
+        LoadCredentialsDesktop();
+#endif
     }
 
-    private void LoadCredentials()
+#if UNITY_WEBGL && !UNITY_EDITOR
+    private IEnumerator LoadCredentialsWebGL()
+    {
+        string url = "ここにファイルが置かれているサーバーのURL/necoOAuthDesktop.json";
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.isNetworkError || webRequest.isHttpError)
+            {
+                Debug.LogError($"Cannot load credentials: {webRequest.error}");
+            }
+            else
+            {
+                string dataAsJson = webRequest.downloadHandler.text;
+                ProcessCredentials(dataAsJson);
+            }
+        }
+    }
+#endif
+
+    private void LoadCredentialsDesktop()
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, "necoOAuthDesktop.json");
 
         if (File.Exists(filePath))
         {
             string dataAsJson = File.ReadAllText(filePath);
-            GoogleCredentials credentials = JsonUtility.FromJson<GoogleCredentials>(dataAsJson);
-
-            clientId = credentials.installed.client_id;
-            clientSecret = credentials.installed.client_secret;
+            ProcessCredentials(dataAsJson);
         }
         else
         {
             Debug.LogError("Cannot find credentials file.");
         }
+    }
+
+    private void ProcessCredentials(string dataAsJson)
+    {
+        GoogleCredentials credentials = JsonUtility.FromJson<GoogleCredentials>(dataAsJson);
+
+        clientId = credentials.installed.client_id;
+        clientSecret = credentials.installed.client_secret;
+
+        Debug.Log("Credentials loaded successfully.");
     }
 
     // プロフィール画像をロードして表示
