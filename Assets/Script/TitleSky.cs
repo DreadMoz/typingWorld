@@ -43,6 +43,8 @@ public class TitleSky : MonoBehaviour
     private GameObject userData; // ユーザーデータ
     [SerializeField]
     private GameObject message; // メッセージボックス
+    [SerializeField]
+    private GameObject reLogin; // ログインしなおす
 
     [SerializeField]
     private GameObject standupButton; // standupボタン
@@ -66,6 +68,7 @@ public class TitleSky : MonoBehaviour
 
     [SerializeField]
     private string code;
+    [SerializeField]
     private GoogleAuth googleAuth;
 
 
@@ -113,25 +116,31 @@ public class TitleSky : MonoBehaviour
                 startButton.SetActive(false);   // 誤動作防止用、ログイン完了まで一旦消す
 
                 // Google OAuth認証サービスを初期化
-                googleAuth = gameObject.AddComponent<GoogleAuth>();
+//                googleAuth = gameObject.AddComponent<GoogleAuth>();
 
                 // 認証してアクセストークンを取得
                 var (userInfo, accessToken) = await googleAuth.Authenticate();
 
-                if (userInfo != null)
+                message.SetActive(true);
+                Text messageText = message.GetComponentInChildren<Text>();
+                if (userInfo == null)
+                {
+                    message.SetActive(true);
+                    messageText.text = userInfo.GivenName + "Google認証にしっぱいしました";
+                    return;
+                }
+                else
                 {
                     mailText.text = userInfo.Email;
                     firstName.text = userInfo.GivenName;
                     lastName.text = userInfo.FamilyName;
                     StartCoroutine(googleAuth.LoadProfileImage(userInfo.Picture, OnImageLoaded));
+                    userData.SetActive(true);
                 }
-                userData.SetActive(true);
 
                 for (int i = 0; i < 3; i++)
                 {
                     // ここでいいネットなら判定
-                    message.SetActive(true);
-                    Text messageText = message.GetComponentInChildren<Text>();
                     if (userInfo.Hd == "e-net.nara.jp")
                     {
                         messageText.text = userInfo.GivenName + "さんはいいネットならのなかまだね。データをロードするね。";
@@ -156,6 +165,7 @@ public class TitleSky : MonoBehaviour
                     }
                     else
                     {
+                        messageText.text = "さあ！スタートしましょう。";
                         break;
                     }
                 }

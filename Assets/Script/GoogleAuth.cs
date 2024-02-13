@@ -21,11 +21,11 @@ public class GoogleAuth : MonoBehaviour
 
     private void Awake()
     {
-//        LoadCredentialsDesktop();
+        LoadCredentialsDesktop();
     }
 
     private void LoadCredentialsDesktop()
-    {
+    {/*
         string filePath = Path.Combine(Application.streamingAssetsPath, "necoOAuthDesktop.json");
 
         if (File.Exists(filePath))
@@ -36,7 +36,7 @@ public class GoogleAuth : MonoBehaviour
         else
         {
             Debug.LogError("Cannot find credentials file.");
-        }
+        }*/
     }
 
     private void ProcessCredentials(string dataAsJson)
