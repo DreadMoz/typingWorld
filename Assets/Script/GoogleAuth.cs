@@ -14,39 +14,15 @@ using System.IO;
 
 public class GoogleAuth : MonoBehaviour
 {
+    [SerializeField]
     private string clientId;
+    [SerializeField]
     private string clientSecret;
 
     private void Awake()
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        StartCoroutine(LoadCredentialsWebGL());
-#else
-        LoadCredentialsDesktop();
-#endif
+//        LoadCredentialsDesktop();
     }
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-    private IEnumerator LoadCredentialsWebGL()
-    {
-        string url = "https://DreadMoz.github.io/typingWorld/necoOAuthDesktop.json";
-
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
-        {
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.isNetworkError || webRequest.isHttpError)
-            {
-                Debug.LogError($"Cannot load credentials: {webRequest.error}");
-            }
-            else
-            {
-                string dataAsJson = webRequest.downloadHandler.text;
-                ProcessCredentials(dataAsJson);
-            }
-        }
-    }
-#endif
 
     private void LoadCredentialsDesktop()
     {
@@ -66,7 +42,7 @@ public class GoogleAuth : MonoBehaviour
     private void ProcessCredentials(string dataAsJson)
     {
         GoogleCredentials credentials = JsonUtility.FromJson<GoogleCredentials>(dataAsJson);
-
+        
         clientId = credentials.installed.client_id;
         clientSecret = credentials.installed.client_secret;
 
@@ -111,7 +87,7 @@ public class GoogleAuth : MonoBehaviour
                 scopes,
                 "user",
                 CancellationToken.None);
-            Debug.LogError("GoogleWebAuthorizationBroker.AuthorizeAsync done.");
+            Debug.Log("GoogleWebAuthorizationBroker.AuthorizeAsync done.");
 
             // アクセストークンを取得
             string accessToken = credential.Token.AccessToken;
@@ -122,10 +98,10 @@ public class GoogleAuth : MonoBehaviour
                 HttpClientInitializer = credential,
                 ApplicationName = "Unity Google Auth"
             });
-            Debug.LogError("Oauth2Service done.");
+            Debug.Log("Oauth2Service done.");
 
             Userinfo userInfo = await service.Userinfo.Get().ExecuteAsync();
-            Debug.LogError("service.Userinfo.Get().ExecuteAsync() done.");
+            Debug.Log("service.Userinfo.Get().ExecuteAsync() done.");
 
             // ユーザー情報とアクセストークンの両方を返します。
             return (userInfo, accessToken);
