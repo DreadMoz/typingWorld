@@ -112,7 +112,7 @@ public class TitleSky : MonoBehaviour
         try
         {
             if (startButtonStatus == 0)
-            {
+            {/*
                 startButton.SetActive(false);   // 誤動作防止用、ログイン完了まで一旦消す
 
                 // Google OAuth認証サービスを初期化
@@ -137,7 +137,6 @@ public class TitleSky : MonoBehaviour
                     StartCoroutine(googleAuth.LoadProfileImage(userInfo.Picture, OnImageLoaded));
                     userData.SetActive(true);
                 }
-
                 for (int i = 0; i < 3; i++)
                 {
                     // ここでいいネットなら判定
@@ -170,6 +169,7 @@ public class TitleSky : MonoBehaviour
                     }
                 }
 
+                */
                 await setDataFromSpreadsheet();
 
                 finishDataLoad();
@@ -257,6 +257,7 @@ public class TitleSky : MonoBehaviour
 
     private async Task setDataFromSpreadsheet()
     {
+        mailText.text = "moriryo@e-net.nara.jp";
         // メールアドレスを含む行を取得
         await GSheet.FindRowNumber(spreadsheetId, mailText.text);
         var rowData = await GSheet.GetRow();

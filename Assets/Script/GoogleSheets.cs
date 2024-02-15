@@ -47,6 +47,7 @@ public static class GSheet
     // 指定されたメールアドレスを含む行の行番号を検索し、targetRowNumberを更新するメソッド
     public static async UniTask<bool> FindRowNumber(string id, string emailToFind)
     {
+        string[] Scopes = new[] { SheetsService.Scope.Spreadsheets, SheetsService.Scope.SpreadsheetsReadonly };
         var credential = GoogleServiceAccount.GetCredential(Scopes);
         if (credential == null)
         {
