@@ -112,7 +112,9 @@ public class TitleSky : MonoBehaviour
         try
         {
             if (startButtonStatus == 0)
-            {/*
+            {
+                userData.SetActive(true);    // OAuth認証GASアクセスなしの場合
+                /*
                 startButton.SetActive(false);   // 誤動作防止用、ログイン完了まで一旦消す
 
                 // Google OAuth認証サービスを初期化
@@ -168,7 +170,6 @@ public class TitleSky : MonoBehaviour
                         break;
                     }
                 }
-
                 */
                 await setDataFromSpreadsheet();
 
@@ -257,7 +258,7 @@ public class TitleSky : MonoBehaviour
 
     private async Task setDataFromSpreadsheet()
     {
-        mailText.text = "moriryo@e-net.nara.jp";
+        mailText.text = "moriryo@e-net.nara.jp";    // OAuth認証GASアクセスなしの場合
         // メールアドレスを含む行を取得
         await GSheet.FindRowNumber(spreadsheetId, mailText.text);
         var rowData = await GSheet.GetRow();
