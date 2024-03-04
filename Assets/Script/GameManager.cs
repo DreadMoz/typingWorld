@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject inventoryButton;  // インベントリボタン
     public GameObject rankingButton;    // ランキングボタン
+    public GameObject settingButton;    // セッティングボタン
 
     [SerializeField]
     private int windowOpenCount = 20;    // ウィンドウが開くフレーム数
@@ -158,6 +159,7 @@ public class GameManager : MonoBehaviour
                 recalculateKpm();
                 inventory.SetActive(false);
                 equip.SetActive(false);
+                settingButton.SetActive(false);
                 rankingButton.SetActive(false);
                 inventoryButton.SetActive(false);
                 status.SetActive(true);

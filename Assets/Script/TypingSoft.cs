@@ -362,7 +362,7 @@ public class TypingSoft : MonoBehaviour
             if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random > 0))
             {
                 ShuffleThemes(theme.random);
-                currentThemeIndex = 0; // リストの最初に戻る
+                currentThemeIndex = 1; // リストの最初に戻る
                 returnCount++;
             }
         }
@@ -678,30 +678,7 @@ public class TypingSoft : MonoBehaviour
         bool isMistype = JudgeTyping(nextString);
         if (!isMistype)
         {
-            if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))
-            {
-                currentTime = 0;
-                isTimerRunning = false;
-                isInputValid = false;
-                Fukidashi.SetActive(false);
-
-                END.text = "よくできました！";
-                UIJ.text = "";
-                UIH.text = "";
-                UIR.text = "";
-                UII.text = "";
-
-                // キーカラークリア
-                AssistKeyboardObj.SetAllKeyColorWhite();
-                AssistKeyboardObj.SetNextHighlight(" ");
-                animator.SetTrigger("end3");
-
-                spaceEnd = true;
-            }
-            else
-            {
-                Correct(nextString);
-            }
+            Correct(nextString);
         }
         else
         {
@@ -849,8 +826,32 @@ public class TypingSoft : MonoBehaviour
         // タイプした文字を緑色に
         UII.text = $"<color=#20A01D>{UII.text}</color>";
         answers++;
-        // 次の文章
-        StartCoroutine(ChangeSentence());
+
+        if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))
+        {
+            currentTime = 0;
+            isTimerRunning = false;
+            isInputValid = false;
+            Fukidashi.SetActive(false);
+
+            END.text = "よくできました！";
+            UIJ.text = "";
+            UIH.text = "";
+            UIR.text = "";
+            UII.text = "";
+
+            // キーカラークリア
+            AssistKeyboardObj.SetAllKeyColorWhite();
+            AssistKeyboardObj.SetNextHighlight(" ");
+            animator.SetTrigger("end3");
+
+            spaceEnd = true;
+        }
+        else
+        {
+            // 次の文章
+            StartCoroutine(ChangeSentence());
+        }
     }
 
     /// <summary>
