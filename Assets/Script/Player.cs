@@ -10,7 +10,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject tiikawa;
     [SerializeField] private GameObject kinoko;
     [SerializeField] private GameObject inventoryButton;
-    [SerializeField] private GameObject rankButton;
+    [SerializeField] private GameObject rankingButton;
+    [SerializeField] private GameObject settingButton;
     [SerializeField] private GameObject itemShop;
     [SerializeField] private GameObject status;
     [SerializeField] private Fade fade;
@@ -24,7 +25,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject inventoryFilter;
     [SerializeField] private TypingDetail typingDetail;
     [SerializeField] private ChibiCat chibiCat;
-    [SerializeField] private float hitBackForce = 50f;
+    [SerializeField] private float hitBackForce = 0.3f;
+    [SerializeField] private GameObject keepOut;
 
     private Animator pAnimator;
     public Camera playerCamera; // レイキャストに使用するカメラ
@@ -35,10 +37,11 @@ public class Player : MonoBehaviour
     private float speed = 8f;
     private int typingWindow = 0;
     private int shopWindow = 0;
+    private int keepOutCount = 0;
 
     void Start()
     {
-        if (!gm || !typingRoom || !inventoryButton || !rankButton || !itemShop || !status || !fade || !fadeDoor)
+        if (!gm || !typingRoom || !inventoryButton || !rankingButton || !itemShop || !status || !fade || !fadeDoor)
         {
             Debug.LogError("Playerスクリプトで必要なオブジェクトが割り当てられていません。");
             return;
@@ -51,6 +54,7 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();  // Playerのアニメーターを取得
         animator.SetInteger("anim", 1);       // アニメーションステートを1に設定 タイトルのアニメーションを抜ける
 
+        keepOut.SetActive(false);
         tiikawa.SetActive(false);
         kinoko.SetActive(false);
         inventoryFilter.SetActive(false);
@@ -113,9 +117,10 @@ public class Player : MonoBehaviour
             typingWindow = 0;
             tiikawa.SetActive(true);
             typingRoom.SetActive(true);
-            rankButton.SetActive(false);
+            settingButton.SetActive(false);
+            rankingButton.SetActive(false);
             inventoryButton.SetActive(false);
-            rankButton.GetComponent<OpenButton>().forceOpen();
+            rankingButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);
             exitHouse.SetActive(true);
@@ -139,9 +144,10 @@ public class Player : MonoBehaviour
             }
             typingWindow = 0;
             typingRoom.SetActive(false);
-            rankButton.SetActive(true);
+            settingButton.SetActive(true);
+            rankingButton.SetActive(true);
             inventoryButton.SetActive(true);
-            rankButton.GetComponent<OpenButton>().OnButton();
+            rankingButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);
             exitHouse.SetActive(false);
@@ -164,7 +170,8 @@ public class Player : MonoBehaviour
             }
             shopWindow = 0;
             itemShop.SetActive(true);
-            rankButton.SetActive(false);
+            rankingButton.SetActive(false);
+            settingButton.SetActive(false);
             inventoryButton.SetActive(false);
             inventoryButton.GetComponent<OpenButton>().forceOpen();
             exitShop.SetActive(true);
@@ -186,7 +193,8 @@ public class Player : MonoBehaviour
             }
             shopWindow = 0;
             itemShop.SetActive(false);
-            rankButton.SetActive(true);
+            settingButton.SetActive(true);
+            rankingButton.SetActive(true);
             inventoryButton.SetActive(true);
             inventoryButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
@@ -206,7 +214,7 @@ public class Player : MonoBehaviour
         // ダメージまたは"Hi"アニメーション中またなウィンドウを開いたときはプレイヤーの位置を固定
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi") || gm.getWindowOpen())
         {
-            agent.destination = this.transform.position;
+            agent.ResetPath(); // 目的地を解除する
         }
         else
         {
@@ -280,8 +288,18 @@ public class Player : MonoBehaviour
                     if (Vector3.Distance(transform.position, agent.destination) < 0.2f)
                     {
                         animator.SetBool("Run", false);
-                        agent.destination = this.transform.position;
+
+                        // 目的地を解除し、エージェントの移動を停止します。
+                        agent.ResetPath(); // 目的地を解除する
                     }
+                }
+                if (keepOutCount > 0)
+                {
+                    keepOutCount--;
+                }
+                if (keepOutCount == 0)
+                {
+                    keepOut.SetActive(false);
                 }
             }
         }
@@ -317,18 +335,8 @@ public class Player : MonoBehaviour
                 shopWindow = 1;
             }
         }
-        else if (col.gameObject.CompareTag("InvisibleFence"))
-        {
-            Vector3 hitBackDirection = transform.position - col.transform.position;
-            hitBackDirection.y = 0; // Y軸方向の影響を無視（必要に応じて）
-            rb.AddForce(hitBackDirection.normalized * hitBackForce, ForceMode.Impulse);
-
-        }
         else if (col.gameObject.name != "Terrain")
         {
-            Vector3 hitBackDirection = transform.position - col.transform.position;
-            hitBackDirection.y = 0; // Y軸方向の影響を無視（必要に応じて）
-            rb.AddForce(hitBackDirection.normalized * hitBackForce, ForceMode.Impulse);
             // "Damage" トリガーアニメーションを開始
             animator.SetTrigger("Damage");
             agent.destination = this.transform.position;
@@ -340,8 +348,19 @@ public class Player : MonoBehaviour
         // 接触している間中行いたい処理
         if (col.gameObject.CompareTag("InvisibleFence"))
         {
+            keepOut.SetActive(true);
+            keepOutCount = 50;
             animator.SetBool("Walk", true);
             agent.speed = speed/4;
+
+            // 目的地を解除し、エージェントの移動を停止します。
+            agent.ResetPath(); // 目的地を解除する
+
+            // ワールドの中心方向に少し移動させる処理
+            Vector3 centerDirection = (new Vector3(268, 6, 146) - transform.position).normalized; // ワールドの中心への方向を計算
+            float moveTowardsCenterAmount = hitBackForce; // 中心に向かって移動させたい距離
+            Vector3 newPosition = transform.position + centerDirection * moveTowardsCenterAmount; // 新しい位置を計算
+            agent.Move(centerDirection * moveTowardsCenterAmount); // NavMeshAgentを使用して移動
         }
     }
 
