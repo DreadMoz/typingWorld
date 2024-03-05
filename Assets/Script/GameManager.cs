@@ -6,13 +6,14 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
+using System.Linq;
 
-enum scene
+public class scene
 {
-    Title = 0,
-    World = 1,
-    Typing = 2,
-    House = 3
+    public const int Title = 0;
+    public const int World = 1;
+    public const int Typing = 2;
+    public const int House = 3;
 }
 
 public class GameManager : MonoBehaviour
@@ -423,37 +424,40 @@ public class GameManager : MonoBehaviour
         equipUi.getAllSoubi();
         newInventory = savedata.getInventory();     // 現在のインベントリの並びを保存
         newEquip = savedata.getEquipment();         // 現在の装備を保存
-        var updatesInventory = new Dictionary<string, int>();
-        var updatesEquipment = new Dictionary<string, int>();
+        int[] updatesItems;
 
         if (oldInventory == null || oldEquip == null)    // 何かの手違いで変更前がnullの場合抜ける
         {
             return;
         }
+        int[] oldItems = oldEquip.Concat(oldInventory).ToArray();
+        int[] newItems = newEquip.Concat(newInventory).ToArray();
 
-        for (int i = 0; i< oldInventory.Length; i++)
+        int changeFirstIndex = 0;
+        int changeLastIndex = 0;
+        bool noChangeFlg = true;
+        for (int i = 0; i < oldItems.Length; i++)
         {
-            if (oldInventory[i] != newInventory[i])     // インベントリを開いたときと変化があるかチェック
+            if (oldItems[i] != newItems[i])     // インベントリを開いたときと変化があるかチェック
             {
-                updatesInventory.Add(i.ToString(), newInventory[i]);
+                if (noChangeFlg)
+                {
+                    changeFirstIndex = i;
+                    noChangeFlg = false;
+                }
+                changeLastIndex = i;
             }
         }
-        if (updatesInventory.Count > 0)
+        if (!noChangeFlg)
         {
-            connection.saveFbInventory(updatesInventory);   // 変化があればFbに保存
-        }
-
-        // RightHnad,Glasses(121),Head(151),LeftHand,  CatBody(201),CatFace(101),NickName(211)
-        for (int i = 0; i<oldEquip.Length; i++)
-        {
-            if (oldEquip[i] != newEquip[i])     // インベントリを開いたときと変化があるかチェック
+            updatesItems = new int[changeLastIndex - changeFirstIndex + 1];
+            // 変化のあった最初と最後の間の値を全て取得
+            for (int j = 0; j <= changeLastIndex - changeFirstIndex; j++)
             {
-                updatesEquipment.Add(i.ToString(), newEquip[i]);
+                updatesItems[j] = newItems[changeFirstIndex + j];
             }
-        }
-        if (updatesEquipment.Count > 0)
-        {
-            connection.saveFbEquipment(updatesEquipment);   // 変化があればFbに保存
+            // GSSに書き込み
+            savedata.saveGssItems(changeFirstIndex, changeLastIndex, updatesItems);
         }
         oldInventory = null;        // データクリア
         oldEquip = null;
@@ -463,14 +467,7 @@ public class GameManager : MonoBehaviour
     {
         if (Kpm > NewKpm * kpmRatio)    // 今回の成績が一定の成績以上であれば
         {
-            Kpm = savedata.updateKpm(NewKpm);   // kpm更新
-
-            var fbKpms = new Dictionary<string, int>();
-            for (int i = 0; i < savedata.getKpms().Length; i++)
-            {
-                fbKpms[i.ToString()] = savedata.getKpms()[i];
-            }
-            connection.saveFbKpm(fbKpms);
+            savedata.updateKpm(NewKpm);   // kpm更新
         }
     }
     public void registerRecentTypingResult()
@@ -479,6 +476,13 @@ public class GameManager : MonoBehaviour
         if (savedata.getMedals()[TypingDataId] < stars)
         {
             savedata.setMedalIndex(TypingDataId, stars);
+
+            int changeMedalId = savedata.EncodeToLongArray();
+            if (changeMedalId != -1)
+            {
+                savedata.saveGssMedals(changeMedalId);
+            }
+
         }
     }
 

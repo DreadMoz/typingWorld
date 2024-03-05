@@ -31,7 +31,7 @@ public class Connection : MonoBehaviour
 #if UNITY_WEBGL && !UNITY_EDITOR
         FbAuth();
 #else
-        title.finishAuth();
+//        title.finishAuth();
 #endif
     }
 
