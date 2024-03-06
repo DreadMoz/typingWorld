@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     static private int typingTab;           // タイピングステージのタブNo
     static private int kpm;                 // 現在のkpm
     static private int newKpm;              // 直近のタイピング結果のkpm
-    static private int numAnswers;          // 回答数
+    static private float keyRate;           // 回答数
     static private float answerRate;        // 解答率
     static private int typingDataId;        // タイピングデータのJson呼び出しID練習のファイル名は数字
     static private string typingDataName;   // タイピングデータのJson呼び出し用ファイル名
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     static public int TypingTab { get => typingTab; set => typingTab = value; }
     static public int Kpm { get => kpm; set => kpm = value; }
     static public int NewKpm { get => newKpm; set => newKpm = value; }
-    static public int NumAnswers { get => numAnswers; set => numAnswers = value; }
+    static public float KeyRate { get => keyRate; set => keyRate = value; }
     static public float AnswerRate { get => answerRate; set => answerRate = value; }
     static public int TypingDataId { get => typingDataId; set => typingDataId = value; }
     static public string TypingDataName { get => typingDataName; set => typingDataName = value; }
@@ -472,7 +472,7 @@ public class GameManager : MonoBehaviour
     }
     public void registerRecentTypingResult()
     {
-        int stars = judgeStar(AnswerRate);
+        int stars = judgeStar();
         if (savedata.getMedals()[TypingDataId] < stars)
         {
             savedata.setMedalIndex(TypingDataId, stars);
@@ -486,17 +486,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private int judgeStar(float rate)
+    private int judgeStar()
     {
-        if (rate > 0.95)
+        if ((AnswerRate > 0.95) && (KeyRate > 60))
         {
             return 4;       // 星3つ
         }
-        else if (rate > 0.75)
+        else if ((AnswerRate > 0.75) && (KeyRate > 30))
         {
             return 3;       // 星2つ
         }
-        else if (rate > 0.4)
+        else if (AnswerRate > 0.4)
         {
             return 2;       // 星1つ
         }

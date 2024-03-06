@@ -534,7 +534,7 @@ public class TypingSoft : MonoBehaviour
             {
                 AssistKeyboardObj.pushKeyAction(inputStr);
                 GameManager.NewKpm = (int)kpm;
-                GameManager.NumAnswers = answers;
+                GameManager.KeyRate = correctN / totalTime;
                 GameManager.AnswerRate = correctAR;
                 GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
                 SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移

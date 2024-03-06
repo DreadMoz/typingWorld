@@ -29,7 +29,7 @@ public class NpcManager : MonoBehaviour
         for (int i = 0; i < spawnCount; i++)
         {
             // Y軸周りでランダムな角度を選択
-            Quaternion randomRotation = Quaternion.Euler(0, Random.Range(110, 270), 0);
+            Quaternion randomRotation = Quaternion.Euler(0, Random.Range(110, 220), 0);
             // NPCプレハブのインスタンスを生成し、指定された位置に配置
             Instantiate(npcPrefab, spawnPoints[i].position, randomRotation, transform);
         }
