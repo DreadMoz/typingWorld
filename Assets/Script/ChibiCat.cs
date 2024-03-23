@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UniRx;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
@@ -57,8 +58,25 @@ public class ChibiCat : MonoBehaviour
 //        if (Input.GetKeyDown(KeyCode.R)) { setEmo(11); }
     }
 
+    public void setName(string name)
+    {
+        var textComponent = GetComponentInChildren<TextMeshProUGUI>();
+        if (textComponent != null)
+        {
+            textComponent.text = name; // 名前をテキストにセット
+        }
+        else
+        {
+            Debug.LogError("TextMeshProUGUI component not found on " + gameObject.name);
+        }
+    }
+
     public void setChara(int no)
     {
+        if (no > 9)
+        {
+            no = 0;
+        }
         Material[] tmp = materials;
         tmp[0] = cats[no];
         GetComponent<Renderer>().materials = tmp;
@@ -129,7 +147,7 @@ public class ChibiCat : MonoBehaviour
         releaseHead();
         switch (itemIdHead)
         {
-            case 151:
+            case 121:
                 hikingHat.SetActive(true);
                 break;
         }
@@ -140,7 +158,7 @@ public class ChibiCat : MonoBehaviour
         releaseGrasses();
         switch (itemIdGrass)
         {
-            case 121:
+            case 151:
                 grassARed.SetActive(true);
                 break;
         }

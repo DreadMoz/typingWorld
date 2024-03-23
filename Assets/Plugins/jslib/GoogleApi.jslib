@@ -1,4 +1,9 @@
 mergeInto(LibraryManager.library, {
+    RequestDataFromExtension: function(stageNo) {
+        // 直接数値を使用
+        var message = { action: "requestDataFromExtension", stageNo: stageNo };
+        window.postMessage(message, "*");
+    },
 
     FbAuth: function () {
         googleAuth();

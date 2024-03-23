@@ -390,6 +390,20 @@
                 });
             }
         }
-        window.saveFirebaseKpm = saveFirebaseKpm;</script>
+        window.saveFirebaseKpm = saveFirebaseKpm;
+
+        window.addEventListener('message', function (event) {
+            // セキュリティを確保するために、信頼できるオリジンからのメッセージのみを受け入れる
+            if (event.origin !== "http://127.0.0.1:8000" && event.origin !== "https://dreadmoz.github.io") {
+                return;
+            }
+
+            // Content Scriptからのメッセージを確認する
+            if (event.data && event.data.type === "FROM_EXTENSION") {
+                console.log("拡張機能からのデータを受け取りましたにゃん: ", event.data.data);
+
+                myGameInstance.SendMessage('GameManager', 'setRanking', JSON.stringify(event.data.data));
+            }
+        });</script>
 </body>
 </html>

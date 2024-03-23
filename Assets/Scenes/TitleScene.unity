@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.1298731, g: 0.20024246, b: 0.35992482, a: 1}
+  m_IndirectSpecularColor: {r: 0.10373356, g: 0.1559861, b: 0.27686796, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -870,9 +870,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 133407441}
-        m_TargetAssemblyTypeName: Connection, Assembly-CSharp
-        m_MethodName: loadFbData
+      - m_Target: {fileID: 529254024}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: testFirstExtention
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1163,6 +1163,7 @@ MonoBehaviour:
   shopRoom: {fileID: 0}
   inventoryButton: {fileID: 0}
   rankingButton: {fileID: 0}
+  settingButton: {fileID: 0}
   windowOpenCount: 20
 --- !u!4 &529254025
 Transform:

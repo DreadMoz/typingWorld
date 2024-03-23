@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
+using System.Runtime.InteropServices.ComTypes;
+using UnityEngine.SocialPlatforms;
 
 public class GssIndex
 {
@@ -41,6 +44,54 @@ public class eq
     public const int CatFace = 5;
     public const int NickName = 6;
 }
+// JSONトップレベル
+public class JsonResponse
+{
+    public string status;
+    public JsonData data;
+}
+
+// dataオブジェクト
+public class JsonData
+{
+    public List<List<object>> value;
+}
+
+// 拡張機能ランキング
+public class ExRank
+{
+    public int Stage { get; set; }
+    public int Ranking { get; set; }
+    public string Name { get; set; }
+    public int RightHand { get; set; }
+    public int Glasses { get; set; }
+    public int Head { get; set; }
+    public int LeftHand { get; set; }
+    public int CatBody { get; set; }
+    public int CatFace { get; set; }
+    public int NickName { get; set; }
+    public int Kpm { get; set; }
+}
+
+// 拡張機能ステータス
+public class ExStatus
+{
+    public string Mail { get; set; }
+    public string Ou { get; set; }
+    public string LastName { get; set; }
+    public int Gold { get; set; }
+    public ExRank Rank { get; set; }
+    public int[] Kpms { get; set; }
+    public long Medal1 { get; set; }
+    public long Medal2 { get; set; }
+    public long Medal3 { get; set; }
+    public long Medal4 { get; set; }
+    public long Medal5 { get; set; }
+    public long Item1 { get; set; }
+    public long Item2 { get; set; }
+    public long Item3 { get; set; }
+    public long Item4 { get; set; }
+}
 
 [CreateAssetMenu(fileName = "SaveData", menuName = "SaveData")]
 public class SaveData : ScriptableObject
@@ -62,6 +113,11 @@ public class SaveData : ScriptableObject
 
     [SerializeField]
     private int[] kpms = new int[GssSize.Kpms];
+
+    // ExRankのリストを作成
+    public List<ExRank> ExRankings = new List<ExRank>();
+
+
 
     private long[] medalCode = new long[GssSize.Medals];
 
@@ -336,5 +392,40 @@ public class SaveData : ScriptableObject
         {
             kpms[i] = int.Parse(intStrings[i]);
         }
+    }
+
+    public void setRankingFromExtension(string jsonMsg)
+    {
+        Debug.Log("Received JSON: " + jsonMsg);
+
+        // JSONデータをデシリアライズ
+        var jsonResponse = JsonConvert.DeserializeObject<JsonResponse>(jsonMsg);
+
+        foreach (var item in jsonResponse.data.value)
+        {
+            var rank = new ExRank
+            {
+                Stage = Convert.ToInt32(item[0]),
+                Ranking = Convert.ToInt32(item[1]),
+                Name = (string)item[2],
+                RightHand = Convert.ToInt32(item[3]),
+                Glasses = Convert.ToInt32(item[4]),
+                Head = Convert.ToInt32(item[5]),
+                LeftHand = Convert.ToInt32(item[6]),
+                CatBody = Convert.ToInt32(item[7]),
+                CatFace = Convert.ToInt32(item[8]),
+                NickName = Convert.ToInt32(item[9]),
+                Kpm = Convert.ToInt32(item[10])
+            };
+            ExRankings.Add(rank);
+        }
+
+        // ここでrankingsリストを使用する
+        // 例: Debug.Logでリストの内容を表示
+        foreach (var rank in ExRankings)
+        {
+            Debug.Log($"Ranking: {rank.Ranking}： {rank.Name}： {rank.Kpm}");
+        }
+
     }
 }

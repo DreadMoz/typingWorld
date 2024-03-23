@@ -488,11 +488,11 @@ public class GameManager : MonoBehaviour
 
     private int judgeStar()
     {
-        if ((AnswerRate > 0.95) && (KeyRate > 60))
+        if ((AnswerRate > 0.95) && (KeyRate > 0.8))
         {
             return 4;       // 星3つ
         }
-        else if ((AnswerRate > 0.75) && (KeyRate > 30))
+        else if ((AnswerRate > 0.75) && (KeyRate > 0.3))
         {
             return 3;       // 星2つ
         }
@@ -575,4 +575,11 @@ public class GameManager : MonoBehaviour
     public void setInventory(string msg) { savedata.setInventoryFromFireBase(msg);}
     public void setMedals(string msg) { savedata.setMedalsFromFireBase(msg);}
     public void setKpm(string msg) { savedata.setKpmFromFireBase(msg);}
+
+    public void setRanking(string msg) { savedata.setRankingFromExtension(msg); }
+
+    public void testFirstExtention()
+    {
+        connection.OnRequestData();
+    }
 }

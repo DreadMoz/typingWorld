@@ -349,7 +349,7 @@ public class Player : MonoBehaviour
         if (col.gameObject.CompareTag("InvisibleFence"))
         {
             keepOut.SetActive(true);
-            keepOutCount = 50;
+            keepOutCount = 40;
             animator.SetBool("Walk", true);
             agent.speed = speed/4;
 
