@@ -477,12 +477,12 @@ public class GameManager : MonoBehaviour
         {
             savedata.setMedalIndex(TypingDataId, stars);
 
-            int changeMedalId = savedata.EncodeToLongArray();
+/*            int changeMedalId = savedata.EncodeToLongArray();
             if (changeMedalId != -1)
             {
                 savedata.saveGssMedals(changeMedalId);
             }
-
+*/
         }
     }
 

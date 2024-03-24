@@ -8,6 +8,7 @@ using Google.Apis.Sheets.v4;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 //using UnityEditor.MemoryProfiler;
 
 public class TitleSky : MonoBehaviour
@@ -107,7 +108,7 @@ public class TitleSky : MonoBehaviour
         }
     }
 
-    public async void StartButton()
+    public void StartButton()
     {
         try
         {
@@ -170,9 +171,12 @@ public class TitleSky : MonoBehaviour
                         break;
                     }
                 }
-                */
                 await setDataFromSpreadsheet();
+                */
 
+                IList<object> rowData = new List<object> { "demonstration@e-net.nara.jp", "/公立学校/低学年/OU市/OU小学校", "0603-24", 999, 7, 87, "moru", 6, 0, 121, 3, 206, 0, 0, 333, "001022333444555666777888", 656279013556373796, 476371964491057444, 0471305275021828764, 511767441717405468, 86064876791434, 0, 0, 0, 0 };
+
+                gm.savedata.LoadAllDataFromGss(rowData);
                 finishDataLoad();
             }
             else if (startButtonStatus == 1)
@@ -195,6 +199,13 @@ public class TitleSky : MonoBehaviour
             // 必要に応じて、エラー情報を含む例外をスロー
             throw new ApplicationException("Authentication failed.", ex);
         }
+    }
+
+    public void exportData()
+    {
+        IList<object> list;
+        list = gm.savedata.SaveAllDataForGss();
+        Debug.Log($"exportData: {list}");
     }
 
     private async Task SendRequestToGAS(string email, string accessToken)
@@ -263,7 +274,7 @@ public class TitleSky : MonoBehaviour
         await GSheet.FindRowNumber(spreadsheetId, mailText.text);
         var rowData = await GSheet.GetRow();
 
-        gm.savedata.loadAllDataFromGss(rowData);
+        gm.savedata.LoadAllDataFromGss(rowData);
     }
 
     private void OnImageLoaded(Texture2D texture)

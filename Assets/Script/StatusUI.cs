@@ -50,7 +50,7 @@ public class StatusUI : MonoBehaviour
         TMPName.text = gm.savedata.getUserName() + nickname;
         TMPGold.text = saveStatus[(int)st.Gold].ToString() + " ｼｰｶｰ";
         TMPServer.text = "サーバー：" + gm.db.GetServerList()[saveStatus[(int)st.Server]];
-        TMPWpm.text = "1分間に" + saveStatus[(int)st.Kpm] + "キー";
+//        TMPWpm.text = "1分間に" + saveStatus[(int)st.Kpm] + "キー";
         TMPRank.text = "(" + saveStatus[(int)st.Rank] + "位 / 200位)";
     }
 }

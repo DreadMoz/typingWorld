@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR;
 #if UNITY_EDITOR
 // エディタ固有のコード
 using static UnityEditor.Progress;
@@ -60,6 +61,11 @@ public class ShopItem : MonoBehaviour
     }
     public void OnBuyButton()
     {
+        if (soldOut.activeSelf)
+        {
+            return;
+        }
+
         // このShopItem（板）にあるMemoテキストを取得
         string memoText = transform.Find("Memo").GetComponent<TextMeshProUGUI>().text;
         string sikaText = transform.Find("Price").GetComponent<TextMeshProUGUI>().text;
