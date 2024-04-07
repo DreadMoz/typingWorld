@@ -400,10 +400,39 @@
 
             // Content Scriptからのメッセージを確認する
             if (event.data && event.data.type === "FROM_EXTENSION") {
-                console.log("拡張機能からのデータを受け取りましたにゃん: ", event.data.data);
+                console.log("Received data from extension:", event.data);
 
-                myGameInstance.SendMessage('GameManager', 'setRanking', JSON.stringify(event.data.data));
+                // タイムアウトタイマーをキャンセル
+                if (window.cancelRequestTimeout) {
+                    window.cancelRequestTimeout();
+                }
+
+                // データが正しく受信できた場合の処理
+                if (event.data.data && event.data.data.status === "success") {
+                    // combinedDataの作成前にデータの存在をチェック
+                    const hasRankingData = !!event.data.data.data.rankingData;
+                    const hasStatusData = !!event.data.data.data.statusData;
+
+                    if (hasRankingData && hasStatusData) {
+                        const combinedData = {
+                            rankingData: event.data.data.data.rankingData,
+                            statusData: event.data.data.data.statusData
+                        };
+                        console.log("combinedData:", combinedData);
+                        myGameInstance.SendMessage('TitleScene', 'finishDataLoad', JSON.stringify(combinedData));
+                    } else {
+                        // 不足しているデータに応じたエラーメッセージを出力
+                        if (!hasRankingData) console.log("rankingData is missing.");
+                        if (!hasStatusData) console.log("statusData is missing.");
+                        myGameInstance.SendMessage('TitleScene', 'handleDataError', "Some data is missing.");
+                    }
+                } else {
+                    // データが初期状態またはエラーである場合の処理
+                    console.log("Data is in the initial state or an error occurred.");
+                    myGameInstance.SendMessage('TitleScene', 'handleDataError', "Data is in the initial state or an error occurred.");
+                }
             }
-        });</script>
+        });
+    </script>
 </body>
 </html>

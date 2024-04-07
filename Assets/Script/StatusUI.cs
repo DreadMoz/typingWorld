@@ -24,7 +24,7 @@ public class StatusUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        setStatus();
+        dispStatus();
     }
 
     // Update is called once per frame
@@ -32,12 +32,10 @@ public class StatusUI : MonoBehaviour
     {
     }
 
-    public void setStatus()
+    public void dispStatus()
     {
-        int[] saveStatus = gm.savedata.getStatus();
-        int[] saveEquip = gm.savedata.getEquipment();
         string nickname;
-        Item item = gm.db.GetItemList()[saveEquip[(int)eq.NickName]];
+        Item item = gm.db.GetItemList()[gm.savedata.equipment[eq.NickName]];
         if (item != null)
         {
             nickname = item.MyItemName;
@@ -46,11 +44,11 @@ public class StatusUI : MonoBehaviour
         {
             nickname = "さん";
         }
-        TMPHeadName.text = gm.savedata.getUserName() + nickname;
-        TMPName.text = gm.savedata.getUserName() + nickname;
-        TMPGold.text = saveStatus[(int)st.Gold].ToString() + " ｼｰｶｰ";
-        TMPServer.text = "サーバー：" + gm.db.GetServerList()[saveStatus[(int)st.Server]];
-//        TMPWpm.text = "1分間に" + saveStatus[(int)st.Kpm] + "キー";
-        TMPRank.text = "(" + saveStatus[(int)st.Rank] + "位 / 200位)";
+        TMPHeadName.text = gm.savedata.userName + nickname;
+        TMPName.text = gm.savedata.userName + nickname;
+        TMPGold.text = gm.savedata.status[st.Gold].ToString() + " ｼｰｶｰ";
+        TMPServer.text = "サーバー：" + gm.db.GetServerList()[gm.savedata.status[st.Server]];
+        TMPWpm.text = "1分間に" + gm.savedata.status[st.Kpm] + "キー";
+        TMPRank.text = "(" + gm.savedata.status[st.Rank] + "位 / 200位)";
     }
 }

@@ -193,7 +193,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
         if (soubiSlot)
         {
-            gm.savedata.setEquipmentIndex(slotNo, hand.GetGrabbingItemNo());
+            gm.savedata.setEquipmentIndex(slotNo, hand.GetGrabbingItemNo());    // セーブデータの入れ替え
             switch(slotNo)
             {
                 case 0:
@@ -201,7 +201,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
                     {
                         return;
                     }
-                    gm.changeEquip(0);
+                    gm.changeEquip(0);      // 見た目の変更
                     break;
                 case 1:
                     if (hand.GetGrabbingItemType() != ItemType.Hat)

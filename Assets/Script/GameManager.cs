@@ -40,7 +40,6 @@ public class GameManager : MonoBehaviour
     static public int TypingDataId { get => typingDataId; set => typingDataId = value; }
     static public string TypingDataName { get => typingDataName; set => typingDataName = value; }
 
-    [SerializeField] private StatusUI statusWindow;
     [SerializeField] private float kpmRatio = 0.8f;
 
     public GameObject player;        // プレイヤーオブジェクト
@@ -54,10 +53,14 @@ public class GameManager : MonoBehaviour
     public GameObject status;
     public GameObject typingRoom;
     public GameObject shopRoom;
+    public NpcManager npcManager;
 
     public GameObject inventoryButton;  // インベントリボタン
     public GameObject rankingButton;    // ランキングボタン
     public GameObject settingButton;    // セッティングボタン
+
+
+    public StatusUI statusui;
 
     [SerializeField]
     private int windowOpenCount = 20;    // ウィンドウが開くフレーム数
@@ -92,6 +95,8 @@ public class GameManager : MonoBehaviour
     private int[] newInventory;
     private int[] oldEquip;
     private int[] newEquip;
+
+    public bool isExtension; // 拡張機能があるかどうか
 
     private void Awake()
     {
@@ -147,6 +152,7 @@ public class GameManager : MonoBehaviour
             // アニメーションステートが1最初のワールドの場合
             if (SceneNo == (int)scene.World)
             {
+                statusui.dispStatus();
                 status.SetActive(false);
                 inventory.SetActive(false);
                 equip.SetActive(false);
@@ -187,10 +193,6 @@ public class GameManager : MonoBehaviour
         posy = (statusOffset.y - chaseOffset.y) / windowOpenCount;
         posz = (statusOffset.z - chaseOffset.z) / windowOpenCount;
 
-        if (statusWindow)
-        {
-            statusWindow.setStatus();
-        }
         // シーンがタイトルの場合
         if (SceneNo == (int)scene.Title)
         {
@@ -198,17 +200,18 @@ public class GameManager : MonoBehaviour
         // シーンが1最初のワールドの場合
         else if (SceneNo == (int)scene.World)
         {
+            npcManager.SpawnNPCs();
             if (savedata.getEquipment()[(int)eq.CatBody] != 0)
             {
                 chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
                 chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
             }
-            chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-            chibiCat.changeEquipHead(savedata.getEquipment()[1]);
-            chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
-            chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-            chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
-            chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
+            chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
+            chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
+            chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
+            chibiCat2D.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
+            chibiCat2D.changeEquipHead(savedata.getEquipment()[eq.Head]);
+            chibiCat2D.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
         }
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
@@ -218,23 +221,23 @@ public class GameManager : MonoBehaviour
                 chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
                 chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
             }
-            chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-            chibiCat.changeEquipHead(savedata.getEquipment()[1]);
-            chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
-            chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-            chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
-            chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
+            chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
+            chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
+            chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
+            chibiCat2D.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
+            chibiCat2D.changeEquipHead(savedata.getEquipment()[eq.Head]);
+            chibiCat2D.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
         }
         // シーンが2タイピングの場合
         else if (SceneNo == (int)scene.Typing)
         {
             if (savedata.getEquipment()[(int)eq.CatBody] != 0)
             {
-                chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                chibiCat.setChara(savedata.getEquipment()[eq.CatBody] - 200);
             }
-            chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-            chibiCat.changeEquipHead(savedata.getEquipment()[1]);
-            chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
+            chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
+            chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
+            chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
         }
     }
 
@@ -456,8 +459,7 @@ public class GameManager : MonoBehaviour
             {
                 updatesItems[j] = newItems[changeFirstIndex + j];
             }
-            // GSSに書き込み
-            savedata.saveGssItems(changeFirstIndex, changeLastIndex, updatesItems);
+            exportExtension();  // 拡張機能に保存
         }
         oldInventory = null;        // データクリア
         oldEquip = null;
@@ -530,18 +532,18 @@ public class GameManager : MonoBehaviour
         switch (parts)
         {
             case 0:     // 両手
-                chibiCat.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
-                chibiCat2D.changeEquipHands(savedata.getEquipment()[0], savedata.getEquipment()[3], checkBagItem());
+                chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
+                chibiCat2D.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
                 break;
 
             case 1:     // 頭
-                chibiCat.changeEquipHead(savedata.getEquipment()[1]);
-                chibiCat2D.changeEquipHead(savedata.getEquipment()[1]);
+                chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
+                chibiCat2D.changeEquipHead(savedata.getEquipment()[eq.Head]);
                 break;
 
             case 2:     // メガネ
-                chibiCat.changeEquipGrasses(savedata.getEquipment()[2]);
-                chibiCat2D.changeEquipGrasses(savedata.getEquipment()[2]);
+                chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
+                chibiCat2D.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
                 break;
         }
     }
@@ -568,6 +570,12 @@ public class GameManager : MonoBehaviour
         return ret;
     }
 
+    public void exportExtension()
+    {
+        string saveExtensionJson = savedata.makeExtensionJsonData();
+        connection.saveExtension(saveExtensionJson);
+    }
+
     //htmlから直でsavedataにアクセスできないため
     public void setUserName(string msg) { savedata.setUserNameFromFireBase(msg);}
     public void setStatus(string msg) { savedata.setStatusFromFireBase(msg);}
@@ -576,9 +584,7 @@ public class GameManager : MonoBehaviour
     public void setMedals(string msg) { savedata.setMedalsFromFireBase(msg);}
     public void setKpm(string msg) { savedata.setKpmFromFireBase(msg);}
 
-    public void setRanking(string msg) { savedata.setRankingFromExtension(msg); }
-
-    public void testFirstExtention()
+    public void firstExtention()
     {
         connection.OnRequestData();
     }

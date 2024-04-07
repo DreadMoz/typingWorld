@@ -68,11 +68,12 @@ public class Confirmation : MonoBehaviour
                 kAnimator.SetTrigger("buy");
                 gm.savedata.setInventoryIndex(blankIndex, itemId);
                 gm.savedata.setStatusIndex(0, saifu - itemPrice);
+                gm.savedata.addItem(itemId);
                 talk.text = "まいどありがとうございます！";
                 hide();
 
                 inventoryui.setAllItems();
-                statusui.setStatus();
+                statusui.dispStatus();
                 shopListReset.ShowItemList(0);
 
                 inventoryui.turnImage(blankIndex);

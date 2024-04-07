@@ -147,18 +147,18 @@ public class ChibiCat : MonoBehaviour
         releaseHead();
         switch (itemIdHead)
         {
-            case 121:
+            case 151:
                 hikingHat.SetActive(true);
                 break;
         }
     }
 
-    public void changeEquipGrasses(int itemIdGrass)
+    public void changeEquipGlasses(int itemIdGrass)
     {
-        releaseGrasses();
+        releaseGlasses();
         switch (itemIdGrass)
         {
-            case 151:
+            case 121:
                 grassARed.SetActive(true);
                 break;
         }
@@ -167,7 +167,7 @@ public class ChibiCat : MonoBehaviour
     {
         releaseHands(bagItem);
         releaseHead();
-        releaseGrasses();
+        releaseGlasses();
     }
 
     private void releaseHands(int bagItem)
@@ -197,7 +197,7 @@ public class ChibiCat : MonoBehaviour
         hikingHat.SetActive(false);
     }
 
-    private void releaseGrasses()
+    private void releaseGlasses()
     {
         grassARed.SetActive(false);
     }

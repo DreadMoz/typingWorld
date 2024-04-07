@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
+//using UnityEditor.MemoryProfiler;
 //using UnityEditor.MemoryProfiler;
 
 public class TitleSky : MonoBehaviour
@@ -86,6 +89,8 @@ public class TitleSky : MonoBehaviour
         confirmButton.SetActive(false);
         userData.SetActive(false);
         message.SetActive(false);
+
+        StartButton();
     }
 
     // Update is called once per frame
@@ -110,102 +115,115 @@ public class TitleSky : MonoBehaviour
 
     public void StartButton()
     {
-        try
+        if (startButtonStatus == 0)
         {
-            if (startButtonStatus == 0)
-            {
-                userData.SetActive(true);    // OAuth認証GASアクセスなしの場合
-                /*
-                startButton.SetActive(false);   // 誤動作防止用、ログイン完了まで一旦消す
+            gm.connection.OnRequestData();   // 拡張機能にデータ要求
 
-                // Google OAuth認証サービスを初期化
-//                googleAuth = gameObject.AddComponent<GoogleAuth>();
-
-                // 認証してアクセストークンを取得
-                var (userInfo, accessToken) = await googleAuth.Authenticate();
-
-                message.SetActive(true);
-                Text messageText = message.GetComponentInChildren<Text>();
-                if (userInfo == null)
-                {
-                    message.SetActive(true);
-                    messageText.text = userInfo.GivenName + "Google認証にしっぱいしました";
-                    return;
-                }
-                else
-                {
-                    mailText.text = userInfo.Email;
-                    firstName.text = userInfo.GivenName;
-                    lastName.text = userInfo.FamilyName;
-                    StartCoroutine(googleAuth.LoadProfileImage(userInfo.Picture, OnImageLoaded));
-                    userData.SetActive(true);
-                }
-                for (int i = 0; i < 3; i++)
-                {
-                    // ここでいいネットなら判定
-                    if (userInfo.Hd == "e-net.nara.jp")
-                    {
-                        messageText.text = userInfo.GivenName + "さんはいいネットならのなかまだね。データをロードするね。";
-                    }
-                    else
-                    {
-                        messageText.text = "いいネットなら専用のアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
-                    }
-
-                    if (string.IsNullOrEmpty(accessToken))
-                    {
-                        Debug.LogError("Error: " + "アカウントトークンが得られませんでした。");
-                        return;
-                    }
-
-                    // アクセストークンを使用してGASにリクエストを送信
-                    await SendRequestToGAS(userInfo.Email, accessToken);
-
-                    if (GoogleServiceAccount.SheetInfo == null)
-                    {
-                        Debug.Log("Error: " + "シートトークンが得られませんでした。" + (i + 1) + "/3");
-                    }
-                    else
-                    {
-                        messageText.text = "さあ！スタートしましょう。";
-                        break;
-                    }
-                }
-                await setDataFromSpreadsheet();
-                */
-
-                IList<object> rowData = new List<object> { "demonstration@e-net.nara.jp", "/公立学校/低学年/OU市/OU小学校", "0603-24", 999, 7, 87, "moru", 6, 0, 121, 3, 206, 0, 0, 333, "001022333444555666777888", 656279013556373796, 476371964491057444, 0471305275021828764, 511767441717405468, 86064876791434, 0, 0, 0, 0 };
-
-                gm.savedata.LoadAllDataFromGss(rowData);
-                finishDataLoad();
-            }
-            else if (startButtonStatus == 1)
-            {
-                if (!firstPush)
-                {
-                    fade.StartFadeOut();
-                    firstPush = true;
-                }
-            }
         }
-        catch (Exception ex)
+        else if (startButtonStatus == 1)
         {
-            message.SetActive(true);
-            Text messageText = message.GetComponentInChildren<Text>();
-            messageText.text = "ネットワークエラーです。";
-
-            // 例外をキャッチした場合、エラーメッセージをログに記録またはコンソールに出力
-            Console.WriteLine($"Authentication failed: {ex.Message}");
-            // 必要に応じて、エラー情報を含む例外をスロー
-            throw new ApplicationException("Authentication failed.", ex);
+            if (!firstPush)
+            {
+                fade.StartFadeOut();
+                firstPush = true;
+            }
         }
     }
 
-    public void exportData()
+    public void finishDataLoad(string msg)
     {
-        IList<object> list;
-        list = gm.savedata.SaveAllDataForGss();
-        Debug.Log($"exportData: {list}");
+        Text messageText = message.GetComponentInChildren<Text>();
+
+        // JSONデータをデシリアライズして必要な部分を取得
+        var combinedData = JsonConvert.DeserializeObject<ExtensionData>(msg);
+        if (combinedData == null)
+        {
+            messageText.text = "あしあとデータに問題が生じました。";
+        }
+        else
+        {
+            if (combinedData.rankingData != null)
+            {
+                gm.savedata.setRankingFromExtension(JsonConvert.SerializeObject(combinedData.rankingData));
+                messageText.text = "ランキングデータをよみこみました。";
+            }
+            if (combinedData.statusData != null)
+            {
+                gm.savedata.setStatusFromExtension(JsonConvert.SerializeObject(combinedData.statusData));
+                messageText.text = "あしあとデータをよみこみました。";
+                gm.isExtension = true;
+            }
+        }
+        showNextStartButton();
+    }
+
+    private void showNextStartButton()
+    {
+        IList<object> rowData;
+        startButton.SetActive(false);   // 誤動作防止用、ログイン完了まで一旦消す
+        message.SetActive(true);
+        Text messageText = message.GetComponentInChildren<Text>();
+
+        if (gm.savedata.Email == "")
+        {
+            messageText.text = "あしあとデータがないので、サーバーから取ってきます。";
+            // 拡張機能データが取れない場合、GSSにアクセス。
+#if UNITY_WEBGL && !UNITY_EDITOR
+// ここでGSSアクセス。
+// 仮
+rowData = new List<object> { "demonstration@e-net.nara.jp", "/公立学校/低学年/OU市/OU小学校", "0603-24", 999, 7, 87, "moru", 0, 0, 0, 0, 0, 0, 0, 333, "001022333444555666777888", 656279013556373796, 476371964491057444, 0471305275021828764, 511767441717405468, 86064876791434, 0, 0, 0, 0 };
+gm.savedata.LoadAllDataFromGss(rowData);
+#else
+//            rowData = new List<object> { "demonstration@e-net.nara.jp", "/公立学校/低学年/OU市/OU小学校", "0603-24", 999, 7, 87, "moru", 6, 0, 121, 3, 206, 0, 0, 333, "001022333444555666777888", 656279013556373796, 476371964491057444, 0471305275021828764, 511767441717405468, 86064876791434, 0, 0, 0, 0 };
+//            gm.savedata.LoadAllDataFromGss(rowData);
+            gm.isExtension = true;
+#endif
+        }
+        mailText.text = gm.savedata.Email;
+
+        // あしあとデータまたはサーバーからデータ取得後。ここでいいネットなら判定。全くの新規、外部からのアクセスの可能性もある。
+        if (mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp")
+        {
+            Debug.Log("gm.savedata.equipment[eq.CatBody]: " + gm.savedata.equipment[eq.CatBody]);
+            if (gm.savedata.equipment[eq.CatBody] == 0)      // catBodyがない状態なら 新規作成
+            {
+                selectNeco();
+            }
+            else
+            {
+                userData.SetActive(true);       // ユーザーデータウィンドウ表示
+                firstName.text = gm.savedata.userName;
+                lastName.text = gm.savedata.lastName;
+                ou.text = gm.savedata.Ou;
+                messageText.text = firstName.text + "さんはいいネットならのなかまだね。スタートしましょう。";
+
+                cat.setChara(gm.savedata.getEquipment()[(int)eq.CatBody] - 200);
+                TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+                buttonText.text = "スタート";
+                startButtonStatus = 1;
+
+                startButton.SetActive(true);   // スタートボタンにして表示
+            }
+        }
+        else
+        {
+            messageText.text = "いいネットなら専用のアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
+        }
+    }
+
+    public void handleDataError(string mes)
+    {
+        showNextStartButton();
+    }
+
+    public void OnRequestTimeout()
+    {
+        showNextStartButton();
+    }
+
+    public void handleInitialData(string mes)
+    {
+        showNextStartButton();
     }
 
     private async Task SendRequestToGAS(string email, string accessToken)
@@ -298,23 +316,6 @@ public class TitleSky : MonoBehaviour
         }
     }
 
-    public void finishDataLoad()
-    {
-        Debug.Log("gm.savedata.getEquipment()[(int)eq.CatBody]: " + gm.savedata.getEquipment()[(int)eq.CatBody]);
-        if (gm.savedata.getEquipment()[(int)eq.CatBody] == 0)      // catBodyがない状態なら
-        {
-            selectNeco();
-        }
-        else
-        {
-            cat.setChara(gm.savedata.getEquipment()[(int)eq.CatBody] - 200);
-            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-            buttonText.text = "スタート";
-            startButtonStatus = 1;
-
-            startButton.SetActive(true);   // スタートボタンにして表示
-        }
-    }
     public void setDummyData()
     {
         Thread.Sleep(300);
@@ -353,13 +354,6 @@ public class TitleSky : MonoBehaviour
 
         fade.StartFadeOut();
         firstPush = true;
-        /*
-        TMP_Text startText = startButton.GetComponentInChildren<TMP_Text>();
-        startText.text = "スタート";
-        startButtonStatus = 1;
-
-        startButton.SetActive(true);   // スタートボタンにして表示
-        */
     }
     public void updownNeco()
     {

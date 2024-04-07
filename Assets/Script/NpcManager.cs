@@ -14,8 +14,6 @@ public class NpcManager : MonoBehaviour
 
     void Start()
     {
-        // ゲーム開始時にNPCをスポーン
-        SpawnNPCs();
     }
 
     void shufflePlayers()
@@ -35,8 +33,13 @@ public class NpcManager : MonoBehaviour
         }
     }
 
-    void SpawnNPCs()
+    public void SpawnNPCs()
     {
+        if (!gm.isExtension)
+        {
+            return;
+        }
+
         shufflePlayers();
         // 生成するNPCの数をスポーンポイントの数と比較し、小さい方を使用
         int spawnCount = Mathf.Min(numberOfNPCs, spawnPoints.Length);
@@ -60,23 +63,26 @@ public class NpcManager : MonoBehaviour
 
             if (chibiCatScript != null)
             {
-                string nickname;
-                Item item = gm.db.GetItemList()[gm.savedata.ExRankings[pickedPlayers[i]].NickName];
-                if (item != null)
+                if (gm.savedata.ExRankings.Count > 0)
                 {
-                    nickname = item.MyItemName;
-                }
-                else
-                {
-                    nickname = "さん";
-                }
-                chibiCatScript.setName(gm.savedata.ExRankings[pickedPlayers[i]].Name + nickname);
+                    string nickname;
+                    Item item = gm.db.GetItemList()[gm.savedata.ExRankings[pickedPlayers[i]].NickName];
+                    if (item != null)
+                    {
+                        nickname = item.MyItemName;
+                    }
+                    else
+                    {
+                        nickname = "さん";
+                    }
+                    chibiCatScript.setName(gm.savedata.ExRankings[pickedPlayers[i]].Name + nickname);
 
-                chibiCatScript.setChara(gm.savedata.ExRankings[pickedPlayers[i]].CatBody - 200);
-                chibiCatScript.releaseAllEquip();
-                chibiCatScript.changeEquipHands(gm.savedata.ExRankings[pickedPlayers[i]].RightHand, gm.savedata.ExRankings[pickedPlayers[i]].LeftHand, 0);
-                chibiCatScript.changeEquipHead(gm.savedata.ExRankings[pickedPlayers[i]].Head);
-                chibiCatScript.changeEquipGrasses(gm.savedata.ExRankings[pickedPlayers[i]].Glasses);
+                    chibiCatScript.setChara(gm.savedata.ExRankings[pickedPlayers[i]].CatBody - 200);
+                    chibiCatScript.releaseAllEquip();
+                    chibiCatScript.changeEquipHands(gm.savedata.ExRankings[pickedPlayers[i]].RightHand, gm.savedata.ExRankings[pickedPlayers[i]].LeftHand, 0);
+                    chibiCatScript.changeEquipHead(gm.savedata.ExRankings[pickedPlayers[i]].Head);
+                    chibiCatScript.changeEquipGlasses(gm.savedata.ExRankings[pickedPlayers[i]].Glasses);
+                }
             }
         }
     }
