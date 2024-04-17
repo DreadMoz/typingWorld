@@ -96,8 +96,6 @@ public class GameManager : MonoBehaviour
     private int[] oldEquip;
     private int[] newEquip;
 
-    public bool isExtension; // 拡張機能があるかどうか
-
     private void Awake()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -574,6 +572,12 @@ public class GameManager : MonoBehaviour
     {
         string saveExtensionJson = savedata.makeExtensionJsonData();
         connection.saveExtension(saveExtensionJson);
+    }
+
+    public void exportGas()
+    {
+        string saveExtensionJson = savedata.makeExtensionJsonData();
+        connection.saveGas(saveExtensionJson);
     }
 
     //htmlから直でsavedataにアクセスできないため

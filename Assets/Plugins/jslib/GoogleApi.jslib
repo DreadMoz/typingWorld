@@ -27,6 +27,10 @@ mergeInto(LibraryManager.library, {
         // タイムアウト監視の処理をここに追加することも可能
     },
 
+    SendToNecoBase: function(dataPointer) {
+        sendToNecoBase(dataPointer);
+    },
+
     FbAuth: function () {
         googleAuth();
     },

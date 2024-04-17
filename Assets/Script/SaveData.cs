@@ -43,9 +43,9 @@ public class eq
 // Gold,Server,Rank,userName
 public class se
 {
-    public const int Volume = 0;
-    public const int CatNum = 1;
-    public const int dummy2 = 2;
+    public const int Extension = 0;
+    public const int Volume = 1;
+    public const int CatNum = 2;
     public const int dummy3 = 3;
     public const int dummy4 = 4;
     public const int dummy5 = 5;

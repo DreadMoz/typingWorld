@@ -391,6 +391,62 @@
             }
         }
         window.saveFirebaseKpm = saveFirebaseKpm;
+const SCRIPT_ID = 'AKfycbxI79d1FhMhZDc_p2QDA-alSRMeXq7uulX6qvCGlzHx8wSY_JaKkmZtQpiYMxYsEni-Bg'
+const CLIENT_ID = '1018693471402-00vuk8cocmrvo0kibf6iht0na9s9vabk.apps.googleusercontent.com'
+const CLIENT_SECRET = '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'
+const REFRESH_TOKEN = '1//04iINmdcuvo_cCgYIARAAGAQSNwF-L9Irx8PLrzfWXPKbWzriE8Rg0S3r8cjxCol6amwxPXoNZFvY-rrBvnRXeWfBnzCnWHnWRCk'
+const TOKEN_URL = "https://oauth2.googleapis.com/token";
+/**
+ * アクセストークンを取得する関数
+ * @return string
+ */
+         async function getAccessToken() {
+          const data = JSON.stringify({
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            refresh_token: REFRESH_TOKEN,
+            grant_type: 'refresh_token',
+          });
+          const options = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: data
+          };
+          const response = await fetch(TOKEN_URL, options);
+          const responseData = await response.json();
+          return responseData.access_token;
+        }
+
+        async function sendToNecoBase() {
+            try {
+                const accessToken = await getAccessToken();
+                const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
+                const data = JSON.stringify({
+                function: 'writeToSpreadsheet',
+                parameters: [] // 引数なし
+            });
+            const options = {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json"
+                },
+                body: data // リクエストボディにデータを追加
+            };
+
+            const response = await fetch(url, options);
+            const responseData = await response.json();
+            console.log(responseData); // レスポンスをログに出力
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        window.sendToNecoBase = sendToNecoBase;
+
+
 
         window.addEventListener('message', function (event) {
             // セキュリティを確保するために、信頼できるオリジンからのメッセージのみを受け入れる
@@ -432,7 +488,6 @@
                     myGameInstance.SendMessage('TitleScene', 'handleDataError', "Data is in the initial state or an error occurred.");
                 }
             }
-        });
-    </script>
+        });</script>
 </body>
 </html>

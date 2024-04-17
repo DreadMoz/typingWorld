@@ -188,7 +188,6 @@ MonoBehaviour:
   settingButton: {fileID: 198227624}
   statusui: {fileID: 1979795457}
   windowOpenCount: 20
-  isExtension: 0
 --- !u!114 &1403481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14916,7 +14915,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1403480}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: exportExtension
+        m_MethodName: exportGas
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

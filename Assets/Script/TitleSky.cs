@@ -151,7 +151,8 @@ public class TitleSky : MonoBehaviour
             {
                 gm.savedata.setStatusFromExtension(JsonConvert.SerializeObject(combinedData.statusData));
                 messageText.text = "あしあとデータをよみこみました。";
-                gm.isExtension = true;
+
+                gm.savedata.settings[se.Extension] = 1;
             }
         }
         showNextStartButton();
@@ -176,7 +177,6 @@ gm.savedata.LoadAllDataFromGss(rowData);
 #else
 //            rowData = new List<object> { "demonstration@e-net.nara.jp", "/公立学校/低学年/OU市/OU小学校", "0603-24", 999, 7, 87, "moru", 6, 0, 121, 3, 206, 0, 0, 333, "001022333444555666777888", 656279013556373796, 476371964491057444, 0471305275021828764, 511767441717405468, 86064876791434, 0, 0, 0, 0 };
 //            gm.savedata.LoadAllDataFromGss(rowData);
-            gm.isExtension = true;
 #endif
         }
         mailText.text = gm.savedata.Email;
@@ -195,7 +195,7 @@ gm.savedata.LoadAllDataFromGss(rowData);
                 firstName.text = gm.savedata.userName;
                 lastName.text = gm.savedata.lastName;
                 ou.text = gm.savedata.Ou;
-                messageText.text = firstName.text + "さんはいいネットならのなかまだね。スタートしましょう。";
+                messageText.text += firstName.text + "さんはいいネットならのなかまだね。スタートしましょう。";
 
                 cat.setChara(gm.savedata.getEquipment()[(int)eq.CatBody] - 200);
                 TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
