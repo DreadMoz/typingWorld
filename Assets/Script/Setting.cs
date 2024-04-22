@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // UIコンポーネントを使用するために必要
 using TMPro;
 
 public class Setting : MonoBehaviour
@@ -10,11 +11,20 @@ public class Setting : MonoBehaviour
     [SerializeField]
     private GameManager gm;
     public TMP_Text necoNum;
+    public GameObject toGas;
+    public Slider necoNumSlider;
 
     // Start is called before the first frame update
     void Start()
     {
-        //hide();
+        if (gm.savedata.settings[se.Extension] != 0)
+        {
+            toGas.SetActive(false);
+        }
+        else
+        {
+            necoNumSlider.maxValue = 0;
+        }
     }
 
     // Update is called once per frame

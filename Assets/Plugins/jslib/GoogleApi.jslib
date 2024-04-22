@@ -1,4 +1,5 @@
 mergeInto(LibraryManager.library, {
+
   RequestDataFromExtension: function() {
     var message = { action: "requestDataFromExtension" };
     window.postMessage(message, "*");
@@ -28,37 +29,13 @@ mergeInto(LibraryManager.library, {
     },
 
     SendToNecoBase: function(dataPointer) {
-        sendToNecoBase(dataPointer);
+        console.log("Received pointer:", dataPointer); // ポインタ受け取り時のデバッグ
+        var data = UTF8ToString(dataPointer);
+        console.log("Converted data:", data); // 文字列変換後のデバッグ
+        sendToNecoBase(data);
     },
 
-    FbAuth: function () {
-        googleAuth();
-    },
-
-    LoadFbData: function () {
-        loadFirebaseData();
-    },
-
-    SaveFbStatus: function (value) {
-        saveFirebaseStatus(value);
-    },
-
-    SaveFbEquipment: function (valuePtr) {
-        var value = UTF8ToString(valuePtr);
-        saveFirebaseEquipment(value);
-    },
-
-    SaveFbInventory: function (valuePtr) {
-        var value = UTF8ToString(valuePtr);
-        saveFirebaseInventory(value);
-    },
-
-    SaveFbMedals: function (value) {
-        saveFirebaseMedals(value);
-    },
-
-    SaveFbKpm: function (value) {
-        saveFirebaseKpm(value);
+    ReceiveFromNecoBase: function() {
+        receiveFromNecoBase();
     }
-
 });

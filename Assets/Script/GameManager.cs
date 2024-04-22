@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using System.Linq;
+using Newtonsoft.Json;
 
 public class scene
 {
@@ -571,13 +572,22 @@ public class GameManager : MonoBehaviour
     public void exportExtension()
     {
         string saveExtensionJson = savedata.makeExtensionJsonData();
+        Debug.Log("saveExtensionJson(GameManager): " + saveExtensionJson);  // ログ出力を追加
         connection.saveExtension(saveExtensionJson);
     }
 
     public void exportGas()
     {
-        string saveExtensionJson = savedata.makeExtensionJsonData();
-        connection.saveGas(saveExtensionJson);
+        string saveGasObject = savedata.CompileGameDataForGss();
+//        string jsonData = JsonConvert.SerializeObject(saveGasObject, Formatting.Indented);
+        Debug.Log("saveGasData(GameManager): " + saveGasObject);  // ログ出力を追加
+
+        connection.saveGas(saveGasObject);
+    }
+
+    public void importGas()
+    {
+        connection.loadGas();
     }
 
     //htmlから直でsavedataにアクセスできないため

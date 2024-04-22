@@ -132,274 +132,21 @@
         };
         document.body.appendChild(script);
 
-        // user 変数を auth 関数外で宣言
-        let user;
-        let db;
-
-        /**
-        *  認証 C#側から呼ぶ
-        */
-        function googleAuth() {
-            const firebaseConfig = {
-                // Firebaseの設定情報
-                apiKey: "AIzaSyD2uf3ULaqZQLfYYQa-9QLdamelA0CwguE",
-                authDomain: "firetyping-ad101.firebaseapp.com",
-                databaseURL: "https://firetyping-ad101-default-rtdb.firebaseio.com",
-                projectId: "firetyping-ad101",
-                storageBucket: "firetyping-ad101.appspot.com",
-                messagingSenderId: "658577906647",
-                appId: "1:658577906647:web:09e85b0541ca715bf94992",
-                measurementId: "G-D0NXRPYMNR"
-            };
-
-            //                const app = firebase.initializeApp(firebaseConfig); // Firebaseアプリを初期化
-            //                const db = firebase.getDatabase(app);    // RealtimeDBに接続
-            //                const provider = new firebase.auth.GoogleAuthProvider(); // Google 認証プロバイダー
-            //                const authInstance = app.auth(); // Firebase Auth インスタンスを取得
-
-            const app = initializeApp(firebaseConfig); // Firebaseアプリを初期化
-            db = getDatabase(app);    // RealtimeDBに接続
-            const provider = new GoogleAuthProvider(); // Google 認証プロバイダー
-            const authInstance = getAuth(); // Firebase Auth インスタンスを取得
-
-            //                authInstance.signInWithPopup(provider)
-            signInWithPopup(authInstance, provider)
-                .then((result) => {
-                    // ログイン成功時の処理
-                    user = result.user;
-                    // ドメインが '@e-net.nara.jp' であることを確認
-                    const emailDomain = user.email.split('@')[1];
-
-                    if (emailDomain === 'e-net.nara.jp') {
-                        user.providerData.forEach((profile) => {
-                            myGameInstance.SendMessage('TitleScene', 'finishAuth');
-                            const fullName = profile.displayName;
-                            const parts = fullName.split(" ");
-                            const firstName = parts[0];
-                            const lastName = parts[1];
-                            myGameInstance.SendMessage('mail', 'UpdateText', profile.email);
-                            myGameInstance.SendMessage('Image', 'UpdateImage', profile.photoURL);
-                            myGameInstance.SendMessage('firstName', 'UpdateText', firstName);
-                            myGameInstance.SendMessage('lastName', 'UpdateText', lastName);
-                        });
-                    } else {
-                        myGameInstance.SendMessage('TitleScene', 'showDomainError');
-                        // ドメインが一致しない場合はログアウトする
-                        authInstance.signOut().then(() => {
-                            // ログアウト後の処理、例えばログインページにリダイレクトする
-                        });
-                    }
-                }).catch((error) => {
-                    // サインインに失敗した時の処理
-                    console.error("認証に失敗しました:", error);
-
-                    alert(error.code);
-                    alert(error.message);
-                    alert(error.mail);
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    // the email of the user's account used.
-                    const email = error.email;
-                    // The AuthCredential type that was used.
-                    // const credential = firebase.auth.GoogleAuthProvider.credentialFromError(error);
-                });
-        }
-        // auth 関数をグローバルに公開
-        window.googleAuth = googleAuth;
-
-        // リファレンスをグローバルまたはモジュールスコープに定義
-        var pathStatus, pathEquipment, pathInventory, pathMedals, pathKpm;
-
-        function initFirebaseRefs(uid) {
-            pathStatus = ref(db, "users/" + uid + "/status");
-            pathEquipment = ref(db, "users/" + uid + "/equipment");
-            pathInventory = ref(db, "users/" + uid + "/inventory");
-            pathMedals = ref(db, "users/" + uid + "/medals");
-            pathKpm = ref(db, "users/" + uid + "/kpm");
-        }
-        //######################################################
-        // ゲームデータ取得
-        //######################################################
-        function loadFirebaseData() {
-            if (user) {
-                // User is signed in, see docs for a list of available properties
-                // https://firebase.google.com/docs/reference/js/firebase.User
-                const uid = user.uid;
-                initFirebaseRefs(uid);
-
-                // ユーザー情報取得
-                user.providerData.forEach((profile) => {
-                    const fullName = profile.displayName;
-                    const parts = fullName.split(" ");
-                    var firstName = parts[0];
-                    // 第1引数はクラス名ではなくオブジェクト名なので注意
-                    myGameInstance.SendMessage('GameManager', 'setUserName', firstName);
-                });
-
-                // データの存在を確認し、なければ初期化する
-                onValue(pathStatus, (snapshot) => {
-                    if (!snapshot.exists()) {
-                        // ステータスデータがない場合は初期化する
-                        initFirebaseData().then(() => {
-                            fetchData(); // データの取得を開始
-                        }).catch((error) => {
-                            console.error('Init Firebase Data failed:', error);
-                        });
-                    } else {
-                        fetchData(); // データが存在する場合、直ちに取得を開始
-                    }
-                });
-            }
-        }
-        // getFirebaseData関数をグローバルに公開
-        window.loadFirebaseData = loadFirebaseData;
-
-        function fetchData() {
-            Promise.all([
-                get(pathEquipment).then(data => {
-                    var msgEquipment = data.val();
-                    var intArrayAsStringEquipment = msgEquipment.join(",");
-                    myGameInstance.SendMessage('GameManager', 'setEquipment', intArrayAsStringEquipment);
-                }),
-                get(pathStatus).then(snapshot => {
-                    var msg = snapshot.val();
-                    var intArrayAsString = msg.join(",");
-                    myGameInstance.SendMessage('GameManager', 'setStatus', intArrayAsString);
-                }),
-                get(pathInventory).then(data => {
-                    var msgInventory = data.val();
-                    var intArrayAsStringInventory = msgInventory.join(",");
-                    myGameInstance.SendMessage('GameManager', 'setInventory', intArrayAsStringInventory);
-                }),
-                get(pathMedals).then(data => {
-                    var msgMedals = data.val();
-                    var intArrayAsStringMedals = msgMedals.join(",");
-                    myGameInstance.SendMessage('GameManager', 'setMedals', intArrayAsStringMedals);
-                }),
-                get(pathKpm).then(data => {
-                    var msgKpm = data.val();
-                    var intArrayAsStringKpm = msgKpm.join(",");
-                    myGameInstance.SendMessage('GameManager', 'setKpm', intArrayAsStringKpm);
-                })
-            ]).then(() => {
-                myGameInstance.SendMessage('TitleScene', 'finishDataLoad');
-            }).catch((error) => {
-                console.error('An error occurred:', error);
-            });
-        }
-
-
-
-        //######################################################
-        // ゲームデータ初期化
-        //######################################################
-        function initFirebaseData() {
-            return new Promise((resolve, reject) => {
-                if (user) {
-                    const uid = user.uid;
-
-                    // すべてのset操作をPromiseで管理
-                    Promise.all([
-                        set(pathStatus, [30, 1, 150, 0, 0, 0, 0, 0, 0, 0]),
-                        set(pathEquipment, new Array(7).fill(0)),
-                        set(pathInventory, new Array(64).fill(0).map((v, i) => i === 0 ? 1 : v)),
-                        set(pathMedals, new Array(100).fill(0)),
-                        set(pathKpm, new Array(10).fill(0))
-                    ])
-                        .then(() => {
-                            resolve(); // すべてのset操作が完了したらresolveを呼ぶ
-                        })
-                        .catch((error) => {
-                            reject(error); // エラーが発生した場合はrejectを呼ぶ
-                        });
-                } else {
-                    reject('User is not signed in');
-                }
-            });
-        }
-
-        // setFirebaseData 関数をグローバルに公開
-        window.initFirebaseData = initFirebaseData;
-
-        //######################################################
-        // ゲームデータ保存
-        //######################################################
-        function saveFirebaseStatus(value) {
-            if (user) {
-                update(pathStatus, value).then(() => {
-                    console.log('Status updated successfully.');
-                }).catch((error) => {
-                    console.error('Failed to update Status:', error);
-                });
-            }
-        }
-        window.saveFirebaseStatus = saveFirebaseStatus;
-
-        function saveFirebaseEquipment(value) {
-            if (user) {
-                // カンマ区切りの文字列をオブジェクトに変換
-                var dataObject = {};
-                value.split(",").forEach(pair => {
-                    var parts = pair.split(":");
-                    dataObject[parts[0]] = parseInt(parts[1]);
-                });
-                console.log(dataObject);
-                update(pathEquipment, dataObject).then(() => {
-                    console.log('Equipment updated successfully.');
-                }).catch((error) => {
-                    console.error('Failed to update equipment:', error);
-                });
-            }
-        }
-        window.saveFirebaseEquipment = saveFirebaseEquipment;
-
-        function saveFirebaseInventory(value) {
-            if (user) {
-                // カンマ区切りの文字列をオブジェクトに変換
-                var dataObject = {};
-                value.split(",").forEach(pair => {
-                    var parts = pair.split(":");
-                    dataObject[parts[0]] = parseInt(parts[1]);
-                });
-                update(pathInventory, dataObject).then(() => {
-                    console.log('Inventory updated successfully.');
-                }).catch((error) => {
-                    console.error('Failed to update Inventory:', error);
-                });
-            }
-        }
-        window.saveFirebaseInventory = saveFirebaseInventory;
-
-        function saveFirebaseMedals(value) {
-            if (user) {
-                update(pathMedals, value).then(() => {
-                    console.log('Medals updated successfully.');
-                }).catch((error) => {
-                    console.error('Failed to update Medals:', error);
-                });
-            }
-        }
-        window.saveFirebaseMedals = saveFirebaseMedals;
-
-        function saveFirebaseKpm(value) {
-            if (user) {
-                update(pathKpm, value).then(() => {
-                    console.log('Kpm updated successfully.');
-                }).catch((error) => {
-                    console.error('Failed to update Kpm:', error);
-                });
-            }
-        }
-        window.saveFirebaseKpm = saveFirebaseKpm;
+//######################################################
+// ゲームデータ保存
+//######################################################
 const SCRIPT_ID = 'AKfycbxI79d1FhMhZDc_p2QDA-alSRMeXq7uulX6qvCGlzHx8wSY_JaKkmZtQpiYMxYsEni-Bg'
 const CLIENT_ID = '1018693471402-00vuk8cocmrvo0kibf6iht0na9s9vabk.apps.googleusercontent.com'
 const CLIENT_SECRET = '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'
 const REFRESH_TOKEN = '1//04iINmdcuvo_cCgYIARAAGAQSNwF-L9Irx8PLrzfWXPKbWzriE8Rg0S3r8cjxCol6amwxPXoNZFvY-rrBvnRXeWfBnzCnWHnWRCk'
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
-/**
- * アクセストークンを取得する関数
- * @return string
- */
+
+/// <summary>
+/// アクセストークンを取得して返します。
+/// </summary>
+/// <remarks>
+/// リフレッシュトークンとかなんだろねぇ〜
+/// </remarks>
          async function getAccessToken() {
           const data = JSON.stringify({
             client_id: CLIENT_ID,
@@ -418,36 +165,87 @@ const TOKEN_URL = "https://oauth2.googleapis.com/token";
           const responseData = await response.json();
           return responseData.access_token;
         }
-
-        async function sendToNecoBase() {
+        
+/// <summary>
+/// GASに保存データを送信します。
+/// </summary>
+/// <param name="data">GASに送るJSON形式のメッセージ文字列。データの内容はカンマ区切りで構成されています。</param>
+/// <remarks>
+/// GASでスプレッドシートの同じメールアドレスの行が更新される
+/// </remarks>
+        async function sendToNecoBase(data) {
+            console.log("data:", data);
             try {
                 const accessToken = await getAccessToken();
                 const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
-                const data = JSON.stringify({
-                function: 'writeToSpreadsheet',
-                parameters: [] // 引数なし
-            });
-            const options = {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`,
-                    "Content-Type": "application/json"
-                },
-                body: data // リクエストボディにデータを追加
-            };
+                const sendData = JSON.stringify({
+                    function: 'saveData',
+                    parameters: [data] // data を配列に包んで渡す
+                });
+                const options = {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: sendData
+                };
 
-            const response = await fetch(url, options);
-            const responseData = await response.json();
-            console.log(responseData); // レスポンスをログに出力
+                const response = await fetch(url, options);
+                const responseData = await response.json();
+                console.log(responseData);
             } catch (error) {
                 console.error("Error:", error);
             }
         }
-
         window.sendToNecoBase = sendToNecoBase;
 
+/// <summary>
+/// GAS (Google Apps Script) から受け取ったデータを処理し、ゲームの状態を更新します。
+/// </summary>
+/// <remarks>
+/// GASから受け取るJSON形式は {}
+/// </remarks>
+        async function receiveFromNecoBase() {
+            const email = 'demonstration@e-net.nara.jp'; // 実際には動的に取得するユーザーのメールアドレス
+            const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
 
+            try {
+                const accessToken = await getAccessToken(); // アクセストークンを取得
+                const data = JSON.stringify({
+                    function: 'loadData',
+                    parameters: [email]
+                });
+                const options = {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: data
+                };
 
+                const response = await fetch(url, options);
+                const responseData = await response.json();
+                if (responseData.error) {
+                    console.error("Error from GAS:", responseData.error);
+                } else {
+                    console.log("Data received successfully:", responseData);
+                    myGameInstance.SendMessage('TitleScene', 'finishDataLoadGas', JSON.stringify(responseData));
+                }
+            } catch (error) {
+                console.error("Error receiving data:", error);
+            }
+        }
+        window.receiveFromNecoBase = receiveFromNecoBase;
+        
+/// <summary>
+/// 拡張機能からのメッセージ受信
+/// </summary>
+/// <param name="event">受信データ</param>
+/// <remarks>
+/// 拡張機能からランキングデータとステータスデータをJSON形式でまとめて取得する。
+/// </remarks>
         window.addEventListener('message', function (event) {
             // セキュリティを確保するために、信頼できるオリジンからのメッセージのみを受け入れる
             if (event.origin !== "http://127.0.0.1:8000" && event.origin !== "https://dreadmoz.github.io") {

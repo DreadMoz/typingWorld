@@ -13,7 +13,19 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 //using UnityEditor.MemoryProfiler;
 //using UnityEditor.MemoryProfiler;
+[System.Serializable]
+public class ResponseData
+{
+    public bool done;
+    public Response response;
+}
 
+[System.Serializable]
+public class Response
+{
+    public string type;
+    public string result;
+}
 public class TitleSky : MonoBehaviour
 {
     [SerializeField]
@@ -63,12 +75,6 @@ public class TitleSky : MonoBehaviour
     private int necoNo = 1;
     private bool firstPush = false;      // スタートボタンが2回以上押されないようにするためのフラグ
     private bool goNextScene = false;    // ワールドシーンに遷移するためのフラグ
-    private int startButtonStatus = 0;   // ログインやらスタートやら
-
-
-    private string[] scopes = { SheetsService.Scope.Spreadsheets };
-    private string spreadsheetId = "1jFRfg-f0uomBdj-suHbB6VvBYmvDEbuVj4ErSCJWuhU";
-    private SheetsService service;
 
     [SerializeField]
     private string code;
@@ -79,6 +85,8 @@ public class TitleSky : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player.SetActive(false);
+        startButton.SetActive(false);   // ログイン完了まで一旦消す
         skyboxMaterial = RenderSettings.skybox;
         skyboxMaterial.SetFloat("_Rotation", 330f);
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
@@ -90,7 +98,7 @@ public class TitleSky : MonoBehaviour
         userData.SetActive(false);
         message.SetActive(false);
 
-        StartButton();
+        gm.connection.OnRequestData();   // 拡張機能にデータ要求
     }
 
     // Update is called once per frame
@@ -115,68 +123,52 @@ public class TitleSky : MonoBehaviour
 
     public void StartButton()
     {
-        if (startButtonStatus == 0)
+        if (!firstPush)
         {
-            gm.connection.OnRequestData();   // 拡張機能にデータ要求
-
-        }
-        else if (startButtonStatus == 1)
-        {
-            if (!firstPush)
-            {
-                fade.StartFadeOut();
-                firstPush = true;
-            }
+            fade.StartFadeOut();
+            firstPush = true;
         }
     }
 
     public void finishDataLoad(string msg)
     {
+        message.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
         // JSONデータをデシリアライズして必要な部分を取得
         var combinedData = JsonConvert.DeserializeObject<ExtensionData>(msg);
         if (combinedData == null)
         {
-            messageText.text = "あしあとデータに問題が生じました。";
+            messageText.text = "あしあとデータに問題がおこったよ〜〜";
         }
         else
         {
             if (combinedData.rankingData != null)
             {
                 gm.savedata.setRankingFromExtension(JsonConvert.SerializeObject(combinedData.rankingData));
-                messageText.text = "ランキングデータをよみこみました。";
             }
             if (combinedData.statusData != null)
             {
                 gm.savedata.setStatusFromExtension(JsonConvert.SerializeObject(combinedData.statusData));
-                messageText.text = "あしあとデータをよみこみました。";
 
                 gm.savedata.settings[se.Extension] = 1;
             }
+            messageText.text = "あしあとデータをよみこみました。";
         }
-        showNextStartButton();
+        accessGss();
     }
 
-    private void showNextStartButton()
+    private void accessGss()
     {
-        IList<object> rowData;
-        startButton.SetActive(false);   // 誤動作防止用、ログイン完了まで一旦消す
-        message.SetActive(true);
+        player.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
         if (gm.savedata.Email == "")
         {
-            messageText.text = "あしあとデータがないので、サーバーから取ってきます。";
-            // 拡張機能データが取れない場合、GSSにアクセス。
+            messageText.text = "あしあとデータがないので、クラウドから取ってきます。ちょっとまってね。";
+
 #if UNITY_WEBGL && !UNITY_EDITOR
-// ここでGSSアクセス。
-// 仮
-rowData = new List<object> { "demonstration@e-net.nara.jp", "/公立学校/低学年/OU市/OU小学校", "0603-24", 999, 7, 87, "moru", 0, 0, 0, 0, 0, 0, 0, 333, "001022333444555666777888", 656279013556373796, 476371964491057444, 0471305275021828764, 511767441717405468, 86064876791434, 0, 0, 0, 0 };
-gm.savedata.LoadAllDataFromGss(rowData);
-#else
-//            rowData = new List<object> { "demonstration@e-net.nara.jp", "/公立学校/低学年/OU市/OU小学校", "0603-24", 999, 7, 87, "moru", 6, 0, 121, 3, 206, 0, 0, 333, "001022333444555666777888", 656279013556373796, 476371964491057444, 0471305275021828764, 511767441717405468, 86064876791434, 0, 0, 0, 0 };
-//            gm.savedata.LoadAllDataFromGss(rowData);
+            gm.connection.loadGas();    // ここでGSSアクセス。
 #endif
         }
         mailText.text = gm.savedata.Email;
@@ -200,7 +192,6 @@ gm.savedata.LoadAllDataFromGss(rowData);
                 cat.setChara(gm.savedata.getEquipment()[(int)eq.CatBody] - 200);
                 TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
                 buttonText.text = "スタート";
-                startButtonStatus = 1;
 
                 startButton.SetActive(true);   // スタートボタンにして表示
             }
@@ -211,109 +202,46 @@ gm.savedata.LoadAllDataFromGss(rowData);
         }
     }
 
+    public void finishDataLoadGas(string jsonMsg)
+    {
+        Text messageText = message.GetComponentInChildren<Text>();
+
+        if (string.IsNullOrEmpty(jsonMsg))
+        {
+            messageText.text = "GASデータに問題が生じました。";
+        }
+        else
+        {
+            ResponseData responseData = JsonUtility.FromJson<ResponseData>(jsonMsg);
+
+            if (responseData.done && !string.IsNullOrEmpty(responseData.response.result))
+            {
+                string[] dataParts = responseData.response.result.Split(',');
+                List<object> dataList = new List<object>(dataParts);
+                gm.savedata.LoadAllDataFromGss(dataList);
+                messageText.text = "GASデータをよみこみました。";
+            }
+            else
+            {
+                messageText.text = "GASデータに問題が生じました。";
+            }
+        }
+        accessGss();
+    }
+
     public void handleDataError(string mes)
     {
-        showNextStartButton();
+        accessGss();
     }
 
     public void OnRequestTimeout()
     {
-        showNextStartButton();
+        accessGss();
     }
 
     public void handleInitialData(string mes)
     {
-        showNextStartButton();
-    }
-
-    private async Task SendRequestToGAS(string email, string accessToken)
-    {
-        string url = $"https://script.google.com/a/macros/e-net.nara.jp/s/AKfycbyeY6PBHokpyUB-Ol86UXN1rFlLe2CVQsk2gNtVnRWIkN7pxkE68QenqxfY6VaRj53C/exec?email={email}&authCode={code}";
-        Debug.Log("url: " + url);
-
-        try
-        {
-            UnityWebRequest webRequest = UnityWebRequest.Get(url);
-            Debug.Log($"AccessToken: {accessToken}");
-
-            webRequest.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-            await webRequest.SendWebRequest();
-
-            if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.LogError("Error: " + webRequest.error);
-            }
-            else
-            {
-                string responseText = webRequest.downloadHandler.text;
-                if (responseText.StartsWith("<!DOCTYPE html>"))
-                {
-                    // HTMLレスポンスが返された場合の処理
-                    Debug.LogError("HTML Error Response Received");
-                }
-                else
-                {
-                    // 結果の表示
-                    string jsonResponse = webRequest.downloadHandler.text;
-                    Debug.Log("Received: " + jsonResponse);
-
-                    // 受け取ったJSON文字列（jsonResponse）からGASResponseオブジェクトをデシリアライズ
-                    GASResponse response = JsonUtility.FromJson<GASResponse>(jsonResponse);
-
-                    // contentSheetの文字列から不要なエスケープシーケンスを除去して変換
-                    string correctedJson = response.contentSheet.Replace(@"\\", @"\").Replace(@"\n", "\n");
-                    string jsonWithoutNewlines = correctedJson.Replace("\n", "");
-
-                    // 修正後のJSON文字列を使用してServiceAccountDataオブジェクトをデシリアライズ
-                    ServiceAccountData serviceAccountData = JsonUtility.FromJson<ServiceAccountData>(jsonWithoutNewlines);
-
-                    // デシリアライズされたデータの使用
-                    //                Debug.Log("Email: " + response.email);
-                    //                Debug.Log("Org Unit Path: " + response.orgUnitPath);
-                    //                Debug.Log("Sheet Info: " + response.contentSheet);
-
-                    // 応答に基づいて必要な処理を行う
-                    ou.text = response.orgUnitPath;
-                    GoogleServiceAccount.SheetInfo = response.contentSheet;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            // 例外が発生した場合のエラーログ
-            Debug.Log($"An error occurred: {ex.Message}");
-        }
-    }
-
-    private async Task setDataFromSpreadsheet()
-    {
-        mailText.text = "moriryo@e-net.nara.jp";    // OAuth認証GASアクセスなしの場合
-        // メールアドレスを含む行を取得
-        await GSheet.FindRowNumber(spreadsheetId, mailText.text);
-        var rowData = await GSheet.GetRow();
-
-        gm.savedata.LoadAllDataFromGss(rowData);
-    }
-
-    private void OnImageLoaded(Texture2D texture)
-    {
-        if (texture != null)
-        {
-            picture.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-        }
-        else
-        {
-            Debug.LogError("画像のロードに失敗しました。");
-        }
-    }
-
-    public void forceStart()
-    {
-        if (!firstPush)
-        {
-            fade.StartFadeOut();
-            firstPush = true;
-        }
+        accessGss();
     }
 
     public void setDummyData()

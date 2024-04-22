@@ -11,31 +11,19 @@ public class Connection : MonoBehaviour
 
 #if UNITY_WEBGL
     [DllImport("__Internal")]
-    private static extern void FbAuth();
-    [DllImport("__Internal")]
-    private static extern void LoadFbData();
-    [DllImport("__Internal")]
-    private static extern void SaveFbStatus(Dictionary<string, int> value);
-    [DllImport("__Internal")]
-    private static extern void SaveFbEquipment(string valuePtr);
-    [DllImport("__Internal")]
-    private static extern void SaveFbInventory(string valuePtr);
-    [DllImport("__Internal")]
-    private static extern void SaveFbMedals(Dictionary<string, int> value);
-    [DllImport("__Internal")]
-    private static extern void SaveFbKpm(Dictionary<string, int> value);
-    [DllImport("__Internal")]
     private static extern void RequestDataFromExtension();
     [DllImport("__Internal")]
     private static extern void SaveStatusToExtension(string data);
     [DllImport("__Internal")]
-    private static extern void SendToNecoBase(string data);
+    private static extern void SendToNecoBase(string dataPointer);
+    [DllImport("__Internal")]
+    private static extern void ReceiveFromNecoBase(); 
 #endif
 
     public void OnRequestData()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-    RequestDataFromExtension(); // 拡張機能にデータを要求
+        RequestDataFromExtension(); // 拡張機能にデータを要求
 #else
         getDummyData();
 #endif
@@ -48,71 +36,20 @@ public class Connection : MonoBehaviour
 #endif
     }
 
-    public void saveGas(string data)
+    public void saveGas(string dataPointer)
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        SendToNecoBase(data);
+        SendToNecoBase(dataPointer);
 #endif
     }
 
-    public void fbAuth()
+    public void loadGas()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        FbAuth();
-#else
-//        title.finishAuth();
+        ReceiveFromNecoBase();
 #endif
     }
 
-    public void loadFbData()
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        LoadFbData();
-#else
-        getDummyDb();
-#endif
-    }
-
-    public void saveFbStatus(Dictionary<string, int> value)
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        SaveFbStatus(value);
-#endif
-    }
-
-    public void saveFbEquipment(Dictionary<string, int> value)
-    {
-        var dataString = string.Join(",", value.Select(kv => kv.Key + ":" + kv.Value.ToString()));
-
-        Debug.Log("saveFbEquipment value: " + value);
-        Debug.Log("saveFbEquipment dataString: " + dataString);
-#if UNITY_WEBGL && !UNITY_EDITOR
-        SaveFbEquipment(dataString);
-#endif
-    }
-
-    public void saveFbInventory(Dictionary<string, int> value)
-    {
-        var items = value.Select(kv => $"{kv.Key}:{kv.Value}").ToArray();
-        var dataString = string.Join(",", items);
-#if UNITY_WEBGL && !UNITY_EDITOR
-        SaveFbInventory(dataString);
-#endif
-    }
-
-    public void saveFbMedals(Dictionary<string, int> value)
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        SaveFbMedals(value);
-#endif
-    }
-
-    public void saveFbKpm(Dictionary<string, int> value)
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        SaveFbKpm(value);
-#endif
-    }
 
     private void getDummyDb()
     {
@@ -171,10 +108,4 @@ public class Connection : MonoBehaviour
         // finishDataLoadを呼び出して、組み合わせたデータを渡す
         title.finishDataLoad(combinedJson);
     }
-    // JSON文字列をオブジェクトにデシリアライズするヘルパーメソッド
-    private object FromJson(string json)
-    {
-        return JsonUtility.FromJson<Dictionary<string, object>>(json);
-    }
-
 }

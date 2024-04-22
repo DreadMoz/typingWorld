@@ -177,6 +177,7 @@ public class SerializableSaveData
 
         // statusDataプロパティを持つ新しいオブジェクトを作成し、JSONにシリアライズ
         var wrappedData = new { statusData = data };
+        Debug.Log("wrappedData(SaveData): " + JsonConvert.SerializeObject(wrappedData));    // ログ出力を追加
         return JsonConvert.SerializeObject(wrappedData);
     }
 }
@@ -314,37 +315,51 @@ public class SaveData : ScriptableObject
     // 拡張機能なし GSSから最低限のデータ取得
     public void LoadAllDataFromGss(IList<object> list)
     {
-        // ApiStatus に値を設定
-        exStatus.apiStatus.Mail = list[0].ToString();
-        exStatus.apiStatus.Ou = list[1].ToString();
-        exStatus.apiStatus.LastName = list[2].ToString();
-        exStatus.apiStatus.Gold = Convert.ToInt32(list[3]);
+        try
+        {
+            // ApiStatus に値を設定
+            exStatus.apiStatus.Mail = list[0].ToString();
+            exStatus.apiStatus.Ou = list[1].ToString();
+            exStatus.apiStatus.LastName = list[2].ToString();
+            exStatus.apiStatus.Gold = Convert.ToInt32(list[3]);
 
-        // ExRank に値を設定
-        exStatus.apiStatus.exRank.Stage = Convert.ToInt32(list[4]);
-        exStatus.apiStatus.exRank.Ranking = Convert.ToInt32(list[5]);
-        exStatus.apiStatus.exRank.Name = list[6].ToString();
-        exStatus.apiStatus.exRank.RightHand = Convert.ToInt32(list[7]);
-        exStatus.apiStatus.exRank.Glasses = Convert.ToInt32(list[8]);
-        exStatus.apiStatus.exRank.Head = Convert.ToInt32(list[9]);
-        exStatus.apiStatus.exRank.LeftHand = Convert.ToInt32(list[10]);
-        exStatus.apiStatus.exRank.CatBody = Convert.ToInt32(list[11]);
-        exStatus.apiStatus.exRank.CatFace = Convert.ToInt32(list[12]);
-        exStatus.apiStatus.exRank.NickName = Convert.ToInt32(list[13]);
-        exStatus.apiStatus.exRank.Kpm = Convert.ToInt32(list[14]);
+            // ExRank に値を設定
+            exStatus.apiStatus.exRank.Stage = Convert.ToInt32(list[4]);
+            exStatus.apiStatus.exRank.Ranking = Convert.ToInt32(list[5]);
+            exStatus.apiStatus.exRank.Name = list[6].ToString();
+            exStatus.apiStatus.exRank.RightHand = Convert.ToInt32(list[7]);
+            exStatus.apiStatus.exRank.Glasses = Convert.ToInt32(list[8]);
+            exStatus.apiStatus.exRank.Head = Convert.ToInt32(list[9]);
+            exStatus.apiStatus.exRank.LeftHand = Convert.ToInt32(list[10]);
+            exStatus.apiStatus.exRank.CatBody = Convert.ToInt32(list[11]);
+            exStatus.apiStatus.exRank.CatFace = Convert.ToInt32(list[12]);
+            exStatus.apiStatus.exRank.NickName = Convert.ToInt32(list[13]);
+            exStatus.apiStatus.exRank.Kpm = Convert.ToInt32(list[14]);
 
-        // 長い数値の項目に値を設定
-        exStatus.apiStatus.rKpm = list[15].ToString();
-        exStatus.apiStatus.Medal[0] = Convert.ToInt64(list[16]);
-        exStatus.apiStatus.Medal[1] = Convert.ToInt64(list[17]);
-        exStatus.apiStatus.Medal[2] = Convert.ToInt64(list[18]);
-        exStatus.apiStatus.Medal[3] = Convert.ToInt64(list[19]);
-        exStatus.apiStatus.Medal[4] = Convert.ToInt64(list[20]);
-        exStatus.apiStatus.Item[0] = Convert.ToInt64(list[21]);
-        exStatus.apiStatus.Item[1] = Convert.ToInt64(list[22]);
-        exStatus.apiStatus.Item[2] = Convert.ToInt64(list[23]);
-        exStatus.apiStatus.Item[3] = Convert.ToInt64(list[24]);
-
+            // 長い数値の項目に値を設定
+            exStatus.apiStatus.rKpm = list[15].ToString();
+            exStatus.apiStatus.Medal[0] = Convert.ToInt64(list[16]);
+            exStatus.apiStatus.Medal[1] = Convert.ToInt64(list[17]);
+            exStatus.apiStatus.Medal[2] = Convert.ToInt64(list[18]);
+            exStatus.apiStatus.Medal[3] = Convert.ToInt64(list[19]);
+            exStatus.apiStatus.Medal[4] = Convert.ToInt64(list[20]);
+            exStatus.apiStatus.Item[0] = Convert.ToInt64(list[21]);
+            exStatus.apiStatus.Item[1] = Convert.ToInt64(list[22]);
+            exStatus.apiStatus.Item[2] = Convert.ToInt64(list[23]);
+            exStatus.apiStatus.Item[3] = Convert.ToInt64(list[24]);
+        }
+        catch (FormatException ex)
+        {
+            // エラーメッセージとスタックトレースをログに記録
+            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+        }
+        catch (Exception ex)
+        {
+            // その他の例外タイプ
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+        }
         DecodeToUnity();
     }
 
@@ -449,43 +464,35 @@ public class SaveData : ScriptableObject
     }
 
     // GSSに保存するためのデータを現在のゲームデータから作る。
-    public IList<object> CompileGameDataForGss()
+    public string CompileGameDataForGss()
     {
-        IList<object> retData = new List<object> { };
-
-        // ApiStatus のデータを追加
-        retData.Add(exStatus.apiStatus.Mail);
-        retData.Add(exStatus.apiStatus.Ou);
-        retData.Add(exStatus.apiStatus.LastName);
-        retData.Add(exStatus.apiStatus.Gold);
-
-        // ExRank のデータを追加
-        retData.Add(exStatus.apiStatus.exRank.Stage);
-        retData.Add(exStatus.apiStatus.exRank.Ranking);
-        retData.Add(exStatus.apiStatus.exRank.Name);
-        retData.Add(exStatus.apiStatus.exRank.RightHand);
-        retData.Add(exStatus.apiStatus.exRank.Glasses);
-        retData.Add(exStatus.apiStatus.exRank.Head);
-        retData.Add(exStatus.apiStatus.exRank.LeftHand);
-        retData.Add(exStatus.apiStatus.exRank.CatBody);
-        retData.Add(exStatus.apiStatus.exRank.CatFace);
-        retData.Add(exStatus.apiStatus.exRank.NickName);
-        retData.Add(exStatus.apiStatus.exRank.Kpm);
-
         EncodeFromUnity();
-
-        // 長い数値のデータを追加
-        retData.Add(exStatus.apiStatus.rKpm);
-        for (int i = 0; i < exStatus.apiStatus.Medal.Length; i++)
+        SerializableSaveData data = new SerializableSaveData
         {
-            retData.Add(exStatus.apiStatus.Medal[i]);
-        }
-        for (int i = 0; i < exStatus.apiStatus.Item.Length; i++)
-        {
-            retData.Add(exStatus.apiStatus.Item[i]);
-        }
+            Email = exStatus.apiStatus.Mail,
+            Ou = exStatus.apiStatus.Ou,
+            LastName = exStatus.apiStatus.LastName,
+            Gold = exStatus.apiStatus.Gold,
 
-        return retData;
+            Stage = exStatus.apiStatus.exRank.Stage,
+            Ranking = exStatus.apiStatus.exRank.Ranking,
+            Name = exStatus.apiStatus.exRank.Name,
+            RightHand = exStatus.apiStatus.exRank.RightHand,
+            Glasses = exStatus.apiStatus.exRank.Glasses,
+            Head = exStatus.apiStatus.exRank.Head,
+            LeftHand = exStatus.apiStatus.exRank.LeftHand,
+            CatBody = exStatus.apiStatus.exRank.CatBody,
+            CatFace = exStatus.apiStatus.exRank.CatFace,
+            NickName = exStatus.apiStatus.exRank.NickName,
+            Kpm = exStatus.apiStatus.exRank.Kpm,
+            Kpms = exStatus.apiStatus.rKpm,
+            Items = exStatus.apiStatus.Item,
+            Medals = exStatus.apiStatus.Medal,
+        };
+
+        // statusDataプロパティを持つ新しいオブジェクトを作成し、JSONにシリアライズ
+        Debug.Log("wrappedData(GssSaveData): " + JsonConvert.SerializeObject(data));    // ログ出力を追加
+        return JsonConvert.SerializeObject(data);
     }
 
     // UnityデータをGoogleAPIデータ、拡張機能データにまとめる。
