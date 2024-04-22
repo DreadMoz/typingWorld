@@ -6,6 +6,10 @@ jobs:
     name: Run the WebGL build
     runs-on: ubuntu-latest
     steps:
+      # ディスク使用状況をチェック
+      - name: Check disk space before build
+        run: df -h
+
       # Node.jsのバージョンをセットアップ
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -25,6 +29,10 @@ jobs:
           targetPlatform: WebGL
           unityVersion: 2021.3.24f1
           
+      # ディスク使用状況を再度チェック
+      - name: Check disk space after build
+        run: df -h
+
       # WebGLビルドをGitHub Pagesにデプロイ
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.3
