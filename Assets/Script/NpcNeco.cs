@@ -15,7 +15,7 @@ public class NpcNeco : MonoBehaviour
     private bool moveFlg = false;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         animator = GetComponent<Animator>();
         animator.SetInteger("animation", 10);

@@ -41,7 +41,7 @@ public class DetailMenu : MonoBehaviour
     {
         id = GameManager.TypingDataId / 3;
         level = transform.GetSiblingIndex();    // GameObjectの兄弟の中でのインデックスを取得
-        int medal = gm.savedata.getMedals()[id * 3 + level];
+        int medal = gm.savedata.Medals[id * 3 + level];
 
         resetStars();
 
@@ -62,7 +62,7 @@ public class DetailMenu : MonoBehaviour
                 star2.SetActive(true);
                 break;
             case -1:
-                gm.savedata.setMedalIndex(id * 3 + level, 1);       // 新規Detail表示から1へ
+                gm.savedata.Medals[id * 3 + level] = 1;       // 新規Detail表示から1へ
                 magicProof.SetActive(true);
                 ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
                 particleSystem.Play();

@@ -29,10 +29,10 @@ public class st
     public const int Rank = 2;
     public const int Kpm = 3;
 }
-// RightHnad,Head(151),Glasses(121),LeftHand,CatBody(201)あえて0,CatFace(101),NickName(211)
+// RightHand,Head(151),Glasses(121),LeftHand,CatBody(201)あえて0,CatFace(101),NickName(211)
 public class eq
 {
-    public const int RightHnad = 0;
+    public const int RightHand = 0;
     public const int Head = 1;
     public const int Glasses = 2;
     public const int LeftHand = 3;
@@ -57,8 +57,8 @@ public class se
 [Serializable]
 public class ExtensionData
 {
-    public JsonData rankingData; // JsonDataは先に定義された型を使用
-    public SerializableSaveData statusData; // StatusDataTypeはステータスデータの型
+    public JsonData rankingData;
+    public SerializableExSaveData statusData; // StatusDataTypeはステータスデータの型
 }
 
 // dataオブジェクト
@@ -84,46 +84,9 @@ public class ExRank
     public int Kpm { get; set; }
 }
 
-// スプレッドシートAPIステータス
-[Serializable]
-public class ApiStatus
-{
-    public string Mail { get; set; }
-    public string Ou { get; set; }
-    public string LastName { get; set; }
-    public int Gold { get; set; }
-    public ExRank exRank { get; set; }
-    public string rKpm { get; set; }
-    public long[] Medal { get; set; }
-    public long[] Item { get; set; }
-
-    public ApiStatus()
-    {
-    // ExRank オブジェクトのインスタンス化
-        exRank = new ExRank();
-        Medal = new long[5];
-        Item = new long[4];
-    }
-}
-
 // 拡張機能ステータス
 [Serializable]
-public class ExStatus
-{
-    public ApiStatus apiStatus { get; set; }
-    public int[] Inventory { get; set; }
-    public int[] Settings { get; set; }
-
-    public ExStatus()
-    {
-        apiStatus = new ApiStatus();    // ApiStatus オブジェクトのインスタンス化
-        Inventory = new int[40];
-        Settings = new int[10];
-    }
-}
-
-[Serializable]
-public class SerializableSaveData
+public class SerializableExSaveData
 {
     public string Email;
     public string Ou;
@@ -146,40 +109,6 @@ public class SerializableSaveData
     public string Kpms;
     public int[] Settings;
     // 必要に応じて他のフィールドも追加
-
-    public string CompileGameDataForExtension(ExStatus exStatus)
-    {
-        SerializableSaveData data = new SerializableSaveData
-        {
-            Email = exStatus.apiStatus.Mail,
-            Ou = exStatus.apiStatus.Ou,
-            LastName = exStatus.apiStatus.LastName,
-            Gold = exStatus.apiStatus.Gold,
-
-            Stage = exStatus.apiStatus.exRank.Stage,
-            Ranking = exStatus.apiStatus.exRank.Ranking,
-            Name = exStatus.apiStatus.exRank.Name,
-            RightHand = exStatus.apiStatus.exRank.RightHand,
-            Glasses = exStatus.apiStatus.exRank.Glasses,
-            Head = exStatus.apiStatus.exRank.Head,
-            LeftHand = exStatus.apiStatus.exRank.LeftHand,
-            CatBody = exStatus.apiStatus.exRank.CatBody,
-            CatFace = exStatus.apiStatus.exRank.CatFace,
-            NickName = exStatus.apiStatus.exRank.NickName,
-            Kpm = exStatus.apiStatus.exRank.Kpm,
-
-            Inventory = exStatus.Inventory,
-            Items = exStatus.apiStatus.Item,
-            Medals = exStatus.apiStatus.Medal,
-            Kpms = exStatus.apiStatus.rKpm,
-            Settings = exStatus.Settings,
-        };
-
-        // statusDataプロパティを持つ新しいオブジェクトを作成し、JSONにシリアライズ
-        var wrappedData = new { statusData = data };
-        Debug.Log("wrappedData(SaveData): " + JsonConvert.SerializeObject(wrappedData));    // ログ出力を追加
-        return JsonConvert.SerializeObject(wrappedData);
-    }
 }
 
 
@@ -189,13 +118,8 @@ public class SaveData : ScriptableObject
     // ExRankのリストを作成
     public List<ExRank> ExRankings = new List<ExRank>();
 
-    // Status オブジェクトのインスタンス化
-    public ExStatus exStatus = new ExStatus();
-
-
-
     [SerializeField]
-    public string userName;
+    public string UserName;
 
     [SerializeField]
     public string Email;
@@ -204,37 +128,37 @@ public class SaveData : ScriptableObject
     public string Ou;
 
     [SerializeField]
-    public string lastName;
+    public string LastName;
 
     [SerializeField]
-    public int[] status = new int[4];
+    public int[] Status = new int[4];
 
     [SerializeField]
-    public int[] equipment = new int[7];
+    public int[] Equipment = new int[7];
 
     [SerializeField]
-    public int[] inventory = new int[40];
+    public int[] Inventory = new int[40];
 
     [SerializeField]
-    public bool[] items = new bool [256];
+    public bool[] Items = new bool [256];
 
     [SerializeField]
-    public int[] medals = new int[100];
+    public int[] Medals = new int[100];
 
     [SerializeField]
-    public int[] kpms = new int[8];
+    public int[] Kpms = new int[8];
 
     [SerializeField]
-    public int[] settings = new int[10];
+    public int[] Settings = new int[10];
 
 
     // 拡張機能からランキング一覧を取得する。
-    public void setRankingFromExtension(string jsonMsg)
+    public void setRankingFromExtension(string rankingData)
     {
-        Debug.Log("Received Ranking JSON: " + jsonMsg);
+        Debug.Log("Received Ranking JSON: " + rankingData);
 
         // JSONデータをデシリアライズ
-        var jsonResponse = JsonConvert.DeserializeObject<JsonData>(jsonMsg);
+        var jsonResponse = JsonConvert.DeserializeObject<JsonData>(rankingData);
 
         foreach (var item in jsonResponse.value)
         {
@@ -252,7 +176,7 @@ public class SaveData : ScriptableObject
                 NickName = Convert.ToInt32(item[9]),
                 Kpm = Convert.ToInt32(item[10])
             };
-            ExRankings.Add(rank);
+            ExRankings.Add(rank);       // ランキングデータ格納場所
         }
         foreach (var rank in ExRankings)
         {
@@ -260,56 +184,53 @@ public class SaveData : ScriptableObject
         }
     }
 
-    // 拡張機能から個人データを取得する。
-    public void setStatusFromExtension(string jsonMsg)
+    // 拡張機能からステータスデータを取得する。
+    public void setStatusFromExtension(string statusData)
     {
-        Debug.Log("Received Status JSON: " + jsonMsg);
+        Debug.Log("Received Status JSON: " + statusData);
 
         // JSONデータをデシリアライズ
-        SerializableSaveData exData = JsonConvert.DeserializeObject<SerializableSaveData>(jsonMsg);
+        SerializableExSaveData exData = JsonConvert.DeserializeObject<SerializableExSaveData>(statusData);
 
         // ApiStatus に値を設定
-        exStatus.apiStatus.Mail = exData.Email;
-        exStatus.apiStatus.Ou = exData.Ou;
-        exStatus.apiStatus.LastName = exData.LastName;
-        exStatus.apiStatus.Gold = exData.Gold;
+        Email = exData.Email;
+        Ou = exData.Ou;
+        LastName = exData.LastName;
+        Status[st.Gold] = exData.Gold;
 
         // ExRank に値を設定
-        exStatus.apiStatus.exRank.Stage = exData.Stage;
-        exStatus.apiStatus.exRank.Ranking = exData.Ranking;
-        exStatus.apiStatus.exRank.Name = exData.Name;
-        exStatus.apiStatus.exRank.RightHand = exData.RightHand;
-        exStatus.apiStatus.exRank.Glasses = exData.Glasses;
-        exStatus.apiStatus.exRank.Head = exData.Head;
-        exStatus.apiStatus.exRank.LeftHand = exData.LeftHand;
-        exStatus.apiStatus.exRank.CatBody = exData.CatBody;
-        exStatus.apiStatus.exRank.CatFace = exData.CatFace;
-        exStatus.apiStatus.exRank.NickName = exData.NickName;
-        exStatus.apiStatus.exRank.Kpm = exData.Kpm;
+        Status[st.Server] = exData.Stage;
+        Status[st.Rank] = exData.Ranking;
+        UserName = exData.Name;
+        Equipment[eq.RightHand] = exData.RightHand;
+        Equipment[eq.Glasses] = exData.Glasses;
+        Equipment[eq.Head] = exData.Head;
+        Equipment[eq.LeftHand] = exData.LeftHand;
+        Equipment[eq.CatBody] = exData.CatBody;
+        Equipment[eq.CatFace] = exData.CatFace;
+        Equipment[eq.NickName] = exData.NickName;
+        Status[st.Kpm] = exData.Kpm;
 
-        // ここは配列40　15〜54
-        for (int i = 0; i < exStatus.Inventory.Length; i++)
+        // ここは配列40のコピー
+        for (int i = 0; i < Inventory.Length; i++)
         {
-            exStatus.Inventory[i] = exData.Inventory[i];
-        }
-        // ここは配列4　55〜58
-        for (int i = 0; i < exStatus.apiStatus.Item.Length; i++)
-        {
-            exStatus.apiStatus.Item[i] = exData.Items[i];
-        }
-        // ここは配列5　59〜63
-        for (int i = 0; i < exStatus.apiStatus.Medal.Length; i++)
-        {
-            exStatus.apiStatus.Medal[i] = exData.Medals[i];
-        }
-        exStatus.apiStatus.rKpm = exData.Kpms;
-        // ここは配列10　65〜74
-        for (int i = 0; i < exStatus.Settings.Length; i++)
-        {
-            exStatus.Settings[i] = exData.Settings[i];
+            Inventory[i] = exData.Inventory[i];
         }
 
-        DecodeToUnity();
+        // ここはlong[4]をbool[100]に変換
+        DecodeItemData(exData.Items);
+
+        // ここはlong[5]をint[100]に変換
+        DecodeMedalData(exData.Medals);
+
+        // ここは配列8<-文字列
+        DecodeKpmData(exData.Kpms);
+
+        // ここは配列10のコピー
+        for (int i = 0; i < Settings.Length; i++)
+        {
+            Settings[i] = exData.Settings[i];
+        }
     }
 
     // 拡張機能なし GSSから最低限のデータ取得
@@ -318,35 +239,45 @@ public class SaveData : ScriptableObject
         try
         {
             // ApiStatus に値を設定
-            exStatus.apiStatus.Mail = list[0].ToString();
-            exStatus.apiStatus.Ou = list[1].ToString();
-            exStatus.apiStatus.LastName = list[2].ToString();
-            exStatus.apiStatus.Gold = Convert.ToInt32(list[3]);
+            Email = list[0].ToString();
+            Ou = list[1].ToString();
+            LastName = list[2].ToString();
+            Status[st.Gold] = Convert.ToInt32(list[3]);
 
             // ExRank に値を設定
-            exStatus.apiStatus.exRank.Stage = Convert.ToInt32(list[4]);
-            exStatus.apiStatus.exRank.Ranking = Convert.ToInt32(list[5]);
-            exStatus.apiStatus.exRank.Name = list[6].ToString();
-            exStatus.apiStatus.exRank.RightHand = Convert.ToInt32(list[7]);
-            exStatus.apiStatus.exRank.Glasses = Convert.ToInt32(list[8]);
-            exStatus.apiStatus.exRank.Head = Convert.ToInt32(list[9]);
-            exStatus.apiStatus.exRank.LeftHand = Convert.ToInt32(list[10]);
-            exStatus.apiStatus.exRank.CatBody = Convert.ToInt32(list[11]);
-            exStatus.apiStatus.exRank.CatFace = Convert.ToInt32(list[12]);
-            exStatus.apiStatus.exRank.NickName = Convert.ToInt32(list[13]);
-            exStatus.apiStatus.exRank.Kpm = Convert.ToInt32(list[14]);
+            Status[st.Server] = Convert.ToInt32(list[4]);
+            Status[st.Rank] = Convert.ToInt32(list[5]);
+            UserName = list[6].ToString();
+            Equipment[eq.RightHand] = Convert.ToInt32(list[7]);
+            Equipment[eq.Glasses] = Convert.ToInt32(list[8]);
+            Equipment[eq.Head] = Convert.ToInt32(list[9]);
+            Equipment[eq.LeftHand] = Convert.ToInt32(list[10]);
+            Equipment[eq.CatBody] = Convert.ToInt32(list[11]);
+            Equipment[eq.CatFace] = Convert.ToInt32(list[12]);
+            Equipment[eq.NickName] = Convert.ToInt32(list[13]);
+            Status[st.Kpm] = Convert.ToInt32(list[14]);
 
-            // 長い数値の項目に値を設定
-            exStatus.apiStatus.rKpm = list[15].ToString();
-            exStatus.apiStatus.Medal[0] = Convert.ToInt64(list[16]);
-            exStatus.apiStatus.Medal[1] = Convert.ToInt64(list[17]);
-            exStatus.apiStatus.Medal[2] = Convert.ToInt64(list[18]);
-            exStatus.apiStatus.Medal[3] = Convert.ToInt64(list[19]);
-            exStatus.apiStatus.Medal[4] = Convert.ToInt64(list[20]);
-            exStatus.apiStatus.Item[0] = Convert.ToInt64(list[21]);
-            exStatus.apiStatus.Item[1] = Convert.ToInt64(list[22]);
-            exStatus.apiStatus.Item[2] = Convert.ToInt64(list[23]);
-            exStatus.apiStatus.Item[3] = Convert.ToInt64(list[24]);
+            // ここは配列8<-文字列
+            DecodeKpmData(list[15].ToString());
+
+            long[] gssMedals = new long[5];
+            gssMedals[0] = Convert.ToInt64(list[16]);
+            gssMedals[1] = Convert.ToInt64(list[17]);
+            gssMedals[2] = Convert.ToInt64(list[18]);
+            gssMedals[3] = Convert.ToInt64(list[19]);
+            gssMedals[4] = Convert.ToInt64(list[20]);
+
+            // ここはlong[5]をint[100]に変換
+            DecodeMedalData(gssMedals);
+
+            long[] gssItems = new long[4];
+            gssItems[0] = Convert.ToInt64(list[21]);
+            gssItems[1] = Convert.ToInt64(list[22]);
+            gssItems[2] = Convert.ToInt64(list[23]);
+            gssItems[3] = Convert.ToInt64(list[24]);
+
+            // ここはlong[4]をbool[100]に変換
+            DecodeItemData(gssItems);
         }
         catch (FormatException ex)
         {
@@ -360,56 +291,10 @@ public class SaveData : ScriptableObject
             Console.WriteLine($"Unexpected error: {ex.Message}");
             Console.WriteLine($"StackTrace: {ex.StackTrace}");
         }
-        DecodeToUnity();
     }
 
-    public string makeExtensionJsonData()
+    public void DecodeItemData(long[] itemData)
     {
-        EncodeFromUnity();
-
-        SerializableSaveData ssd = new SerializableSaveData();
-        string jsonData = ssd.CompileGameDataForExtension(exStatus);
-
-        return jsonData;
-    }
-
-    // GoogleAPIデータ、拡張機能データをUnityデータに置き換える。
-    public void DecodeToUnity()
-    {
-        DecodeStatusData();
-        DecodeEquipmentData();
-        DecodeItemData();
-        AssignInventory();      // 同じ型の場合はポインタを渡す
-        DecodeMedalData();
-        DecodeKpmData();
-        AssignSettings();       // 同じ型の場合はポインタを渡す
-    }
-
-    public void DecodeStatusData()
-    {
-        userName = exStatus.apiStatus.exRank.Name;
-        Email = exStatus.apiStatus.Mail;
-        Ou = exStatus.apiStatus.Ou;
-        lastName = exStatus.apiStatus.LastName;
-        status[0] = exStatus.apiStatus.Gold;
-        status[1] = exStatus.apiStatus.exRank.Stage;
-        status[2] = exStatus.apiStatus.exRank.Ranking;
-        status[3] = exStatus.apiStatus.exRank.Kpm;
-    }
-    public void DecodeEquipmentData()
-    {
-        equipment[0] = exStatus.apiStatus.exRank.RightHand;
-        equipment[1] = exStatus.apiStatus.exRank.Glasses;
-        equipment[2] = exStatus.apiStatus.exRank.Head;
-        equipment[3] = exStatus.apiStatus.exRank.LeftHand;
-        equipment[4] = exStatus.apiStatus.exRank.CatBody;
-        equipment[5] = exStatus.apiStatus.exRank.CatFace;
-        equipment[6] = exStatus.apiStatus.exRank.NickName;
-    }
-
-    public void DecodeItemData()
-    {
-        long[] itemData = exStatus.apiStatus.Item;
         // 各 long 値をビット単位で調べる
         for (int i = 0; i < itemData.Length; i++)
         {
@@ -419,14 +304,13 @@ public class SaveData : ScriptableObject
                 // currentItemData から特定のビット位置の値を取得
                 bool isItemPresent = (currentItemData & (1L << bit)) != 0;
                 // 計算したビット位置に応じた items 配列の位置に値をセット
-                items[i * 64 + bit] = isItemPresent;
+                Items[i * 64 + bit] = isItemPresent;
             }
         }
     }
 
-    public void DecodeMedalData()
+    public void DecodeMedalData(long[] medalCode)
     {
-        long[] medalCode = exStatus.apiStatus.Medal;
         int mask = 0b111; // 3ビットを取り出すためのマスク
 
         for (int i = 0; i < medalCode.Length; i++)
@@ -435,14 +319,13 @@ public class SaveData : ScriptableObject
             {
                 // encodedValues[i]から3ビットずつ切り出して、配列に格納
                 // 最下位ビットから開始するため、シフトするビット数を調整
-                medals[i * 20 + j] = (int)((medalCode[i] >> (j * 3)) & mask);
+                Medals[i * 20 + j] = (int)((medalCode[i] >> (j * 3)) & mask);
             }
         }
     }
 
-    public void DecodeKpmData()
+    public void DecodeKpmData(string rkpm)
     {
-        string rkpm = exStatus.apiStatus.rKpm;
         int arrayIndex = 7;
 
         // 文字列の末尾から3文字ずつ取得していく
@@ -450,44 +333,71 @@ public class SaveData : ScriptableObject
         {
             // 3文字の部分文字列を取得
             string part = rkpm.Substring(Math.Max(i - 3, 0), i - Math.Max(i - 3, 0));
-            kpms[arrayIndex] = int.Parse(part);
+            Kpms[arrayIndex] = int.Parse(part);
             arrayIndex--;
         }
     }
-    public void AssignInventory()
+
+    // 拡張機能に保存するためのデータを現在のゲームデータから作る。
+    public string CompileGameDataForExtension(SaveData sd)
     {
-        inventory = exStatus.Inventory;
-    }
-    public void AssignSettings()
-    {
-        settings = exStatus.Settings;
+        SerializableExSaveData data = new SerializableExSaveData
+        {
+            Email = sd.Email,
+            Ou = sd.Ou,
+            LastName = sd.LastName,
+            Gold = sd.Status[st.Gold],
+
+            Stage = sd.Status[st.Server],
+            Ranking = sd.Status[st.Rank],
+            Name = sd.UserName,
+            RightHand = sd.Equipment[eq.RightHand],
+            Glasses = sd.Equipment[eq.Glasses],
+            Head = sd.Equipment[eq.Head],
+            LeftHand = sd.Equipment[eq.LeftHand],
+            CatBody = sd.Equipment[eq.CatBody],
+            CatFace = sd.Equipment[eq.CatFace],
+            NickName = sd.Equipment[eq.NickName],
+            Kpm = sd.Status[st.Kpm],
+
+            Inventory = sd.Inventory,
+            Items = EncodeItemData(sd.Items),
+            Medals = EncodeMedalData(sd.Medals),
+            Kpms = EncodeKpmData(sd.Kpms),
+            Settings = sd.Settings,
+        };
+
+        // statusDataプロパティを持つ新しいオブジェクトを作成し、JSONにシリアライズ
+        var wrappedData = new { statusData = data };
+        Debug.Log("wrappedData(SaveData): " + JsonConvert.SerializeObject(wrappedData));    // ログ出力を追加
+        return JsonConvert.SerializeObject(wrappedData);
     }
 
     // GSSに保存するためのデータを現在のゲームデータから作る。
-    public string CompileGameDataForGss()
+    public string CompileGameDataForGss(SaveData sd)
     {
-        EncodeFromUnity();
-        SerializableSaveData data = new SerializableSaveData
+        SerializableExSaveData data = new SerializableExSaveData
         {
-            Email = exStatus.apiStatus.Mail,
-            Ou = exStatus.apiStatus.Ou,
-            LastName = exStatus.apiStatus.LastName,
-            Gold = exStatus.apiStatus.Gold,
+            Email = sd.Email,
+            Ou = sd.Ou,
+            LastName = sd.LastName,
+            Gold = sd.Status[st.Gold],
 
-            Stage = exStatus.apiStatus.exRank.Stage,
-            Ranking = exStatus.apiStatus.exRank.Ranking,
-            Name = exStatus.apiStatus.exRank.Name,
-            RightHand = exStatus.apiStatus.exRank.RightHand,
-            Glasses = exStatus.apiStatus.exRank.Glasses,
-            Head = exStatus.apiStatus.exRank.Head,
-            LeftHand = exStatus.apiStatus.exRank.LeftHand,
-            CatBody = exStatus.apiStatus.exRank.CatBody,
-            CatFace = exStatus.apiStatus.exRank.CatFace,
-            NickName = exStatus.apiStatus.exRank.NickName,
-            Kpm = exStatus.apiStatus.exRank.Kpm,
-            Kpms = exStatus.apiStatus.rKpm,
-            Items = exStatus.apiStatus.Item,
-            Medals = exStatus.apiStatus.Medal,
+            Stage = sd.Status[st.Server],
+            Ranking = sd.Status[st.Rank],
+            Name = sd.UserName,
+            RightHand = sd.Equipment[eq.RightHand],
+            Glasses = sd.Equipment[eq.Glasses],
+            Head = sd.Equipment[eq.Head],
+            LeftHand = sd.Equipment[eq.LeftHand],
+            CatBody = sd.Equipment[eq.CatBody],
+            CatFace = sd.Equipment[eq.CatFace],
+            NickName = sd.Equipment[eq.NickName],
+            Kpm = sd.Status[st.Kpm],
+
+            Items = EncodeItemData(sd.Items),
+            Medals = EncodeMedalData(sd.Medals),
+            Kpms = EncodeKpmData(sd.Kpms),
         };
 
         // statusDataプロパティを持つ新しいオブジェクトを作成し、JSONにシリアライズ
@@ -495,184 +405,66 @@ public class SaveData : ScriptableObject
         return JsonConvert.SerializeObject(data);
     }
 
-    // UnityデータをGoogleAPIデータ、拡張機能データにまとめる。
-    public void EncodeFromUnity()
+    public long[] EncodeItemData(bool[] items)
     {
-        EncodeStatusData();
-        EncodeEquipmentData();
-        EncodeItemData();
-        EncodeMedalData();
-        EncodeKpmData();
-    }
-
-    public void EncodeStatusData()
-    {
-        if (exStatus.apiStatus.exRank != null)
+        long[] encodedItems = new long[4];
+        for (int i = 0; i < items.Length; i++)
         {
-            exStatus.apiStatus.exRank.Name = userName;
-            exStatus.apiStatus.exRank.Stage = status[1];
-            exStatus.apiStatus.exRank.Ranking = status[2];
-            exStatus.apiStatus.exRank.Kpm = status[3];
-        }
-        if (exStatus.apiStatus != null)
-        {
-            exStatus.apiStatus.Mail = Email;
-            exStatus.apiStatus.Ou = Ou;
-            exStatus.apiStatus.LastName = lastName;
-            exStatus.apiStatus.Gold = status[0];
-        }
-    }
-    public void EncodeEquipmentData()
-    {
-        if (exStatus.apiStatus.exRank != null)
-        {
-            exStatus.apiStatus.exRank.RightHand = equipment[0];
-            exStatus.apiStatus.exRank.Glasses = equipment[1];
-            exStatus.apiStatus.exRank.Head = equipment[2];
-            exStatus.apiStatus.exRank.LeftHand = equipment[3];
-            exStatus.apiStatus.exRank.CatBody = equipment[4];
-            exStatus.apiStatus.exRank.CatFace = equipment[5];
-            exStatus.apiStatus.exRank.NickName = equipment[6];
-        }
-    }
-    public void EncodeItemData()
-    {
-        if (exStatus.apiStatus != null)
-        {
-            long[] encodedItems = new long[4];
-            for (int i = 0; i < items.Length; i++)
+            if (items[i])
             {
-                if (items[i])
-                {
-                    int itemIndex = i / 64;
-                    int bitPosition = i % 64;
-                    encodedItems[itemIndex] |= (1L << bitPosition);
-                }
+                int itemIndex = i / 64;
+                int bitPosition = i % 64;
+                encodedItems[itemIndex] |= (1L << bitPosition);
             }
-            exStatus.apiStatus.Item = encodedItems;
         }
+        return encodedItems;
     }
-    public void EncodeMedalData()
+    public long[] EncodeMedalData(int[] medals)
     {
-        if (exStatus.apiStatus != null)
+        long[] encodedMedals = new long[5];
+        for (int i = 0; i < medals.Length; i++)
         {
-            long[] encodedMedals = new long[5];
-            for (int i = 0; i < medals.Length; i++)
-            {
-                int medalIndex = i / 20;
-                int bitPosition = (i % 20) * 3;
-                encodedMedals[medalIndex] |= ((long)medals[i] << bitPosition);
-            }
-            exStatus.apiStatus.Medal = encodedMedals;
+            int medalIndex = i / 20;
+            int bitPosition = (i % 20) * 3;
+            encodedMedals[medalIndex] |= ((long)medals[i] << bitPosition);
         }
+        return encodedMedals;
     }
-    public void EncodeKpmData()
+    public string EncodeKpmData(int[] kpms)
     {
-        if (exStatus.apiStatus != null)
+        StringBuilder sb = new StringBuilder();
+        for (int i = kpms.Length - 1; i >= 0; i--)
         {
-            StringBuilder sb = new StringBuilder();
-            for (int i = kpms.Length - 1; i >= 0; i--)
+            // 最初の要素以外は3桁になるように0でパディング
+            if (i == kpms.Length - 1 && kpms[i] <= 999)
             {
-                // 最初の要素以外は3桁になるように0でパディング
-                if (i == kpms.Length - 1 && kpms[i] <= 999)
-                {
-                    sb.Insert(0, kpms[i].ToString());
-                }
-                else
-                {
-                    sb.Insert(0, kpms[i].ToString("D3"));
-                }
+                sb.Insert(0, kpms[i].ToString());
             }
-            exStatus.apiStatus.rKpm = sb.ToString();
+            else
+            {
+                sb.Insert(0, kpms[i].ToString("D3"));
+            }
         }
-    }
-
-    public void addItem(int index)
-    {
-        items[index] = true;
-    }
-
-
-    public void setStatusIndex(int index, int value)
-    {
-        status[index] = value;
-    }
-
-    public void setEquipmentIndex(int index, int value)
-    {
-        equipment[index] = value;
-    }
-
-    public void setInventoryIndex(int index, int value)
-    {
-        inventory[index] = value;
-    }
-
-    public void saveGssItems(int startId, int endId, int[] saveData)
-    {
-        List<object> data = saveData.Cast<object>().ToList();
-//        GSheet.WriteRow(GssIndex.Equipment + startId, GssIndex.Equipment + endId, data);
-    }
-
-    public void saveGssKpis(int startId, int endId, int[] saveData)
-    {
-        List<object> data = saveData.Cast<object>().ToList();
-//        GSheet.WriteRow(GssIndex.Kpms + startId, GssIndex.Kpms + endId, data);
-    }
-
-    public void saveGssMedals(int index)
-    {
-//        long[] medalData = { medalCode[index] };
-  //      List<object> data = medalData.Cast<object>().ToList();
-    //    GSheet.WriteRow(GssIndex.Medals + index, GssIndex.Medals + index, data);
-    }
-
-    public void setMedalIndex(int index, int value)
-    {
-        medals[index] = value;
+        return sb.ToString();
     }
 
     public int getBlankInventoryIndex()
     {
-        for (int i = 0; i < inventory.Length; i++)
+        for (int i = 0; i < Inventory.Length; i++)
         {
-            if (inventory[i] == 0)
+            if (Inventory[i] == 0)
             {
                 return i;
             }
         }
         return -1;
     }
-    public string getUserName()
-    {
-        return userName;
-    }
-    public int[] getStatus()
-    {
-        return status;
-    }
-    public int[] getEquipment()
-    {
-        return equipment;
-    }
-    public int[] getInventory()
-    {
-        return inventory;
-    }
-    public int[] getMedals()
-    {
-        return medals;
-    }
-    public int[] getKpms()
-    {
-        return kpms;
-    }
 
     public bool existInventory(int id)
     {
-        for (int i = 0; i < inventory.Length; i++)
+        for (int i = 0; i < Inventory.Length; i++)
         {
-            if (inventory[i] == id)
+            if (Inventory[i] == id)
             {
                 return true;
             }
@@ -682,9 +474,9 @@ public class SaveData : ScriptableObject
 
     public bool existEquipment(int id)
     {
-        for (int i = 0; i < equipment.Length; i++)
+        for (int i = 0; i < Equipment.Length; i++)
         {
-            if (equipment[i] == id)
+            if (Equipment[i] == id)
             {
                 return true;
             }
@@ -697,81 +489,24 @@ public class SaveData : ScriptableObject
         // 要素1から6までを0から5に移動
         for (int i = 0; i < 6; i++)
         {
-            kpms[i] = kpms[i + 1];
+            Kpms[i] = Kpms[i + 1];
         }
 
         // 6番目の要素に新しい値を代入
-        kpms[6] = newKpm;
+        Kpms[6] = newKpm;
 
         // 平均を計算
         double average = 0;
-        for (int i = 0; i < kpms.Length; i++)
+        for (int i = 0; i < Kpms.Length; i++)
         {
-            average += kpms[i];
+            average += Kpms[i];
         }
-        average /= kpms.Length;
+        average /= Kpms.Length;
 
         int[] newKpi = new int[1];
         newKpi[0] = (int)Math.Round(average); // 四捨五入してintにキャスト;
 
-//        int[] saveKpis = newKpi.Concat(kpms).ToArray();
-
-//        saveGssKpis(-1, GssSize.Kpms, saveKpis);    // 先頭の前にKpmを追加しているため-1から
+        //        int[] saveKpis = newKpi.Concat(kpms).ToArray();
+        //        saveGssKpis(-1, GssSize.Kpms, saveKpis);    // 先頭の前にKpmを追加しているため-1から
     }
-
-
-
-
-
-
-    public void setUserNameFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
-    {
-        userName = msg;
-    }
-    public void setStatusFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
-    {
-        Debug.Log("setStatus msg: " + msg);
-        string[] intStrings = msg.Split(',');
-        for (int i = 0; i < intStrings.Length; i++)
-        {
-            status[i] = int.Parse(intStrings[i]);
-        }
-    }
-    public void setEquipmentFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
-    {
-        Debug.Log("setEquipment msg: " + msg);
-        string[] intStrings = msg.Split(',');
-        for (int i = 0; i < intStrings.Length; i++)
-        {
-            equipment[i] = int.Parse(intStrings[i]);
-        }
-    }
-    public void setInventoryFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
-    {
-        Debug.Log("setInventory msg: " + msg);
-        string[] intStrings = msg.Split(',');
-        for (int i = 0; i < intStrings.Length; i++)
-        {
-            inventory[i] = int.Parse(intStrings[i]);
-        }
-    }
-    public void setMedalsFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
-    {
-        Debug.Log("setMedals msg: " + msg);
-        string[] intStrings = msg.Split(',');
-        for (int i = 0; i < intStrings.Length; i++)
-        {
-            medals[i] = int.Parse(intStrings[i]);
-        }
-    }
-    public void setKpmFromFireBase(string msg)       //htmlからデータロード時に真っ先に呼ばれる
-    {
-        Debug.Log("setKpm msg: " + msg);
-        string[] intStrings = msg.Split(',');
-        for (int i = 0; i < intStrings.Length; i++)
-        {
-            kpms[i] = int.Parse(intStrings[i]);
-        }
-    }
-
 }

@@ -1,8 +1,15 @@
 mergeInto(LibraryManager.library, {
+    GetOAuth: function() {
+        getOAuth();
+    },
 
-  RequestDataFromExtension: function() {
-    var message = { action: "requestDataFromExtension" };
-    window.postMessage(message, "*");
+    OAuthLogout: function() {
+        oAuthLogout();
+    },
+
+    LoadDataFromExtension: function() {
+        var message = { action: "loadDataFromExtension" };
+        window.postMessage(message, "*");
 
         // タイムアウトを監視する
         var timeoutDuration = 3000; // タイムアウトまでのミリ秒（ここでは3000ms = 3秒）
@@ -28,14 +35,14 @@ mergeInto(LibraryManager.library, {
         // タイムアウト監視の処理をここに追加することも可能
     },
 
-    SendToNecoBase: function(dataPointer) {
+    SaveToGss: function(dataPointer) {
         console.log("Received pointer:", dataPointer); // ポインタ受け取り時のデバッグ
         var data = UTF8ToString(dataPointer);
         console.log("Converted data:", data); // 文字列変換後のデバッグ
-        sendToNecoBase(data);
+        saveToGss(data);
     },
 
-    ReceiveFromNecoBase: function() {
-        receiveFromNecoBase();
+    LoadFromGss: function() {
+        loadFromGss();
     }
 });

@@ -11,10 +11,10 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
-//using UnityEditor.MemoryProfiler;
-//using UnityEditor.MemoryProfiler;
+using System.Collections;
+
 [System.Serializable]
-public class ResponseData
+public class ResponseData       // GASデータ受信用フォーマット
 {
     public bool done;
     public Response response;
@@ -43,15 +43,15 @@ public class TitleSky : MonoBehaviour
     private ChibiCat cat;             // ねこオブジェクト
 
     [SerializeField]
-    private Text ou; // ダミーデータ表示用
+    private Text ouText; // データ表示用
     [SerializeField]
-    private Text firstName; // ダミーデータ表示用
+    private Text firstName; // データ表示用
     [SerializeField]
-    private Text lastName; // ダミーデータ表示用
+    private Text lastName; // データ表示用
     [SerializeField]
-    private Text mailText; // ダミーデータ表示用
+    private Text mailText; // データ表示用
     [SerializeField]
-    private Image picture; // ダミーデータ表示用
+    private Image picture; // データ表示用
 
     [SerializeField]
     private GameObject startButton; // startボタン
@@ -70,6 +70,8 @@ public class TitleSky : MonoBehaviour
     private GameObject prevButton; // prevボタン
     [SerializeField]
     private GameObject confirmButton; // confirmボタン
+    [SerializeField]
+    private GameObject ashiato;
 
     private Animator animator;
     private int necoNo = 1;
@@ -81,24 +83,27 @@ public class TitleSky : MonoBehaviour
     [SerializeField]
     private GoogleAuth googleAuth;
 
+    private bool loginFlg = false;
+
 
     // Start is called before the first frame update
     void Start()
     {
         player.SetActive(false);
-        startButton.SetActive(false);   // ログイン完了まで一旦消す
+//        startButton.SetActive(false);   // ログイン完了まで一旦消す
         skyboxMaterial = RenderSettings.skybox;
         skyboxMaterial.SetFloat("_Rotation", 330f);
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
 
+        reLogin.SetActive(false);
         standupButton.SetActive(false);
         nextButton.SetActive(false);
         prevButton.SetActive(false);
         confirmButton.SetActive(false);
         userData.SetActive(false);
         message.SetActive(false);
-
-        gm.connection.OnRequestData();   // 拡張機能にデータ要求
+        ashiato.SetActive(false);
+        gm.savedata.Equipment[eq.CatBody] = 0;
     }
 
     // Update is called once per frame
@@ -123,11 +128,51 @@ public class TitleSky : MonoBehaviour
 
     public void StartButton()
     {
-        if (!firstPush)
+        if (!loginFlg)
         {
-            fade.StartFadeOut();
-            firstPush = true;
+            gm.connection.enetLogin();   // OAuth認証要求
         }
+        else
+        {
+            if (!firstPush)
+            {
+                fade.StartFadeOut();
+                firstPush = true;
+            }
+        }
+    }
+
+    public void finishOAuth(string userInfo)
+    {
+        userData.SetActive(true);
+        message.SetActive(true);
+        Text messageText = message.GetComponentInChildren<Text>();
+
+        string[] parts = userInfo.Split(',');
+        string mail = parts[0];
+        string name = parts.Length > 1 ? parts[1] : "";
+        string imageUrl = parts.Length > 2 ? parts[2] : "";
+
+        mailText.text = mail;
+        int spaceIndex = name.IndexOf(' ');
+        if (spaceIndex != -1)
+        {
+            firstName.text = name.Substring(0, spaceIndex);
+            lastName.text = name.Substring(spaceIndex + 1);
+        }
+        StartCoroutine(LoadImage(imageUrl));
+
+        if (mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp")
+        {
+            messageText.text += firstName.text + "さんはいいネットならのなかまだね。あしあとデータをさがします。";
+            gm.connection.loadExtension();
+        }
+        else
+        {
+            startButton.SetActive(false);
+            messageText.text = "これはいいネットならのアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
+        }
+        reLogin.SetActive(true);
     }
 
     public void finishDataLoad(string msg)
@@ -139,7 +184,8 @@ public class TitleSky : MonoBehaviour
         var combinedData = JsonConvert.DeserializeObject<ExtensionData>(msg);
         if (combinedData == null)
         {
-            messageText.text = "あしあとデータに問題がおこったよ〜〜";
+            messageText.text += "あしあとデータに問題がおこったよ〜〜";
+            Debug.Log("あしあとデータに問題がおこったよ");
         }
         else
         {
@@ -150,55 +196,40 @@ public class TitleSky : MonoBehaviour
             if (combinedData.statusData != null)
             {
                 gm.savedata.setStatusFromExtension(JsonConvert.SerializeObject(combinedData.statusData));
-
-                gm.savedata.settings[se.Extension] = 1;
+                gm.savedata.Settings[se.Extension] = 1;
+                Debug.Log("gm.savedata.settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
             }
-            messageText.text = "あしあとデータをよみこみました。";
+            ashiato.SetActive(true);
+            ouText.text = gm.savedata.Ou;
+            messageText.text += "あしあとデータをよみこみました。";
+            Debug.Log("あしあとデータをよみこみました。");
         }
-        accessGss();
+        checkExtensionData();
     }
 
-    private void accessGss()
+    private void checkExtensionData()
     {
         player.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
-        if (gm.savedata.Email == "")
+        if (gm.savedata.Settings[se.Extension] == 0)
         {
             messageText.text = "あしあとデータがないので、クラウドから取ってきます。ちょっとまってね。";
+            gm.connection.loadGas();    // GSSアクセス。
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-            gm.connection.loadGas();    // ここでGSSアクセス。
-#endif
         }
-        mailText.text = gm.savedata.Email;
-
-        // あしあとデータまたはサーバーからデータ取得後。ここでいいネットなら判定。全くの新規、外部からのアクセスの可能性もある。
-        if (mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp")
+        if (gm.savedata.Equipment[eq.CatBody] != 0)
         {
-            Debug.Log("gm.savedata.equipment[eq.CatBody]: " + gm.savedata.equipment[eq.CatBody]);
-            if (gm.savedata.equipment[eq.CatBody] == 0)      // catBodyがない状態なら 新規作成
-            {
-                selectNeco();
-            }
-            else
-            {
-                userData.SetActive(true);       // ユーザーデータウィンドウ表示
-                firstName.text = gm.savedata.userName;
-                lastName.text = gm.savedata.lastName;
-                ou.text = gm.savedata.Ou;
-                messageText.text += firstName.text + "さんはいいネットならのなかまだね。スタートしましょう。";
+            cat.setChara(gm.savedata.Equipment[eq.CatBody] - 200);
+            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+            buttonText.text = "スタート";
+            loginFlg = true;
 
-                cat.setChara(gm.savedata.getEquipment()[(int)eq.CatBody] - 200);
-                TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-                buttonText.text = "スタート";
-
-                startButton.SetActive(true);   // スタートボタンにして表示
-            }
+            startButton.SetActive(true);   // スタートボタンにして表示
         }
         else
         {
-            messageText.text = "いいネットなら専用のアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
+            selectNeco();
         }
     }
 
@@ -208,7 +239,7 @@ public class TitleSky : MonoBehaviour
 
         if (string.IsNullOrEmpty(jsonMsg))
         {
-            messageText.text = "GASデータに問題が生じました。";
+            messageText.text += "\nGASデータがありませんでした。";
         }
         else
         {
@@ -219,42 +250,72 @@ public class TitleSky : MonoBehaviour
                 string[] dataParts = responseData.response.result.Split(',');
                 List<object> dataList = new List<object>(dataParts);
                 gm.savedata.LoadAllDataFromGss(dataList);
-                messageText.text = "GASデータをよみこみました。";
+                messageText.text += "\nGASデータをよみこみました。";
             }
             else
             {
-                messageText.text = "GASデータに問題が生じました。";
+                messageText.text += "\nGASデータに問題が生じました。";
             }
         }
-        accessGss();
+    }
+
+    IEnumerator LoadImage(string url)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url))
+        {
+            // リクエストを送信し、レスポンスを待つ
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Error: " + webRequest.error);
+            }
+            else
+            {
+                // 正常に画像を取得できた場合、TextureをImageに設定する
+                Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
+                picture.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            }
+        }
+    }
+
+    public void googleLogout()
+    {
+        gm.savedata.Equipment[eq.CatBody] = 0;
+        gm.connection.googleLogout();
+    }
+
+    public void finishLogout()
+    {
+        loginFlg = false;
+        ashiato.SetActive(false);
+        player.SetActive(false);
+        userData.SetActive(false);
+        reLogin.SetActive(false);
+        startButton.SetActive(true);
+        Text messageText = message.GetComponentInChildren<Text>();
+        messageText.text = "ログアウトしました。";
+
+        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+        buttonText.text = "ログイン";
+
     }
 
     public void handleDataError(string mes)
     {
-        accessGss();
+        checkExtensionData();
     }
 
     public void OnRequestTimeout()
     {
-        accessGss();
+        checkExtensionData();
     }
 
     public void handleInitialData(string mes)
     {
-        accessGss();
+        checkExtensionData();
     }
 
-    public void setDummyData()
-    {
-        Thread.Sleep(300);
-        firstName.text=gm.savedata.getUserName();
-        ou.text="0000-00";
-        mailText.text="abc-123-xyz@e-net.nara.jp";
-//        image.texture = Resources.Load<Texture2D>("necoHand");
-        userData.SetActive(true);
-
-        Thread.Sleep(300);
-    }
     private void selectNeco()
     {
         message.SetActive(true);
@@ -270,9 +331,7 @@ public class TitleSky : MonoBehaviour
     public void confirmNeco()
     {
         message.SetActive(false);
-        gm.savedata.setEquipmentIndex(eq.CatBody, 200 + necoNo);
-        int[] necoBody = { 200 + necoNo };
-        gm.savedata.saveGssItems(eq.CatBody, eq.CatBody, necoBody);
+        gm.savedata.Equipment[eq.CatBody] = 200 + necoNo;
 
         standupButton.SetActive(false);
         nextButton.SetActive(false);

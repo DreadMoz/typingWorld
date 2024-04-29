@@ -35,7 +35,7 @@ public class StatusUI : MonoBehaviour
     public void dispStatus()
     {
         string nickname;
-        Item item = gm.db.GetItemList()[gm.savedata.equipment[eq.NickName]];
+        Item item = gm.db.GetItemList()[gm.savedata.Equipment[eq.NickName]];
         if (item != null)
         {
             nickname = item.MyItemName;
@@ -44,11 +44,11 @@ public class StatusUI : MonoBehaviour
         {
             nickname = "さん";
         }
-        TMPHeadName.text = gm.savedata.userName + nickname;
-        TMPName.text = gm.savedata.userName + nickname;
-        TMPGold.text = gm.savedata.status[st.Gold].ToString() + " ｼｰｶｰ";
-        TMPServer.text = "サーバー：" + gm.db.GetServerList()[gm.savedata.status[st.Server]];
-        TMPWpm.text = "1分間に" + gm.savedata.status[st.Kpm] + "キー";
-        TMPRank.text = "(" + gm.savedata.status[st.Rank] + "位 / 200位)";
+        TMPHeadName.text = gm.savedata.UserName + nickname;
+        TMPName.text = gm.savedata.UserName + nickname;
+        TMPGold.text = gm.savedata.Status[st.Gold].ToString() + " ｼｰｶｰ";
+        TMPServer.text = "サーバー：" + gm.db.GetServerList()[gm.savedata.Status[st.Server]];
+        TMPWpm.text = "1分間に" + gm.savedata.Status[st.Kpm] + "キー";
+        TMPRank.text = "(" + gm.savedata.Status[st.Rank] + "位 / 200位)";
     }
 }

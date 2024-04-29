@@ -33,7 +33,7 @@ public class SoubiUI : MonoBehaviour
         {
             int soubiLen = 4;       // いまの装備の長さ最終的に7予定
             slots = slotsParent.GetComponentsInChildren<InventrySlot>();
-            int[] saveEquip = gm.savedata.getEquipment();
+            int[] saveEquip = gm.savedata.Equipment;
 
             if (saveEquip.Length < soubiLen || slots.Length < soubiLen)
             {
@@ -67,11 +67,11 @@ public class SoubiUI : MonoBehaviour
         {
             if (slots[i].MyItem != null)
             {
-                gm.savedata.setEquipmentIndex(i, slots[i].MyItem.MyItemNo);
+                gm.savedata.Equipment[i] = slots[i].MyItem.MyItemNo;
             }
             else
             {
-                gm.savedata.setEquipmentIndex(i, 0);
+                gm.savedata.Equipment[i] = 0;
             }
         }
     }

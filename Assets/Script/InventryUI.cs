@@ -30,7 +30,7 @@ public class InventryUI : MonoBehaviour
         try
         {
             slots = slotsParent.GetComponentsInChildren<InventrySlot>();
-            int[] saveItem = gm.savedata.getInventory();
+            int[] saveItem = gm.savedata.Inventory;
 
             for (int i = 0; i < saveItem.Length; i++)
             {
@@ -71,11 +71,11 @@ public class InventryUI : MonoBehaviour
         {
             if (slots[i].MyItem != null)
             {
-                gm.savedata.setInventoryIndex(i, slots[i].MyItem.MyItemNo);
+                gm.savedata.Inventory[i] = slots[i].MyItem.MyItemNo;
             }
             else
             {
-                gm.savedata.setInventoryIndex(i, 0);
+                gm.savedata.Inventory[i] = 0;
             }
         }
     }

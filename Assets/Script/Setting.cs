@@ -17,7 +17,7 @@ public class Setting : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (gm.savedata.settings[se.Extension] != 0)
+        if (gm.savedata.Settings[se.Extension] != 0)
         {
             toGas.SetActive(false);
         }

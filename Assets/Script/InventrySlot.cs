@@ -193,7 +193,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
         if (soubiSlot)
         {
-            gm.savedata.setEquipmentIndex(slotNo, hand.GetGrabbingItemNo());    // セーブデータの入れ替え
+            gm.savedata.Equipment[slotNo] = hand.GetGrabbingItemNo();    // セーブデータの入れ替え
             switch(slotNo)
             {
                 case 0:
@@ -237,11 +237,11 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
                 {
                     return;
                 }
-                gm.savedata.setEquipmentIndex(hand.ItemSlotNo(), MyItem.MyItemNo);
+                gm.savedata.Equipment[hand.ItemSlotNo()] = MyItem.MyItemNo;
             }
             else
             {
-                gm.savedata.setEquipmentIndex(hand.ItemSlotNo(), 0);    // 装備解除
+                gm.savedata.Equipment[hand.ItemSlotNo()] = 0;    // 装備解除
             }
             switch(hand.GetGrabbingItemType())
             {

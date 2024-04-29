@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using System.Linq;
@@ -60,6 +61,9 @@ public class GameManager : MonoBehaviour
     public GameObject rankingButton;    // ランキングボタン
     public GameObject settingButton;    // セッティングボタン
 
+    public Toggle exToggle;
+    public Toggle gssToggle;
+    public Toggle enetToggle;
 
     public StatusUI statusui;
 
@@ -200,43 +204,43 @@ public class GameManager : MonoBehaviour
         else if (SceneNo == (int)scene.World)
         {
             npcManager.SpawnNPCs();
-            if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+            if (savedata.Equipment[eq.CatBody] != 0)
             {
-                chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                chibiCat.setChara(savedata.Equipment[eq.CatBody] - 200);
+                chibiCat2D.setChara(savedata.Equipment[eq.CatBody] - 200);
             }
-            chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
-            chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
-            chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
-            chibiCat2D.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
-            chibiCat2D.changeEquipHead(savedata.getEquipment()[eq.Head]);
-            chibiCat2D.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
+            chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+            chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
+            chibiCat.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+            chibiCat2D.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+            chibiCat2D.changeEquipHead(savedata.Equipment[eq.Head]);
+            chibiCat2D.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
         }
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
         {
-            if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+            if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
-                chibiCat.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
-                chibiCat2D.setChara(savedata.getEquipment()[(int)eq.CatBody] - 200);
+                chibiCat.setChara(savedata.Equipment[eq.CatBody] - 200);
+                chibiCat2D.setChara(savedata.Equipment[eq.CatBody] - 200);
             }
-            chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
-            chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
-            chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
-            chibiCat2D.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
-            chibiCat2D.changeEquipHead(savedata.getEquipment()[eq.Head]);
-            chibiCat2D.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
+            chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+            chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
+            chibiCat.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+            chibiCat2D.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+            chibiCat2D.changeEquipHead(savedata.Equipment[eq.Head]);
+            chibiCat2D.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
         }
         // シーンが2タイピングの場合
         else if (SceneNo == (int)scene.Typing)
         {
-            if (savedata.getEquipment()[(int)eq.CatBody] != 0)
+            if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
-                chibiCat.setChara(savedata.getEquipment()[eq.CatBody] - 200);
+                chibiCat.setChara(savedata.Equipment[eq.CatBody] - 200);
             }
-            chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
-            chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
-            chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
+            chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+            chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
+            chibiCat.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
         }
     }
 
@@ -414,8 +418,8 @@ public class GameManager : MonoBehaviour
 
     private void keepInventory()
     {
-        oldInventory = (int[])savedata.getInventory().Clone();    // インベントリを開いた時の並びを保存しておく
-        oldEquip = (int[])savedata.getEquipment().Clone();        // インベントリを開いた時の装備を保存しておく
+        oldInventory = (int[])savedata.Inventory.Clone();    // インベントリを開いた時の並びを保存しておく
+        oldEquip = (int[])savedata.Equipment.Clone();        // インベントリを開いた時の装備を保存しておく
     }
 
     private void checkInventory()
@@ -424,8 +428,8 @@ public class GameManager : MonoBehaviour
         SoubiUI equipUi = equip.GetComponentInChildren<SoubiUI>();
         inventoryUi.getAllItems();
         equipUi.getAllSoubi();
-        newInventory = savedata.getInventory();     // 現在のインベントリの並びを保存
-        newEquip = savedata.getEquipment();         // 現在の装備を保存
+        newInventory = savedata.Inventory;     // 現在のインベントリの並びを保存
+        newEquip = savedata.Equipment;         // 現在の装備を保存
         int[] updatesItems;
 
         if (oldInventory == null || oldEquip == null)    // 何かの手違いで変更前がnullの場合抜ける
@@ -474,9 +478,9 @@ public class GameManager : MonoBehaviour
     public void registerRecentTypingResult()
     {
         int stars = judgeStar();
-        if (savedata.getMedals()[TypingDataId] < stars)
+        if (savedata.Medals[TypingDataId] < stars)
         {
-            savedata.setMedalIndex(TypingDataId, stars);
+            savedata.Medals[TypingDataId] = stars;
 
 /*            int changeMedalId = savedata.EncodeToLongArray();
             if (changeMedalId != -1)
@@ -531,18 +535,18 @@ public class GameManager : MonoBehaviour
         switch (parts)
         {
             case 0:     // 両手
-                chibiCat.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
-                chibiCat2D.changeEquipHands(savedata.getEquipment()[eq.RightHnad], savedata.getEquipment()[eq.LeftHand], checkBagItem());
+                chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+                chibiCat2D.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
                 break;
 
             case 1:     // 頭
-                chibiCat.changeEquipHead(savedata.getEquipment()[eq.Head]);
-                chibiCat2D.changeEquipHead(savedata.getEquipment()[eq.Head]);
+                chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
+                chibiCat2D.changeEquipHead(savedata.Equipment[eq.Head]);
                 break;
 
             case 2:     // メガネ
-                chibiCat.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
-                chibiCat2D.changeEquipGlasses(savedata.getEquipment()[eq.Glasses]);
+                chibiCat.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+                chibiCat2D.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
                 break;
         }
     }
@@ -571,14 +575,14 @@ public class GameManager : MonoBehaviour
 
     public void exportExtension()
     {
-        string saveExtensionJson = savedata.makeExtensionJsonData();
+        string saveExtensionJson = savedata.CompileGameDataForExtension(savedata);
         Debug.Log("saveExtensionJson(GameManager): " + saveExtensionJson);  // ログ出力を追加
         connection.saveExtension(saveExtensionJson);
     }
 
     public void exportGas()
     {
-        string saveGasObject = savedata.CompileGameDataForGss();
+        string saveGasObject = savedata.CompileGameDataForGss(savedata);
 //        string jsonData = JsonConvert.SerializeObject(saveGasObject, Formatting.Indented);
         Debug.Log("saveGasData(GameManager): " + saveGasObject);  // ログ出力を追加
 
@@ -590,16 +594,8 @@ public class GameManager : MonoBehaviour
         connection.loadGas();
     }
 
-    //htmlから直でsavedataにアクセスできないため
-    public void setUserName(string msg) { savedata.setUserNameFromFireBase(msg);}
-    public void setStatus(string msg) { savedata.setStatusFromFireBase(msg);}
-    public void setEquipment(string msg) { savedata.setEquipmentFromFireBase(msg);}
-    public void setInventory(string msg) { savedata.setInventoryFromFireBase(msg);}
-    public void setMedals(string msg) { savedata.setMedalsFromFireBase(msg);}
-    public void setKpm(string msg) { savedata.setKpmFromFireBase(msg);}
-
     public void firstExtention()
     {
-        connection.OnRequestData();
+        connection.enetLogin();
     }
 }

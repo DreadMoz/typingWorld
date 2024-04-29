@@ -36,7 +36,7 @@ public class EquipmentUI : MonoBehaviour
         try
         {
             slots = slotsParent.GetComponentsInChildren<InventrySlot>();
-            int[] saveEquip = gm.savedata.getEquipment();
+            int[] saveEquip = gm.savedata.Equipment;
 
             if (saveEquip.Length < 7 || slots.Length < 7)
             {
@@ -70,11 +70,11 @@ public class EquipmentUI : MonoBehaviour
         {
             if (slots[i].MyItem != null)
             {
-                gm.savedata.setEquipmentIndex(i, slots[i].MyItem.MyItemNo);
+                gm.savedata.Equipment[i] = slots[i].MyItem.MyItemNo;
             }
             else
             {
-                gm.savedata.setEquipmentIndex(i, 0);
+                gm.savedata.Equipment[i] = 0;
             }
         }
     }

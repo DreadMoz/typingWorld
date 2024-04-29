@@ -35,7 +35,7 @@ public class NpcManager : MonoBehaviour
 
     public void SpawnNPCs()
     {
-        if (gm.savedata.settings[se.Extension] == 0)
+        if (gm.savedata.Settings[se.Extension] == 0)
         {
             return;
         }

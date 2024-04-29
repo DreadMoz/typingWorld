@@ -61,14 +61,14 @@ public class Confirmation : MonoBehaviour
         int blankIndex = gm.savedata.getBlankInventoryIndex();
         if (blankIndex >= 0)
         {
-            int saifu = gm.savedata.getStatus()[0];
+            int saifu = gm.savedata.Status[0];
             if (saifu >= itemPrice)
             {
                 pAnimator.SetTrigger("yes");
                 kAnimator.SetTrigger("buy");
-                gm.savedata.setInventoryIndex(blankIndex, itemId);
-                gm.savedata.setStatusIndex(0, saifu - itemPrice);
-                gm.savedata.addItem(itemId);
+                gm.savedata.Inventory[blankIndex] = itemId;
+                gm.savedata.Status[0] = saifu - itemPrice;
+                gm.savedata.Items[itemId] = true;
                 talk.text = "まいどありがとうございます！";
                 hide();
 

@@ -22,14 +22,14 @@ public class Practice : MonoBehaviour
 
     public void calcStars()
     {
-        int[] medals = gm.savedata.getMedals();
+        int[] medals = gm.savedata.Medals;
         for (int i=0; i < medals.Length; i++)
         {
             if (i < medals.Length - 1)    // 次があればステージオープン
             {
                 if ((medals[i] > 2) && (medals[i + 1] == 0))    // 星2つ以上で次がクローズだったら
                 {
-                    gm.savedata.setMedalIndex(i + 1, -1);       // Detailオープン
+                    gm.savedata.Medals[i + 1] = -1;       // Detailオープン
                     medals[i + 1] = -1;                         // 花火セット
                     Debug.Log("Oepned detail id:" + (i + 1));
                 }
@@ -57,9 +57,9 @@ public class Practice : MonoBehaviour
                     {
                         medalTop[i + 1] = -1; // Room花火打ち上げセット
                         Debug.Log("Opend room id:" + (i + 1));
-                        if (gm.savedata.getMedals()[(i + 1) * 3] == 0)
+                        if (gm.savedata.Medals[(i + 1) * 3] == 0)
                         {
-                            gm.savedata.setMedalIndex((i + 1) * 3, -1); // Detail花火打ち上げセット
+                            gm.savedata.Medals[(i + 1) * 3] = -1; // Detail花火打ち上げセット
                             Debug.Log("Opend detail id:" + (i + 1) * 3);
                         }
                     }
