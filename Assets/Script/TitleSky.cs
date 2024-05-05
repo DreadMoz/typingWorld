@@ -78,12 +78,7 @@ public class TitleSky : MonoBehaviour
     private bool firstPush = false;      // スタートボタンが2回以上押されないようにするためのフラグ
     private bool goNextScene = false;    // ワールドシーンに遷移するためのフラグ
 
-    [SerializeField]
-    private string code;
-    [SerializeField]
-    private GoogleAuth googleAuth;
-
-    private bool loginFlg = false;
+    private int loginFlg = 0;
 
 
     // Start is called before the first frame update
@@ -128,11 +123,12 @@ public class TitleSky : MonoBehaviour
 
     public void StartButton()
     {
-        if (!loginFlg)
+        if (loginFlg == 0)
         {
+            startButton.SetActive(false);
             gm.connection.enetLogin();   // OAuth認証要求
         }
-        else
+        else if (loginFlg == 1)
         {
             if (!firstPush)
             {
@@ -140,6 +136,11 @@ public class TitleSky : MonoBehaviour
                 firstPush = true;
             }
         }
+        else if (loginFlg == 2)
+        {
+            selectNeco();
+        }
+
     }
 
     public void finishOAuth(string userInfo)
@@ -162,14 +163,13 @@ public class TitleSky : MonoBehaviour
         }
         StartCoroutine(LoadImage(imageUrl));
 
-        if (mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp")
+        if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
         {
             messageText.text += firstName.text + "さんはいいネットならのなかまだね。あしあとデータをさがします。";
             gm.connection.loadExtension();
         }
         else
         {
-            startButton.SetActive(false);
             messageText.text = "これはいいネットならのアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
         }
         reLogin.SetActive(true);
@@ -186,6 +186,7 @@ public class TitleSky : MonoBehaviour
         {
             messageText.text += "あしあとデータに問題がおこったよ〜〜";
             Debug.Log("あしあとデータに問題がおこったよ");
+            checkExtensionData();
         }
         else
         {
@@ -201,10 +202,10 @@ public class TitleSky : MonoBehaviour
             }
             ashiato.SetActive(true);
             ouText.text = gm.savedata.Ou;
-            messageText.text += "あしあとデータをよみこみました。";
+            messageText.text += "\nあしあとデータをよみこみました。";
             Debug.Log("あしあとデータをよみこみました。");
+            showStart();
         }
-        checkExtensionData();
     }
 
     private void checkExtensionData()
@@ -212,34 +213,24 @@ public class TitleSky : MonoBehaviour
         player.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
+        Debug.Log("gm.savedata.Settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
         if (gm.savedata.Settings[se.Extension] == 0)
         {
+            Debug.Log("あしあとデータがないので、クラウドから取ってきます。");
             messageText.text = "あしあとデータがないので、クラウドから取ってきます。ちょっとまってね。";
             gm.connection.loadGas();    // GSSアクセス。
-
-        }
-        if (gm.savedata.Equipment[eq.CatBody] != 0)
-        {
-            cat.setChara(gm.savedata.Equipment[eq.CatBody] - 200);
-            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-            buttonText.text = "スタート";
-            loginFlg = true;
-
-            startButton.SetActive(true);   // スタートボタンにして表示
-        }
-        else
-        {
-            selectNeco();
         }
     }
 
     public void finishDataLoadGas(string jsonMsg)
     {
+        reLogin.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
         if (string.IsNullOrEmpty(jsonMsg))
         {
             messageText.text += "\nGASデータがありませんでした。";
+            showStart();
         }
         else
         {
@@ -251,11 +242,34 @@ public class TitleSky : MonoBehaviour
                 List<object> dataList = new List<object>(dataParts);
                 gm.savedata.LoadAllDataFromGss(dataList);
                 messageText.text += "\nGASデータをよみこみました。";
+                showStart();
             }
             else
             {
                 messageText.text += "\nGASデータに問題が生じました。";
+                showStart();
             }
+        }
+    }
+
+    private void showStart()
+    {
+        if (gm.savedata.Equipment[eq.CatBody] != 0)
+        {
+            cat.setChara(gm.savedata.Equipment[eq.CatBody] - 200);
+            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+            buttonText.text = "スタート";
+            startButton.SetActive(true);
+            loginFlg = 1;
+
+            startButton.SetActive(true);   // スタートボタンにして表示
+        }
+        else
+        {
+            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+            buttonText.text = "つくる";
+            startButton.SetActive(true);
+            loginFlg = 2;
         }
     }
 
@@ -281,13 +295,19 @@ public class TitleSky : MonoBehaviour
 
     public void googleLogout()
     {
+        confirmButton.SetActive(false);
+        standupButton.SetActive(false);
+        nextButton.SetActive(false);
+        prevButton.SetActive(false);
+        confirmButton.SetActive(false);
+
         gm.savedata.Equipment[eq.CatBody] = 0;
         gm.connection.googleLogout();
     }
 
     public void finishLogout()
     {
-        loginFlg = false;
+        loginFlg = 0;
         ashiato.SetActive(false);
         player.SetActive(false);
         userData.SetActive(false);
@@ -330,7 +350,6 @@ public class TitleSky : MonoBehaviour
     }
     public void confirmNeco()
     {
-        message.SetActive(false);
         gm.savedata.Equipment[eq.CatBody] = 200 + necoNo;
 
         standupButton.SetActive(false);
@@ -339,8 +358,15 @@ public class TitleSky : MonoBehaviour
         confirmButton.SetActive(false);
         startButton.SetActive(true);
 
-        fade.StartFadeOut();
-        firstPush = true;
+    gm.savedata.setNewData(mailText.text, firstName.text, lastName.text, ouText.text);
+
+        Text messageText = message.GetComponentInChildren<Text>();
+        messageText.text = "あたらしいデータをつくりました。スタートしましょう。";
+        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+        buttonText.text = "スタート";
+        loginFlg = 1;
+
+        startButton.SetActive(true);   // スタートボタンにして表示
     }
     public void updownNeco()
     {

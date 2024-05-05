@@ -27,7 +27,7 @@
 
     <script type="module">// Import the functions you need from the SDKs you need
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js';
-        import { getAuth, signInWithRedirect, GoogleAuthProvider, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
+        import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
 
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
@@ -141,32 +141,48 @@
         const REFRESH_TOKEN = '1//0470a347aMPLmCgYIARAAGAQSNwF-L9IrHswQHeHg-7sCLGKSeDIsqUdKZEruJj28lpBM7AC56tuV4wrTwjBOdA9cJ47NCwwps00'
         const TOKEN_URL = "https://oauth2.googleapis.com/token";
 
+        // Firebaseアプリの初期化
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
+
+        var user;
         /// <summary>
         /// Googleアカウントにログインします。
         /// </summary>
         /// <remarks>
         /// FireBaseをつかったOAuth認証。メール、ユーザ名、プロフィール画像のURL取得
-        /// </remarks>
-        async function getOAuth() {
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
+        function getOAuth() {
             const provider = new GoogleAuthProvider();
-
-            // Listening for auth state changes.
-            onAuthStateChanged(auth, user => {
-                if (user) {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // 認証成功
+                    user = result.user;
                     console.log("Logged in as:", user.email);
                     console.log('User display name:', user.displayName);
                     console.log('User photo URL:', user.photoURL);
-                    myGameInstance.SendMessage('TitleScene', 'finishOAuth', user.email, user.displayName, user.photoURL);
-                } else {
-                    console.log("User is logged out");
-                }
-            });
+                    var userInfo = user.email + "," + user.displayName + "," + user.photoURL;
+                    myGameInstance.SendMessage('TitleScene', 'finishOAuth', userInfo);
+                })
+                .catch((error) => {
+                    // 認証失敗
+                    console.error("Authentication failed:", error);
+                });
         }
         window.getOAuth = getOAuth;
+
+
+        function logoutFromGoogle() {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            signOut(auth)
+                .then(() => {
+                    console.log("Logged out successfully");
+                })
+                .catch((error) => {
+                    console.error("Logout failed:", error);
+                });
+        }
 
         /// <summary>
         /// Googleアカウントからログアウトします。
@@ -175,9 +191,6 @@
         /// Firebaseを使ったOAuth認証セッションを終了します。
         /// </remarks>
         async function oAuthLogout() {
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-
             try {
                 await signOut(auth);
                 console.log("User logged out successfully.");
@@ -187,7 +200,7 @@
                 console.error("Error logging out:", error);
             }
         }
-        window.logout = logout;
+        window.oAuthLogout = oAuthLogout;
 
         /// <summary>
         /// アクセストークンを取得して返します。
@@ -258,13 +271,13 @@
             const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
 
             try {
-
-                const email = "demonstration@e-net.nara.jp";
+                console.log("アクセストークン要求");
                 const accessToken = await getAccessToken(); // アクセストークンを取得
                 const data = JSON.stringify({
                     function: 'loadData',
-                    parameters: [email]
+                    parameters: [user.email]
                 });
+                console.log("POST");
                 const options = {
                     method: "POST",
                     headers: {
@@ -275,7 +288,9 @@
                 };
 
                 const response = await fetch(url, options);
+                console.log("fetchきました");
                 const responseData = await response.json();
+                console.log("jsonきました");
                 if (responseData.error) {
                     console.error("Error from GAS:", responseData.error);
                 } else {

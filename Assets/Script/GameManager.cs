@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
     public Toggle exToggle;
     public Toggle gssToggle;
     public Toggle enetToggle;
+    public Toggle gmailToggle;
 
     public StatusUI statusui;
 
@@ -430,7 +431,6 @@ public class GameManager : MonoBehaviour
         equipUi.getAllSoubi();
         newInventory = savedata.Inventory;     // 現在のインベントリの並びを保存
         newEquip = savedata.Equipment;         // 現在の装備を保存
-        int[] updatesItems;
 
         if (oldInventory == null || oldEquip == null)    // 何かの手違いで変更前がnullの場合抜ける
         {
@@ -439,29 +439,17 @@ public class GameManager : MonoBehaviour
         int[] oldItems = oldEquip.Concat(oldInventory).ToArray();
         int[] newItems = newEquip.Concat(newInventory).ToArray();
 
-        int changeFirstIndex = 0;
-        int changeLastIndex = 0;
         bool noChangeFlg = true;
         for (int i = 0; i < oldItems.Length; i++)
         {
             if (oldItems[i] != newItems[i])     // インベントリを開いたときと変化があるかチェック
             {
-                if (noChangeFlg)
-                {
-                    changeFirstIndex = i;
-                    noChangeFlg = false;
-                }
-                changeLastIndex = i;
+                noChangeFlg = false;
+                break;
             }
         }
         if (!noChangeFlg)
         {
-            updatesItems = new int[changeLastIndex - changeFirstIndex + 1];
-            // 変化のあった最初と最後の間の値を全て取得
-            for (int j = 0; j <= changeLastIndex - changeFirstIndex; j++)
-            {
-                updatesItems[j] = newItems[changeFirstIndex + j];
-            }
             exportExtension();  // 拡張機能に保存
         }
         oldInventory = null;        // データクリア

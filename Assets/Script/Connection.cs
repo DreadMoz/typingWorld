@@ -23,6 +23,7 @@ public class Connection : MonoBehaviour
     private static extern void LoadFromGss(); 
     [DllImport("__Internal")]
     private static extern void SaveToGss(string dataPointer);
+
 #endif
 
     public void enetLogin()

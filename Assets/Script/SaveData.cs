@@ -184,6 +184,48 @@ public class SaveData : ScriptableObject
         }
     }
 
+    // 初期データ登録。
+    public void setNewData(string googleMail, string googleFirstName, string googleLastName, string googleOu)
+    {
+        Debug.Log("setNewData: " + googleMail + googleFirstName + googleLastName + googleOu);
+
+        // ApiStatus に値を設定
+        Email = googleMail;
+        Ou = googleOu;
+        LastName = googleLastName;
+        Status[st.Gold] = 50;
+
+        // ExRank に値を設定
+        Status[st.Server] = 0;
+        Status[st.Rank] = 0;
+        UserName = googleFirstName;
+        Equipment[eq.RightHand] = 0;
+        Equipment[eq.Glasses] = 0;
+        Equipment[eq.Head] = 0;
+        Equipment[eq.LeftHand] = 0;
+        Equipment[eq.CatFace] = 0;
+        Equipment[eq.NickName] = 0;
+        Status[st.Kpm] = 0;
+
+        for (int i = 0; i < Inventory.Length; i++)
+        {
+            Inventory[i] = 0;
+        }
+        for (int i = 0; i < Items.Length; i++)
+        {
+            Items[i] = false;
+        }
+        for (int i = 0; i < Medals.Length; i++)
+        {
+            Medals[i] = 0;
+        }
+        for (int i = 0; i < Kpms.Length; i++)
+        {
+            Kpms[i] = 0;
+        }
+        Settings[se.Volume] = 50;
+    }
+
     // 拡張機能からステータスデータを取得する。
     public void setStatusFromExtension(string statusData)
     {
@@ -248,13 +290,13 @@ public class SaveData : ScriptableObject
             Status[st.Server] = Convert.ToInt32(list[4]);
             Status[st.Rank] = Convert.ToInt32(list[5]);
             UserName = list[6].ToString();
-            Equipment[eq.RightHand] = Convert.ToInt32(list[7]);
-            Equipment[eq.Glasses] = Convert.ToInt32(list[8]);
-            Equipment[eq.Head] = Convert.ToInt32(list[9]);
-            Equipment[eq.LeftHand] = Convert.ToInt32(list[10]);
+            Equipment[eq.RightHand] = 0;
+            Equipment[eq.Glasses] = 0;
+            Equipment[eq.Head] = 0;
+            Equipment[eq.LeftHand] = 0;
             Equipment[eq.CatBody] = Convert.ToInt32(list[11]);
-            Equipment[eq.CatFace] = Convert.ToInt32(list[12]);
-            Equipment[eq.NickName] = Convert.ToInt32(list[13]);
+            Equipment[eq.CatFace] = 0;
+            Equipment[eq.NickName] = 0;
             Status[st.Kpm] = Convert.ToInt32(list[14]);
 
             // ここは配列8<-文字列
@@ -278,6 +320,8 @@ public class SaveData : ScriptableObject
 
             // ここはlong[4]をbool[100]に変換
             DecodeItemData(gssItems);
+
+            setInventoryFromItems();
         }
         catch (FormatException ex)
         {
@@ -290,6 +334,19 @@ public class SaveData : ScriptableObject
             // その他の例外タイプ
             Console.WriteLine($"Unexpected error: {ex.Message}");
             Console.WriteLine($"StackTrace: {ex.StackTrace}");
+        }
+    }
+
+    private void setInventoryFromItems()
+    {
+        int inventoryId = 0;
+        for (int i = 0; i < Items.Length; i++)
+        {
+            if (Items[i] == true)
+            {
+                Inventory[inventoryId] = i;
+                inventoryId++;
+            }
         }
     }
 
