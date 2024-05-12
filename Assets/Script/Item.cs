@@ -16,7 +16,7 @@ public class Item : ScriptableObject
     private ItemType itemType;
 
     [SerializeField]
-    private short itemPrice;
+    private int itemPrice;
 
     [SerializeField]
     private Sprite itemImage;
@@ -27,7 +27,7 @@ public class Item : ScriptableObject
     public int MyItemNo { get => itemNo; }
     public string MyItemName { get => itemName; }
     public ItemType MyItemType { get => itemType; }
-    public short MyItemPrice { get => itemPrice; }
+    public int MyItemPrice { get => itemPrice; }
     public Sprite MyItemImage { get => itemImage; }
     public string MyItemMemo { get => itemMemo; }
 }

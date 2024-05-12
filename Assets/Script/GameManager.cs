@@ -1,3 +1,5 @@
+#define DISABLE_CAMERA_SHAKE
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using System.Linq;
 using Newtonsoft.Json;
+
 
 public class scene
 {
@@ -30,6 +33,8 @@ public class GameManager : MonoBehaviour
     static private int newKpm;              // 直近のタイピング結果のkpm
     static private float keyRate;           // 回答数
     static private float answerRate;        // 解答率
+    static private int seeker;            // お金
+    static private int typingTime;          // お題の解答時間
     static private int typingDataId;        // タイピングデータのJson呼び出しID練習のファイル名は数字
     static private string typingDataName;   // タイピングデータのJson呼び出し用ファイル名
 
@@ -37,8 +42,9 @@ public class GameManager : MonoBehaviour
     static public int TypingTab { get => typingTab; set => typingTab = value; }
     static public int Kpm { get => kpm; set => kpm = value; }
     static public int NewKpm { get => newKpm; set => newKpm = value; }
-    static public float KeyRate { get => keyRate; set => keyRate = value; }
+    static public float KeyParSecond { get => keyRate; set => keyRate = value; }
     static public float AnswerRate { get => answerRate; set => answerRate = value; }
+    static public int Seeker { get => seeker; set => seeker = value; }
     static public int TypingDataId { get => typingDataId; set => typingDataId = value; }
     static public string TypingDataName { get => typingDataName; set => typingDataName = value; }
 
@@ -168,6 +174,7 @@ public class GameManager : MonoBehaviour
             else if (SceneNo == (int)scene.House)
             {
                 recalculateKpm();
+                savedata.Status[st.Gold] = Seeker;
                 inventory.SetActive(false);
                 equip.SetActive(false);
                 settingButton.SetActive(false);
@@ -481,11 +488,11 @@ public class GameManager : MonoBehaviour
 
     private int judgeStar()
     {
-        if ((AnswerRate > 0.95) && (KeyRate > 0.8))
+        if ((AnswerRate > 0.95) && (KeyParSecond > 1.0))
         {
             return 4;       // 星3つ
         }
-        else if ((AnswerRate > 0.75) && (KeyRate > 0.3))
+        else if ((AnswerRate > 0.75) && (KeyParSecond > 0.3))
         {
             return 3;       // 星2つ
         }

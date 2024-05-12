@@ -225,86 +225,59 @@ public class Player : MonoBehaviour
             }
             if (!status.activeSelf)
             {
-                if (Input.GetKey(KeyCode.UpArrow))
+                
+                
+
+                // 矢印キーによる入力を取得
+                float horizontal = Input.GetAxis("Horizontal");
+                float vertical = Input.GetAxis("Vertical");
+                Vector3 direction = new Vector3(horizontal, 0, vertical);
+
+                if (direction.magnitude >= 0.1f)  // 入力がある場合
                 {
-                    if (Input.GetKey(KeyCode.RightArrow))
-                    {
-                        transform.rotation = Quaternion.Euler(0.0f, 45.0f, 0.0f);
-                    } else if (Input.GetKey(KeyCode.LeftArrow))
-                    {
-                        transform.rotation = Quaternion.Euler(0.0f, 315, 0.0f);
-                    }
-                    else
-                    {
-                        transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-                    }
-                    agent.destination = this.transform.position;
-                    transform.position += transform.forward * speed * Time.deltaTime;
-                    animator.SetBool("Run", true);
+                    float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                    Quaternion rotation = Quaternion.Euler(0, targetAngle, 0);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 10);
+
+                    agent.SetDestination(transform.position + direction * 5f);  // 5は前方への移動距離です
                 }
-                else if (Input.GetKey(KeyCode.DownArrow))
-                {
-                    if (Input.GetKey(KeyCode.RightArrow))
-                    {
-                        transform.rotation = Quaternion.Euler(0.0f, 135.0f, 0.0f);
-                    }
-                    else if (Input.GetKey(KeyCode.LeftArrow))
-                    {
-                        transform.rotation = Quaternion.Euler(0.0f, 225.0f, 0.0f);
-                    }
-                    else
-                    {
-                        transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                    }
-                    agent.destination = this.transform.position;
-                    transform.position += transform.forward * speed * Time.deltaTime;
-                    animator.SetBool("Run", true);
-                }
-                else if (Input.GetKey(KeyCode.RightArrow))
-                {
-                    transform.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
-                    agent.destination = this.transform.position;
-                    transform.position += transform.forward * speed * Time.deltaTime;
-                    animator.SetBool("Run", true);
-                }
-                else if (Input.GetKey(KeyCode.LeftArrow))
-                {
-                    transform.rotation = Quaternion.Euler(0.0f, 270.0f, 0.0f);
-                    agent.destination = this.transform.position;
-                    transform.position += transform.forward * speed * Time.deltaTime;
-                    animator.SetBool("Run", true);
-                }
+
+                // マウスクリックによる移動処理
                 if (Input.GetMouseButtonDown(0))
                 {
                     RaycastHit hit;
-                    if (Physics.Raycast(playerCamera.ScreenPointToRay(Input.mousePosition), out hit, 100))
+                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
                     {
-                        animator.SetBool("Run", true);
-                        agent.destination = hit.point;
+                        agent.SetDestination(hit.point);
                     }
                 }
-                if (!Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.RightArrow) && !Input.GetKey(KeyCode.LeftArrow))
-                {
-                    if (Vector3.Distance(transform.position, agent.destination) < 0.2f)
-                    {
-                        animator.SetBool("Run", false);
 
-                        // 目的地を解除し、エージェントの移動を停止します。
-                        agent.ResetPath(); // 目的地を解除する
-                    }
-                }
-                if (keepOutCount > 0)
-                {
-                    keepOutCount--;
-                }
-                if (keepOutCount == 0)
-                {
-                    keepOut.SetActive(false);
-                }
+                // アニメーション状態の更新
+                UpdateAnimationState();
+
+
             }
         }
     }
 
+    private void UpdateAnimationState()
+    {
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    animator.SetBool("Run", false);
+                }
+            }
+            else
+            {
+                animator.SetBool("Run", true);
+            }
+        }
+    }
+    
     void OnCollisionEnter(Collision col)
     {
         // 衝突したオブジェクトに応じてアニメーションと目的地を設定

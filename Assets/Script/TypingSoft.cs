@@ -11,6 +11,7 @@ using static TypingSoft;
 using System.IO;
 using UnityEngine.Networking;
 using TMPro;
+using Shapes2D;
 
 public class TypingSoft : MonoBehaviour
 {
@@ -21,11 +22,19 @@ public class TypingSoft : MonoBehaviour
     private GameObject lPlayer;       // プレイヤーオブジェクト
     [SerializeField]
     private GameObject player;        // プレイヤーオブジェクト
+    [SerializeField]
+    private Coins conis;           // コイン操作
     private Animator animator;
     private Animator lAnimator;
     public GameObject targetCam;
 
-    public float totalTime = 60.0f; // タイマーの総時間（秒）
+    private int seekerStart;
+    private int seekerCombo;
+    private int seekerKey;
+    private int seekerTime;
+    private int totalSeeker;
+
+    public float totalTime = 1.0f; // タイマーの総時間（秒）
     private float currentTime; // 現在の経過時間
     private bool isTimerRunning = false; // タイマーが実行中かどうかのフラグ
 
@@ -97,6 +106,7 @@ public class TypingSoft : MonoBehaviour
     //　1分間あたりの入力キー数表示用テキストUI
     private Text UIkpm;
     private float kpm;
+    private Text UIseeker;
 
     //　コンボ表示用テキストUI
     private Text UIcombo;
@@ -188,6 +198,7 @@ public class TypingSoft : MonoBehaviour
         UIcorrectAR = transform.Find("DataPanel/CorrectAR").GetComponent<Text>();
         UIcombo = transform.Find("DataPanel/Combo").GetComponent<Text>();
         UIkpm = transform.Find("DataPanel/Kpm").GetComponent<Text>();
+        UIseeker = transform.Find("DataPanel/Seeker").GetComponent<Text>();
         UImistake = transform.Find("DataPanel/Mistake").GetComponent<Text>();
         UITimer = transform.Find("DataPanel/Timer").GetComponent<Text>();
         AssistKeyboardObj = GameObject.Find("AssistKeyboard").GetComponent<AssistKeyboardJIS>();
@@ -198,7 +209,14 @@ public class TypingSoft : MonoBehaviour
         comboN = 0;
         mistakeN = 0;
         answers = 0;
-        //        UIcorrectAR.text = correctAR.ToString();
+
+        // シーカーゲット用
+        seekerCombo = 0;
+        seekerKey = 0;
+        seekerTime = 0;
+
+        seekerStart = GameManager.Seeker;
+        updateSeeker();
 
         AssistKeyboardObj.SetNextHighlight(" ");
 
@@ -207,14 +225,14 @@ public class TypingSoft : MonoBehaviour
             setMessage();
             ShuffleThemes(theme.random);
 
-            if (theme.timer > 0)
+            if (theme.timer > 0)    // 時間設定ありなら
             {
                 // タイマーを初期化
                 totalTime = theme.timer;
                 currentTime = totalTime;
                 UpdateTimerText();
             }
-            else
+            else   // 時間設定なしモードなら
             {
                 player.transform.position = new Vector3(-1 * player.transform.position.x, player.transform.position.y, player.transform.position.z);
                 player.transform.LookAt(targetCam.transform);   // カメラを向く
@@ -224,8 +242,6 @@ public class TypingSoft : MonoBehaviour
                 Objkpm.SetActive(false);
                 ObjTimer.SetActive(false);
                 Objnokori.SetActive(false);
-                Combo.SetActive(false);
-                konbo.SetActive(false);
                 input.SetActive(false);
                 spaceStart = false;     // 時間制限なしならスペースでスタート状態を解除
                 UIH.text = "";
@@ -309,9 +325,9 @@ public class TypingSoft : MonoBehaviour
         if (theme != null && theme.themes.Length > 0)
         {
             int firstData;
-            if (shuffledThemes.Count < shuffle)
+            if (theme.themes.Length < shuffle)
             {
-                firstData = shuffledThemes.Count;      // 項目数を超えていたら項目数を上限に
+                firstData = theme.themes.Length;      // 項目数を超えていたら項目数を上限に
             }
             else
             {
@@ -340,6 +356,95 @@ public class TypingSoft : MonoBehaviour
         }
     }
 
+    private void updateSeeker()
+    {
+        totalSeeker = seekerStart + seekerCombo + seekerKey + seekerTime;
+        UIseeker.text = totalSeeker.ToString();
+    }
+
+    private void checkSeekerCombo()
+    {
+        if (comboN == 0)
+        {
+            return;
+        }
+        if (comboN % 50 == 0)
+        {
+            seekerCombo++;
+            conis.SpawnCoins(1, 1);    // コインアニメーション
+            updateSeeker();
+        }
+    }
+
+    private void checkSeekerKey()
+    {
+        switch (seekerKey)
+        {
+            case 0:
+                if (correctN >= 10)
+                {
+                    seekerKey = 1;
+                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    updateSeeker();
+                }
+                break;
+            case 1:
+                if (correctN >= 20)
+                {
+                    seekerKey = 2;
+                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    updateSeeker();
+                }
+                break;
+            case 2:
+                if (correctN >= 40)
+                {
+                    seekerKey = 3;
+                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    updateSeeker();
+                }
+                break;
+            case 3:
+                if (correctN >= 80)
+                {
+                    seekerKey = 4;
+                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    updateSeeker();
+                }
+                break;
+            case 4:
+                if (correctN >= 160)
+                {
+                    seekerKey = 5;
+                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    updateSeeker();
+                }
+                break;
+            case 5:
+                if (correctN >= 320)
+                {
+                    seekerKey = 6;
+                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    updateSeeker();
+                }
+                break;
+        }
+    }
+
+    private void checkSeekerTimer()
+    {
+        if (theme.timer > 0)    // 時間設定ありなら
+        {
+            seekerTime = (int)(totalTime / 10);
+        }
+        else
+        {
+            seekerTime = 2;
+        }
+        conis.SpawnCoins(seekerTime, 0);    // コインアニメーション
+        updateSeeker();
+    }
+
     private IEnumerator ChangeSentence()
     {
         // コンボ数リセット、表示更新
@@ -348,6 +453,9 @@ public class TypingSoft : MonoBehaviour
             kpm = correctN / (totalTime - currentTime) * 60.0f;
             UIkpm.text = string.Format("{0:0}", kpm);
         }
+
+        checkSeekerKey();
+
         if (shuffledThemes.Count > 0)
         {
             Theme currentTheme = shuffledThemes[currentThemeIndex];
@@ -461,6 +569,8 @@ public class TypingSoft : MonoBehaviour
                 isInputValid = false;
                 Fukidashi.SetActive(false);
 
+                checkSeekerTimer();
+                
                 END.text = "おしまい！";
                 UIJ.text = "";
                 UIH.text = "";
@@ -534,8 +644,9 @@ public class TypingSoft : MonoBehaviour
             {
                 AssistKeyboardObj.pushKeyAction(inputStr);
                 GameManager.NewKpm = (int)kpm;
-                GameManager.KeyRate = correctN / totalTime;
+                GameManager.KeyParSecond = correctN / totalTime;
                 GameManager.AnswerRate = correctAR;
+                GameManager.Seeker = totalSeeker;
                 GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
                 SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
             }
@@ -783,6 +894,8 @@ public class TypingSoft : MonoBehaviour
         comboN++;
         UIcorrect.text = string.Format("{0:0}", correctN);
         UIcombo.text = string.Format("{0:0}", comboN);
+
+        checkSeekerCombo();
 
         // 可能な入力パターンのチェック
         bool isIndexCountUp = IsJudgeIndexCountUp(typeChar);

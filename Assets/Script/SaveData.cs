@@ -219,6 +219,7 @@ public class SaveData : ScriptableObject
         {
             Medals[i] = 0;
         }
+        Medals[0] = 1;
         for (int i = 0; i < Kpms.Length; i++)
         {
             Kpms[i] = 0;
