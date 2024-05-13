@@ -1,6 +1,7 @@
 name: Run the WebGL build
 on:
   workflow_dispatch: {}
+
 jobs:
   build:
     name: Run the WebGL build
@@ -10,6 +11,12 @@ jobs:
       - name: Check disk space before build
         run: df -h
 
+      # 不要なDockerイメージとコンテナを削除
+      - name: Clean up Docker
+        run: |
+          docker system prune -af
+          docker volume prune -f
+
       # Node.jsのバージョンをセットアップ
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -17,7 +24,7 @@ jobs:
           node-version: '16'
 
       # Unityプロジェクトをチェックアウト
-      - name: Check out my unity project.
+      - name: Check out my unity project
         uses: actions/checkout@v2
 
       # Unityプロジェクトのビルド
