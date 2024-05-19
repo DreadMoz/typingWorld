@@ -164,7 +164,7 @@ public class TitleSky : MonoBehaviour
 
         if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
         {
-            messageText.text += firstName.text + "さんはいいネットならのなかまだね。あしあとデータをさがします。";
+            messageText.text += firstName.text + "さんはいいネットならのなかまだね。あしあとデータをよみこみます。";
             gm.connection.loadExtension();
         }
         else
@@ -196,12 +196,11 @@ public class TitleSky : MonoBehaviour
             if (combinedData.statusData != null)
             {
                 gm.savedata.setStatusFromExtension(JsonConvert.SerializeObject(combinedData.statusData));
-                gm.savedata.Settings[se.Extension] = 1;
-                Debug.Log("gm.savedata.settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
             }
+            gm.savedata.Settings[se.Extension] = 1;
+            Debug.Log("gm.savedata.settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
             ashiato.SetActive(true);
             ouText.text = gm.savedata.Ou;
-            messageText.text += "\nあしあとデータをよみこみました。";
             Debug.Log("あしあとデータをよみこみました。");
             showStart();
         }
@@ -238,7 +237,6 @@ public class TitleSky : MonoBehaviour
             {
                 if (responseData.response.result == "error:Email not found")
                 {
-                    messageText.text += "メールアドレスがみつからなかったよ。あたらしく作りましょう。";
                 }
                 else
                 {
@@ -258,6 +256,7 @@ public class TitleSky : MonoBehaviour
 
     private void showStart()
     {
+        Text messageText = message.GetComponentInChildren<Text>();
         if (gm.savedata.Equipment[eq.CatBody] != 0)
         {
             cat.setChara(gm.savedata.Equipment[eq.CatBody] - 200);
@@ -270,6 +269,7 @@ public class TitleSky : MonoBehaviour
         }
         else
         {
+            messageText.text += "\nデータをあたらしく作りましょう。";
             TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
             buttonText.text = "つくる";
             startButton.SetActive(true);

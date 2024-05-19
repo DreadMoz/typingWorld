@@ -105,8 +105,8 @@ public class SerializableExSaveData
     public int NickName;
     public int Kpm;
     public int[] Inventory;
-    public long[] Items;
-    public long[] Medals;
+    public string[] Items;
+    public string[] Medals;
     public string Kpms;
     public int[] Settings;
     // 必要に応じて他のフィールドも追加
@@ -308,21 +308,21 @@ public class SaveData : ScriptableObject
             // ここは配列8<-文字列
             DecodeKpmData(list[15].ToString());
 
-            long[] gssMedals = new long[5];
-            gssMedals[0] = Convert.ToInt64(list[16]);
-            gssMedals[1] = Convert.ToInt64(list[17]);
-            gssMedals[2] = Convert.ToInt64(list[18]);
-            gssMedals[3] = Convert.ToInt64(list[19]);
-            gssMedals[4] = Convert.ToInt64(list[20]);
+            string[] gssMedals = new string[5];
+            gssMedals[0] = list[16].ToString();
+            gssMedals[1] = list[17].ToString();
+            gssMedals[2] = list[18].ToString();
+            gssMedals[3] = list[19].ToString();
+            gssMedals[4] = list[20].ToString();
 
             // ここはlong[5]をint[100]に変換
             DecodeMedalData(gssMedals);
 
-            long[] gssItems = new long[4];
-            gssItems[0] = Convert.ToInt64(list[21]);
-            gssItems[1] = Convert.ToInt64(list[22]);
-            gssItems[2] = Convert.ToInt64(list[23]);
-            gssItems[3] = Convert.ToInt64(list[24]);
+            string[] gssItems = new string[4];
+            gssItems[0] = list[21].ToString();
+            gssItems[1] = list[22].ToString();
+            gssItems[2] = list[23].ToString();
+            gssItems[3] = list[24].ToString();
 
             // ここはlong[4]をbool[100]に変換
             DecodeItemData(gssItems);
@@ -357,12 +357,12 @@ public class SaveData : ScriptableObject
         }
     }
 
-    public void DecodeItemData(long[] itemData)
+    public void DecodeItemData(string[] itemData)
     {
         // 各 long 値をビット単位で調べる
         for (int i = 0; i < itemData.Length; i++)
         {
-            long currentItemData = itemData[i];
+            long currentItemData = long.Parse(itemData[i]);
             for (int bit = 0; bit < 64; bit++)
             {
                 // currentItemData から特定のビット位置の値を取得
@@ -373,17 +373,18 @@ public class SaveData : ScriptableObject
         }
     }
 
-    public void DecodeMedalData(long[] medalCode)
+    public void DecodeMedalData(string[] medalCode)
     {
         int mask = 0b111; // 3ビットを取り出すためのマスク
 
         for (int i = 0; i < medalCode.Length; i++)
         {
+            long medal = long.Parse(medalCode[i]);
             for (int j = 0; j < 20; j++)
             {
                 // encodedValues[i]から3ビットずつ切り出して、配列に格納
                 // 最下位ビットから開始するため、シフトするビット数を調整
-                Medals[i * 20 + j] = (int)((medalCode[i] >> (j * 3)) & mask);
+                Medals[i * 20 + j] = (int)((medal >> (j * 3)) & mask);
             }
         }
     }
@@ -469,30 +470,40 @@ public class SaveData : ScriptableObject
         return JsonConvert.SerializeObject(data);
     }
 
-    public long[] EncodeItemData(bool[] items)
+    public string[] EncodeItemData(bool[] items)
     {
-        long[] encodedItems = new long[4];
+        ulong[] encodedItems = new ulong[4];
+        string[] returnItems = new string[4];
         for (int i = 0; i < items.Length; i++)
         {
             if (items[i])
             {
                 int itemIndex = i / 64;
                 int bitPosition = i % 64;
-                encodedItems[itemIndex] |= (1L << bitPosition);
+                encodedItems[itemIndex] |= (1UL << bitPosition);
             }
         }
-        return encodedItems;
+        for(int i = 0; i < encodedItems.Length; i++)
+        {
+            returnItems[i] = encodedItems[i].ToString();
+        }
+        return returnItems;
     }
-    public long[] EncodeMedalData(int[] medals)
+    public string[] EncodeMedalData(int[] medals)
     {
-        long[] encodedMedals = new long[5];
+        ulong[] encodedMedals = new ulong[5];
+        string[] returnMedals = new string[5];
         for (int i = 0; i < medals.Length; i++)
         {
             int medalIndex = i / 20;
             int bitPosition = (i % 20) * 3;
-            encodedMedals[medalIndex] |= ((long)medals[i] << bitPosition);
+            encodedMedals[medalIndex] |= ((ulong)medals[i] << bitPosition);
         }
-        return encodedMedals;
+        for(int i = 0; i < encodedMedals.Length; i++)
+        {
+            returnMedals[i] = encodedMedals[i].ToString();
+        }
+        return returnMedals;
     }
     public string EncodeKpmData(int[] kpms)
     {

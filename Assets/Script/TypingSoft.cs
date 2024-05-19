@@ -109,7 +109,8 @@ public class TypingSoft : MonoBehaviour
     private Text UIseeker;
 
     //　コンボ表示用テキストUI
-    private Text UIcombo;
+    private TMP_Text UIcombo;
+    private Text UIkonbo;
 
     // 回答数
     private int answers;
@@ -196,7 +197,8 @@ public class TypingSoft : MonoBehaviour
         UICountDown = transform.Find("InputPanel/CountDown").GetComponent<Text>();
         UIcorrect = transform.Find("DataPanel/Correct").GetComponent<Text>();
         UIcorrectAR = transform.Find("DataPanel/CorrectAR").GetComponent<Text>();
-        UIcombo = transform.Find("DataPanel/Combo").GetComponent<Text>();
+        UIcombo = transform.Find("DataPanel/Combo").GetComponent<TMP_Text>();
+        UIkonbo = transform.Find("DataPanel/konbo").GetComponent<Text>();
         UIkpm = transform.Find("DataPanel/Kpm").GetComponent<Text>();
         UIseeker = transform.Find("DataPanel/Seeker").GetComponent<Text>();
         UImistake = transform.Find("DataPanel/Mistake").GetComponent<Text>();
@@ -373,6 +375,12 @@ public class TypingSoft : MonoBehaviour
             seekerCombo++;
             conis.SpawnCoins(1, 1);    // コインアニメーション
             updateSeeker();
+            float comboScale = ((float)comboN / 50.0f + 4) / 5;
+            UIcombo.rectTransform.localScale = new Vector3(comboScale, comboScale, comboScale);
+
+            // UIcomboの位置に基づいて、UIkonboの新しい位置を計算
+            float newXPosition = UIcombo.rectTransform.localPosition.x + UIcombo.rectTransform.rect.width * comboScale * 0.7f ;
+            UIkonbo.rectTransform.localPosition = new Vector3(newXPosition, UIkonbo.rectTransform.localPosition.y, 0);
         }
     }
 
@@ -800,6 +808,12 @@ public class TypingSoft : MonoBehaviour
 
         if (comboN == 0)
         {
+            UIcombo.rectTransform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+
+            // UIcomboの位置に基づいて、UIkonboの新しい位置を計算
+            float newXPosition = UIcombo.rectTransform.localPosition.x + UIcombo.rectTransform.rect.width * 0.8f * 0.7f;
+            UIkonbo.rectTransform.localPosition = new Vector3(newXPosition, UIkonbo.rectTransform.localPosition.y, 0);
+            
             animator.SetBool("run", false);
             animator.SetBool("move", false);
             animator.SetBool("walk", true);
