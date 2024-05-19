@@ -35,14 +35,14 @@ mergeInto(LibraryManager.library, {
         // タイムアウト監視の処理をここに追加することも可能
     },
 
+    LoadFromGss: function() {
+        loadFromGss();
+    },
+
     SaveToGss: function(dataPointer) {
         console.log("Received pointer:", dataPointer); // ポインタ受け取り時のデバッグ
         var data = UTF8ToString(dataPointer);
         console.log("Converted data:", data); // 文字列変換後のデバッグ
         saveToGss(data);
-    },
-
-    LoadFromGss: function() {
-        loadFromGss();
     }
 });

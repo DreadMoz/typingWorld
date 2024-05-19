@@ -84,7 +84,6 @@ public class TitleSky : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player.SetActive(false);
 //        startButton.SetActive(false);   // ログイン完了まで一旦消す
         skyboxMaterial = RenderSettings.skybox;
         skyboxMaterial.SetFloat("_Rotation", 330f);
@@ -172,7 +171,7 @@ public class TitleSky : MonoBehaviour
         {
             messageText.text = "これはいいネットならのアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
         }
-        reLogin.SetActive(true);
+        reLogin.SetActive(true);        // これ全てが通る？おかしくない？
     }
 
     public void finishDataLoad(string msg)
@@ -210,7 +209,6 @@ public class TitleSky : MonoBehaviour
 
     private void checkExtensionData()
     {
-        player.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
         Debug.Log("gm.savedata.Settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
@@ -234,21 +232,27 @@ public class TitleSky : MonoBehaviour
         }
         else
         {
-            ResponseData responseData = JsonUtility.FromJson<ResponseData>(jsonMsg);
+            // ResponseData responseData = JsonUtility.FromJson<ResponseData>(jsonMsg);
 
-            if (responseData.done && !string.IsNullOrEmpty(responseData.response.result))
-            {
-                string[] dataParts = responseData.response.result.Split(',');
-                List<object> dataList = new List<object>(dataParts);
-                gm.savedata.LoadAllDataFromGss(dataList);
-                messageText.text += "\nGASデータをよみこみました。";
-                showStart();
-            }
-            else
-            {
-                messageText.text += "\nGASデータに問題が生じました。";
-                showStart();
-            }
+            // if (responseData.done && !string.IsNullOrEmpty(responseData.response.result))
+            // {
+            //     if (responseData.response.result == "error:Email not found")
+            //     {
+            //         messageText.text += "メールアドレスがみつからなかったよ。あたらしく作りましょう。";
+            //     }
+            //     else
+            //     {
+            //         string[] dataParts = responseData.response.result.Split(',');
+            //         List<object> dataList = new List<object>(dataParts);
+            //         gm.savedata.LoadAllDataFromGss(dataList);
+            //         messageText.text += "\nGASデータを読み込みました。";
+            //     }
+            // }
+            // else
+            // {
+            //     messageText.text += "\nGASデータに問題が生じました。";
+            // }
+            // showStart();
         }
     }
 
@@ -309,7 +313,6 @@ public class TitleSky : MonoBehaviour
     {
         loginFlg = 0;
         ashiato.SetActive(false);
-        player.SetActive(false);
         userData.SetActive(false);
         reLogin.SetActive(false);
         startButton.SetActive(true);
@@ -338,10 +341,10 @@ public class TitleSky : MonoBehaviour
 
     private void selectNeco()
     {
-        message.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
         messageText.text = "あたらしくデータをつくるね。いっしょにタイピングをするねこをえらんでね。";
         animator.SetBool("Standup", true);
+        message.SetActive(true);
         standupButton.SetActive(true);
         nextButton.SetActive(true);
         prevButton.SetActive(true);

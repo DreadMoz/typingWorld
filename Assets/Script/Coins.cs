@@ -74,7 +74,7 @@ public class Coins : MonoBehaviour
 
             // spawnAreaCenterからの距離に基づいて力の方向を計算
             Vector2 forceDirection = new Vector2(forceDirectionX, forceDirectionY);
-            float forceMagnitude = Random.Range(0.2f, 2f); // 力の大きさ
+            float forceMagnitude = Random.Range(0.8f, 2f); // 力の大きさ
             // 力を加える
             rb.AddForce(forceDirection * forceMagnitude, ForceMode2D.Impulse);
         }

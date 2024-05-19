@@ -128,6 +128,8 @@ public class Player : MonoBehaviour
             // カメラ切り替え
             switchCam.SwitchCamera();
 
+            // NavMeshAgentの目的地をリセット
+            agent.ResetPath();
             // "Bow" トリガーアニメーションを開始
             pAnimator.SetTrigger("hi");
 
@@ -159,6 +161,8 @@ public class Player : MonoBehaviour
             // カメラ切り替え
             switchCam.SwitchCamera();
 
+            // NavMeshAgentの目的地をリセット
+            agent.ResetPath();
             // "Bow" トリガーアニメーションを開始
             animator.SetTrigger("Bow");
         }
@@ -225,9 +229,6 @@ public class Player : MonoBehaviour
             }
             if (!status.activeSelf)
             {
-                
-                
-
                 // 矢印キーによる入力を取得
                 float horizontal = Input.GetAxis("Horizontal");
                 float vertical = Input.GetAxis("Vertical");
@@ -251,11 +252,8 @@ public class Player : MonoBehaviour
                         agent.SetDestination(hit.point);
                     }
                 }
-
                 // アニメーション状態の更新
                 UpdateAnimationState();
-
-
             }
         }
     }
