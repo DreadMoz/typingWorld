@@ -232,27 +232,27 @@ public class TitleSky : MonoBehaviour
         }
         else
         {
-            // ResponseData responseData = JsonUtility.FromJson<ResponseData>(jsonMsg);
+            ResponseData responseData = JsonUtility.FromJson<ResponseData>(jsonMsg);
 
-            // if (responseData.done && !string.IsNullOrEmpty(responseData.response.result))
-            // {
-            //     if (responseData.response.result == "error:Email not found")
-            //     {
-            //         messageText.text += "メールアドレスがみつからなかったよ。あたらしく作りましょう。";
-            //     }
-            //     else
-            //     {
-            //         string[] dataParts = responseData.response.result.Split(',');
-            //         List<object> dataList = new List<object>(dataParts);
-            //         gm.savedata.LoadAllDataFromGss(dataList);
-            //         messageText.text += "\nGASデータを読み込みました。";
-            //     }
-            // }
-            // else
-            // {
-            //     messageText.text += "\nGASデータに問題が生じました。";
-            // }
-            // showStart();
+            if (responseData.done && !string.IsNullOrEmpty(responseData.response.result))
+            {
+                if (responseData.response.result == "error:Email not found")
+                {
+                    messageText.text += "メールアドレスがみつからなかったよ。あたらしく作りましょう。";
+                }
+                else
+                {
+                    string[] dataParts = responseData.response.result.Split(',');
+                    List<object> dataList = new List<object>(dataParts);
+                    gm.savedata.LoadAllDataFromGss(dataList);
+                    messageText.text += "\nGASデータを読み込みました。";
+                }
+            }
+            else
+            {
+                messageText.text += "\nGASデータに問題が生じました。";
+            }
+            showStart();
         }
     }
 
@@ -361,7 +361,7 @@ public class TitleSky : MonoBehaviour
         confirmButton.SetActive(false);
         startButton.SetActive(true);
 
-    gm.savedata.setNewData(mailText.text, firstName.text, lastName.text, ouText.text);
+        gm.savedata.setNewData(mailText.text, firstName.text, lastName.text, ouText.text);
 
         Text messageText = message.GetComponentInChildren<Text>();
         messageText.text = "あたらしいデータをつくりました。スタートしましょう。";

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Text;
+using Unity.VisualScripting;
 public class GssIndex
 {
     public const int Status = 3;
@@ -224,6 +225,10 @@ public class SaveData : ScriptableObject
         {
             Kpms[i] = 0;
         }
+        for (int i = 0; i < Settings.Length; i++)
+        {
+            Settings[i] = 0;
+        }
         Settings[se.Volume] = 50;
     }
 
@@ -341,6 +346,7 @@ public class SaveData : ScriptableObject
     private void setInventoryFromItems()
     {
         int inventoryId = 0;
+        Array.Clear(Inventory, 0, Inventory.Length);
         for (int i = 0; i < Items.Length; i++)
         {
             if (Items[i] == true)

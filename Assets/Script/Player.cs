@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Analytics;
 using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
@@ -215,6 +216,18 @@ public class Player : MonoBehaviour
             animator.SetTrigger("Bow");
         }
 
+        if (keepOutCount > 0)
+        {
+            keepOutCount--;
+            return;
+        }
+        if (keepOutCount == 0)
+        {
+            keepOut.SetActive(false);
+            // 通り抜け不可処理解除追加予定
+            animator.SetBool("Walk", false);
+            agent.speed = speed;
+        }
         // ダメージまたは"Hi"アニメーション中またなウィンドウを開いたときはプレイヤーの位置を固定
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi") || gm.getWindowOpen())
         {
@@ -306,6 +319,23 @@ public class Player : MonoBehaviour
                 shopWindow = 1;
             }
         }
+        // 接触している間中行いたい処理
+        else if (col.gameObject.CompareTag("InvisibleFence"))
+        {
+            agent.destination = this.transform.position;
+            keepOut.SetActive(true);
+            keepOutCount = (int)(hitBackForce * 80);
+            animator.SetBool("Walk", true);
+            agent.speed = speed/4;
+
+            // 目的地を解除し、エージェントの移動を停止します。
+             agent.ResetPath(); // 目的地を解除する　
+
+            Vector3 centerDirection = (new Vector3(268, 6, 146) - transform.position).normalized;
+            // NavMeshAgentを使用して、計算した位置にワープさせる
+            agent.Move(centerDirection * hitBackForce / 2);
+            agent.destination = transform.position + centerDirection * hitBackForce;
+        }
         else if (col.gameObject.name != "Terrain")
         {
             // "Damage" トリガーアニメーションを開始
@@ -316,32 +346,12 @@ public class Player : MonoBehaviour
 
     void OnCollisionStay(Collision col)
     {
-        // 接触している間中行いたい処理
-        if (col.gameObject.CompareTag("InvisibleFence"))
-        {
-            keepOut.SetActive(true);
-            keepOutCount = 40;
-            animator.SetBool("Walk", true);
-            agent.speed = speed/4;
-
-            // 目的地を解除し、エージェントの移動を停止します。
-            agent.ResetPath(); // 目的地を解除する
-
-            // ワールドの中心方向に少し移動させる処理
-            Vector3 centerDirection = (new Vector3(268, 6, 146) - transform.position).normalized; // ワールドの中心への方向を計算
-            float moveTowardsCenterAmount = hitBackForce; // 中心に向かって移動させたい距離
-            Vector3 newPosition = transform.position + centerDirection * moveTowardsCenterAmount; // 新しい位置を計算
-            agent.Move(centerDirection * moveTowardsCenterAmount); // NavMeshAgentを使用して移動
-        }
     }
 
     void OnCollisionExit(Collision col)
     {
         if (col.gameObject.CompareTag("InvisibleFence"))
         {
-            // 通り抜け不可処理解除追加予定
-            animator.SetBool("Walk", false);
-            agent.speed = speed;
         }
     }
 
