@@ -225,16 +225,12 @@ public class SaveData : ScriptableObject
         {
             Kpms[i] = 0;
         }
-        for (int i = 0; i < Settings.Length; i++)
-        {
-            Settings[i] = 0;
-        }
         Settings[se.Volume] = 50;
     }
 
     // 拡張機能からステータスデータを取得する。
     public void setStatusFromExtension(string statusData)
-    {
+     {
         Debug.Log("Received Status JSON: " + statusData);
 
         // JSONデータをデシリアライズ
@@ -279,6 +275,7 @@ public class SaveData : ScriptableObject
         {
             Settings[i] = exData.Settings[i];
         }
+    // testEncodeMedals();      // デバッグで使用した。Medalエンコード->デコードテスト
     }
 
     // 拡張機能なし GSSから最低限のデータ取得
@@ -362,11 +359,11 @@ public class SaveData : ScriptableObject
         // 各 long 値をビット単位で調べる
         for (int i = 0; i < itemData.Length; i++)
         {
-            long currentItemData = long.Parse(itemData[i]);
+            ulong currentItemData = ulong.Parse(itemData[i]);
             for (int bit = 0; bit < 64; bit++)
             {
                 // currentItemData から特定のビット位置の値を取得
-                bool isItemPresent = (currentItemData & (1L << bit)) != 0;
+                bool isItemPresent = (currentItemData & (1UL << bit)) != 0;
                 // 計算したビット位置に応じた items 配列の位置に値をセット
                 Items[i * 64 + bit] = isItemPresent;
             }
@@ -375,11 +372,11 @@ public class SaveData : ScriptableObject
 
     public void DecodeMedalData(string[] medalCode)
     {
-        int mask = 0b111; // 3ビットを取り出すためのマスク
+        ulong mask = 0b111; // 3ビットを取り出すためのマスク
 
         for (int i = 0; i < medalCode.Length; i++)
         {
-            long medal = long.Parse(medalCode[i]);
+            ulong medal = ulong.Parse(medalCode[i]);
             for (int j = 0; j < 20; j++)
             {
                 // encodedValues[i]から3ビットずつ切り出して、配列に格納
@@ -489,6 +486,12 @@ public class SaveData : ScriptableObject
         }
         return returnItems;
     }
+    public void testEncodeMedals()
+    {
+        int [] test = new int[] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
+        string[] returnString = EncodeMedalData(test);
+        DecodeMedalData(returnString);
+    }
     public string[] EncodeMedalData(int[] medals)
     {
         ulong[] encodedMedals = new ulong[5];
@@ -561,25 +564,29 @@ public class SaveData : ScriptableObject
 
     public void updateKpm(int newKpm)
     {
-        // 要素1から6までを0から5に移動
-        for (int i = 0; i < 6; i++)
+        // 要素1から6までを0から7に移動
+        for (int i = 0; i < Kpms.Length-1; i++)
         {
             Kpms[i] = Kpms[i + 1];
         }
 
-        // 6番目の要素に新しい値を代入
-        Kpms[6] = newKpm;
+        // 最後尾の要素に新しい値を代入
+        Kpms[Kpms.Length-1] = newKpm;
 
         // 平均を計算
         double average = 0;
+        int kpmCount = 0;
         for (int i = 0; i < Kpms.Length; i++)
         {
-            average += Kpms[i];
+            if (Kpms[i] != 0)
+            {
+                average += Kpms[i];
+                kpmCount++;
+            }
         }
-        average /= Kpms.Length;
+        average /= kpmCount;
 
-        int[] newKpi = new int[1];
-        newKpi[0] = (int)Math.Round(average); // 四捨五入してintにキャスト;
+        Status[st.Kpm] = (int)Math.Round(average); // 四捨五入してintにキャスト;
 
         //        int[] saveKpis = newKpi.Concat(kpms).ToArray();
         //        saveGssKpis(-1, GssSize.Kpms, saveKpis);    // 先頭の前にKpmを追加しているため-1から

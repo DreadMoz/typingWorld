@@ -26,6 +26,8 @@ public class DetailMenu : MonoBehaviour
     [SerializeField]
     private GameManager gm;
 
+    private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
+
     void Awake()
     {
         thisButton = this.GetComponent<Button>();
@@ -91,6 +93,10 @@ public class DetailMenu : MonoBehaviour
         GameManager.Seeker = gm.savedata.Status[st.Gold];
 
         GameManager.SceneNo = (int)scene.Typing;
-        SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
+        if (!goNextScene)
+        {
+            SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
+            goNextScene = true;
+        }
     }
 }

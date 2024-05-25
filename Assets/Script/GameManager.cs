@@ -1,5 +1,3 @@
-#define DISABLE_CAMERA_SHAKE
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +27,6 @@ public class GameManager : MonoBehaviour
 
     static private int sceneNo;             // ワールドシーンの状態番号
     static private int typingTab;           // タイピングステージのタブNo
-    static private int kpm;                 // 現在のkpm
     static private int newKpm;              // 直近のタイピング結果のkpm
     static private float keyRate;           // 回答数
     static private float answerRate;        // 解答率
@@ -40,7 +37,6 @@ public class GameManager : MonoBehaviour
 
     static public int SceneNo { get => sceneNo; set => sceneNo = value; }
     static public int TypingTab { get => typingTab; set => typingTab = value; }
-    static public int Kpm { get => kpm; set => kpm = value; }
     static public int NewKpm { get => newKpm; set => newKpm = value; }
     static public float KeyParSecond { get => keyRate; set => keyRate = value; }
     static public float AnswerRate { get => answerRate; set => answerRate = value; }
@@ -48,7 +44,7 @@ public class GameManager : MonoBehaviour
     static public int TypingDataId { get => typingDataId; set => typingDataId = value; }
     static public string TypingDataName { get => typingDataName; set => typingDataName = value; }
 
-    [SerializeField] private float kpmRatio = 0.8f;
+    [SerializeField] private float kpmRatio = 0.5f;
 
     public GameObject player;        // プレイヤーオブジェクト
     public ChibiCat chibiCat;        // 猫ボディ
@@ -187,6 +183,7 @@ public class GameManager : MonoBehaviour
                 rankingRectTransform.anchoredPosition = rankingShowPos;
                 typingRoom.SetActive(true);
                 shopRoom.SetActive(false);
+                exportExtension();
             }
         }
     }
@@ -465,7 +462,7 @@ public class GameManager : MonoBehaviour
 
     public void recalculateKpm()
     {
-        if (Kpm > NewKpm * kpmRatio)    // 今回の成績が一定の成績以上であれば
+        if ((savedata.Kpms[0] == 0) || (savedata.Status[st.Kpm] > NewKpm * kpmRatio))    // 今回の成績が一定の成績以上であれば
         {
             savedata.updateKpm(NewKpm);   // kpm更新
         }
@@ -522,7 +519,7 @@ public class GameManager : MonoBehaviour
     public static void SetTypingDataLevel(int no)
     {
         TypingDataId += no;
-        TypingDataName = TypingDataId.ToString();
+        TypingDataName = "TextPrompts/" + TypingDataId.ToString();
     }
 
     public void changeEquip(int parts)

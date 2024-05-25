@@ -71,22 +71,25 @@ public class Player : MonoBehaviour
         }
         else if (GameManager.SceneNo == scene.House)
         {
-            if (GameManager.TypingDataId < 0)
+            if (GameManager.TypingDataName == null)
             {
                 talk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
             }
-            // 直近のタイピングデータ前の情報を表示
-            practice.calcStars();           // 表示する星を計算
-            practice.showRoomMenu();        // ルームメニュー表示
+            else
+            {
+                talk.text = "がんばったね^ ^";
+            }
+            if (GameManager.TypingTab == 2)
+            {
+                // 直近のタイピングデータ前の情報を表示
+                practice.calcStars();           // 表示する星を計算
+                practice.showRoomMenu();        // ルームメニュー表示
+                practice.showDetail();      // 詳細画面表示
+                gm.registerRecentTypingResult();
+            }
             exitHouse.SetActive(true);
             exitShop.SetActive(false);
             tiikawa.SetActive(true);
-
-            // ここで直近のタイピングデータをセット
-            if (GameManager.TypingTab == 2)
-            {
-                gm.registerRecentTypingResult();
-            }
 
             switchCam.SwitchCamera();           // カメラ切り替え
         }
@@ -104,9 +107,6 @@ public class Player : MonoBehaviour
         }
         if (GameManager.SceneNo == scene.House)
         {
-            practice.calcStars();       // 表示する星を計算
-            practice.showRoomMenu();    // ルームメニュー表示
-            practice.showDetail();      // 詳細画面表示
             GameManager.SceneNo = scene.World; // ワールドシーン状態へ
         }
         if (typingWindow == 1)

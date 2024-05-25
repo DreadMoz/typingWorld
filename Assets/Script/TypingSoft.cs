@@ -28,6 +28,9 @@ public class TypingSoft : MonoBehaviour
     private Animator lAnimator;
     public GameObject targetCam;
 
+    private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
+    
+
     private int seekerStart;
     private int seekerCombo;
     private int seekerKey;
@@ -290,7 +293,7 @@ public class TypingSoft : MonoBehaviour
 
     private bool LoadThemes(string fileName)
     {
-        string typingDataName = "TextPrompts/" + fileName;
+        string typingDataName = fileName;
         TextAsset textAsset = Resources.Load<TextAsset>(typingDataName);
 
         try
@@ -309,8 +312,12 @@ public class TypingSoft : MonoBehaviour
             {
                 Debug.Log("Cannot find file!");
                 GameManager.TypingDataId = -1;
-                GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
-                SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+                if (!goNextScene)
+                {
+                    GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
+                    SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+                    goNextScene = true;
+                }
                 return false;
             }
         }
@@ -655,8 +662,12 @@ public class TypingSoft : MonoBehaviour
                 GameManager.KeyParSecond = correctN / totalTime;
                 GameManager.AnswerRate = correctAR;
                 GameManager.Seeker = totalSeeker;
-                GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
-                SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+                if (!goNextScene)
+                {
+                    GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
+                    SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+                    goNextScene = true;
+                }
             }
         }
         if (isInputValid && e.type == EventType.KeyDown && e.keyCode != KeyCode.None

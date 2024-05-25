@@ -39,6 +39,10 @@ public class NpcManager : MonoBehaviour
         {
             return;
         }
+        if (gm.savedata.ExRankings[0].Name == "")
+        {
+            return;
+        }
 
         shufflePlayers();
         // 生成するNPCの数をスポーンポイントの数と比較し、小さい方を使用

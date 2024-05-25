@@ -31,6 +31,9 @@ public class TypingRoom : MonoBehaviour
     [SerializeField]
     private RectTransform listParent;
 
+    private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
+    
+
     void Start()
     {
         challengeList.SetActive(false);
@@ -60,8 +63,12 @@ public class TypingRoom : MonoBehaviour
 
     public void gotoTypingState()
     {
-        GameManager.SceneNo = (int)scene.Typing;
-        SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
+        if (!goNextScene)
+        {
+            GameManager.SceneNo = (int)scene.Typing;
+            SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
+            goNextScene = true;
+        }
     }
 
     public void openChallenge()
