@@ -323,6 +323,13 @@
                     const hasStatusData = !!event.data.data.data.statusData;
 
                     if (hasRankingData && hasStatusData) {
+                        // statusDataを修正し、特定のフィールドを文字列として扱う
+                        const modifiedStatusData = {
+                            ...event.data.data.data.statusData,
+                            Kpms: event.data.data.data.statusData.Kpms.toString(),
+                            Items: event.data.data.data.statusData.Items.map(item => item.toString()),
+                            Medals: event.data.data.data.statusData.Medals.map(medal => medal.toString())
+                        };
                         const combinedData = {
                             rankingData: event.data.data.data.rankingData,
                             statusData: event.data.data.data.statusData
