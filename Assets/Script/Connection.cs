@@ -139,7 +139,7 @@ public class Connection : MonoBehaviour
                     ""Glasses"": 0,
                     ""Head"": 121,
                     ""LeftHand"": 3,
-                    ""CatBody"": 206,
+                    ""CatBody"": 0,
                     ""CatFace"": 0,
                     ""NickName"": 0,
                     ""Kpm"": 333,
@@ -167,7 +167,7 @@ public class Connection : MonoBehaviour
             ""done"": true,
             ""response"": {
                 ""type"": ""type.googleapis.com/google.apps.script.v1.ExecutionResponse"",
-                ""result"": ""demonstration@e-net.nara.jp,/公立学校/低学年/OU市/OU小学校,0603-24,659,7,87,moru,6,0,121,3,202,0,0,333,122333444555666777,54100,476371964491057500,471305275021828740,511767441717405440,0,0,0,0,0""
+                ""result"": ""demonstration@e-net.nara.jp,/公立学校/低学年/OU市/OU小学校,0603-24,659,7,87,moru,6,0,121,3,0,0,0,333,122333444555666777,54100,476371964491057500,471305275021828740,511767441717405440,0,0,0,0,0""
                 }
             }";
         }

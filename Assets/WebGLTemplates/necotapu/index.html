@@ -136,9 +136,6 @@
             appId: "1:658577906647:web:09e85b0541ca715bf94992",
         };
         const SCRIPT_ID = 'AKfycbxI79d1FhMhZDc_p2QDA-alSRMeXq7uulX6qvCGlzHx8wSY_JaKkmZtQpiYMxYsEni-Bg'
-        const CLIENT_ID = '1018693471402-00vuk8cocmrvo0kibf6iht0na9s9vabk.apps.googleusercontent.com'
-        const CLIENT_SECRET = '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'
-        const REFRESH_TOKEN = '1//044E8lsH17oS6CgYIARAAGAQSNwF-L9IrQhQnwDQ3N3LMM8vLl9DJ3os0XfX7M9uYl3bpwDt06k4jOXCax7MTHy1t7gTATccN8Ks'
         const TOKEN_URL = "https://oauth2.googleapis.com/token";
 
         // Firebaseアプリの初期化
@@ -152,26 +149,26 @@
         /// </summary>
         /// <remarks>
         /// FireBaseをつかったOAuth認証。メール、ユーザ名、プロフィール画像のURL取得
-        function getOAuth() {
-            const provider = new GoogleAuthProvider();
-            // ユーザーにアカウント選択を強制する
-            provider.setCustomParameters({
-                prompt: 'select_account'
-            });
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    // 認証成功
-                    user = result.user;
-                    console.log("Logged in as:", user.email);
-                    console.log('User display name:', user.displayName);
-                    console.log('User photo URL:', user.photoURL);
-                    var userInfo = user.email + "," + user.displayName + "," + user.photoURL;
-                    myGameInstance.SendMessage('TitleScene', 'finishOAuth', userInfo);
-                })
-                .catch((error) => {
-                    // 認証失敗
-                    console.error("Authentication failed:", error);
-                });
+        async function getOAuth() {
+            const data = {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            };
+            const params = new URLSearchParams();
+            params.append('address', "https://script.google.com/macros/s/AKfycbxA-Xk9kKMssR7osU5_RnnZYyHutdC6BRInkRUtG-tEUnlSdUZ9b4zlXsZJlhFnFdUu/exec");
+            params.append('profile', JSON.stringify("profile"));
+            data.body = params;
+
+            try {
+                const res = await fetch("https://script.google.com/macros/s/AKfycbxA-Xk9kKMssR7osU5_RnnZYyHutdC6BRInkRUtG-tEUnlSdUZ9b4zlXsZJlhFnFdUu/exec", data);
+                const json = await res.json();
+                console.log("Response:", json);
+            } catch (e) {
+                console.error("Error:", e);
+            }
         }
         window.getOAuth = getOAuth;
 
@@ -197,15 +194,9 @@
         /// アクセストークンを取得して返します。
         /// </summary>
         /// <remarks>
-        /// リフレッシュトークンとかなんだろねぇ〜
         /// </remarks>
-        async function getAccessToken() {
-            const data = JSON.stringify({
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
-                refresh_token: REFRESH_TOKEN,
-                grant_type: 'refresh_token',
-            });
+        async function getAccessToken(dataInfo) {
+            const data = JSON.stringify({dataInfo});
             const options = {
                 method: "POST",
                 headers: {
@@ -225,10 +216,10 @@
         /// <remarks>
         /// GASでスプレッドシートの同じメールアドレスの行が更新される
         /// </remarks>
-        async function saveToGss(data) {
+        async function saveToGss(data, dataInfo) {
             console.log("data:", data);
             try {
-                const accessToken = await getAccessToken();
+                const accessToken = await getAccessToken(dataInfo);
                 const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
                 const sendData = JSON.stringify({
                     function: 'saveData',
@@ -258,12 +249,12 @@
         /// <remarks>
         /// GASから受け取るJSON形式は {}
         /// </remarks>
-        async function loadFromGss() {
+        async function loadFromGss(dataInfo) {
             const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
 
             try {
                 console.log("アクセストークン要求");
-                const accessToken = await getAccessToken(); // アクセストークンを取得
+                const accessToken = await getAccessToken(dataInfo); // アクセストークンを取得
                 const data = JSON.stringify({
                     function: 'loadData',
                     parameters: [user.email]

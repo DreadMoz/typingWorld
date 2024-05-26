@@ -92,9 +92,9 @@ public class DetailMenu : MonoBehaviour
         GameManager.SetTypingDataLevel(level);
         GameManager.Seeker = gm.savedata.Status[st.Gold];
 
-        GameManager.SceneNo = (int)scene.Typing;
         if (!goNextScene)
         {
+            GameManager.SceneNo = (int)scene.Typing;
             SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
             goNextScene = true;
         }

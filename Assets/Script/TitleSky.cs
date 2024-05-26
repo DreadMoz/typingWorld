@@ -164,14 +164,14 @@ public class TitleSky : MonoBehaviour
 
         if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
         {
-            messageText.text += firstName.text + "さんはいいネットならのなかまだね。あしあとデータを";
+            messageText.text += firstName.text + "さんはいいネットならのなかまだね。あしあとデータをさがします。";
             gm.connection.loadExtension();
         }
         else
         {
             messageText.text = "これはいいネットならのアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
         }
-        reLogin.SetActive(true);        // これ全てが通る？おかしくない？
+        reLogin.SetActive(true);
     }
     
     public void testFinishDataLoad()
@@ -194,7 +194,7 @@ public class TitleSky : MonoBehaviour
             'Glasses': 0,
             'Head': 0,
             'LeftHand': 0,
-            'CatBody': 202,
+            'CatBody': 0,
             'CatFace': 0,
             'NickName': 0,
             'Kpm': 0,
@@ -213,58 +213,65 @@ public class TitleSky : MonoBehaviour
         message.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
-    try
-    {
-        // JSONデータをデシリアライズして必要な部分を取得
-        var combinedData = JsonConvert.DeserializeObject<ExtensionData>(msg);
-        if (combinedData == null)
+        try
         {
-            messageText.text += "読み込んだけど問題がおこったよ〜〜";
-            Debug.Log("あしあとデータに問題がおこったよ");
+            // JSONデータをデシリアライズして必要な部分を取得
+            var combinedData = JsonConvert.DeserializeObject<ExtensionData>(msg);
+            if (combinedData == null)
+            {
+                messageText.text += "あったけどうまく取れなかったよ。";
+                Debug.Log("あしあとデータがnull");
+            }
+            else
+            {
+                if (combinedData.rankingData != null)
+                {
+                    gm.savedata.setRankingFromExtension(JsonConvert.SerializeObject(combinedData.rankingData));
+                }
+                if (combinedData.statusData != null)
+                {
+                    gm.savedata.setStatusFromExtension(JsonConvert.SerializeObject(combinedData.statusData));
+                }
+                gm.savedata.Settings[se.Extension] = 1;
+                Debug.Log("gm.savedata.settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
+                ashiato.SetActive(true);
+                ouText.text = gm.savedata.Ou;
+                Debug.Log("ありました！");
+            }
             checkExtensionData();
         }
-        else
+        catch (Exception ex)
         {
-            if (combinedData.rankingData != null)
-            {
-                gm.savedata.setRankingFromExtension(JsonConvert.SerializeObject(combinedData.rankingData));
-            }
-            if (combinedData.statusData != null)
-            {
-                gm.savedata.setStatusFromExtension(JsonConvert.SerializeObject(combinedData.statusData));
-            }
-            gm.savedata.Settings[se.Extension] = 1;
-            Debug.Log("gm.savedata.settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
-            ashiato.SetActive(true);
-            ouText.text = gm.savedata.Ou;
-            Debug.Log("よみこみました。");
-            showStart();
+            messageText.text = "読み込む時にエラーが発生しました: " + ex.Message;
+            Debug.LogError("データの読み込み中に例外発生: " + ex);
         }
-        }
-    catch (Exception ex)
-    {
-        messageText.text = "読み込む時にエラーが発生しました: " + ex.Message;
-        Debug.LogError("データの読み込み中にエラーが発生しました: " + ex);
-    }
     }
 
     private void checkExtensionData()
     {
         Text messageText = message.GetComponentInChildren<Text>();
-
         Debug.Log("gm.savedata.Settings[se.Extension]: " + gm.savedata.Settings[se.Extension]);
-        if (gm.savedata.Settings[se.Extension] == 0)
+
+        if (gm.savedata.Equipment[eq.CatBody] == 0)        // ねこボディなし
         {
-            Debug.Log("あしあとデータがないので、クラウドから取ってきます。");
-            messageText.text = "あしあとデータがないので、クラウドから取ってきます。ちょっとまってね。";
+            if (gm.savedata.Settings[se.Extension] == 0)        // 拡張機能なしの判定なら
+            {
+                Debug.Log("拡張機能なし、GASアクセスへ");
+                messageText.text = "あしあとデータがないので、クラウドから取ってきます。ちょっとまってね。";
+            }
+            else        // 拡張機能ありの判定なら
+            {
+                Debug.Log("拡張機能ありねこボディなし、GASアクセスへ");
+                messageText.text = "あしあとデータが空なので、クラウドから取ってきます。ちょっとまってね。";
+            }
+            gm.savedata.Settings[se.CatNum] = 0;        // NPC表示なし
             gm.connection.loadGas();    // GSSアクセス。
         }
         else
         {
-            gm.savedata.Settings[se.CatNum] = 0;
-            Debug.Log("あしあとデータが空なので、クラウドから取ってきます。");
-            messageText.text = "あしあとデータが空なので、クラウドから取ってきます。ちょっとまってね。";
-            gm.connection.loadGas();    // GSSアクセス。
+            Debug.Log("拡張機能正常データあり");
+            messageText.text = "あしあとがみつかったよ。スタートしましょう。";
+            showStart();
         }
     }
 
@@ -275,7 +282,7 @@ public class TitleSky : MonoBehaviour
 
         if (string.IsNullOrEmpty(jsonMsg))
         {
-            messageText.text += "\nGASデータがありませんでした。";
+            messageText.text += "\nクラウドデータがありませんでした。あたらしくスタートですね。";
             showStart();
         }
         else
@@ -292,12 +299,13 @@ public class TitleSky : MonoBehaviour
                     string[] dataParts = responseData.response.result.Split(',');
                     List<object> dataList = new List<object>(dataParts);
                     gm.savedata.LoadAllDataFromGss(dataList);
-                    messageText.text += "\nGASデータを読み込みました。";
+                    Debug.Log("dataList: " + dataList);
+                    messageText.text += "\nクラウドデータを読み込みました。";
                 }
             }
             else
             {
-                messageText.text += "\nGASデータに問題が生じました。";
+                messageText.text += "\nクラウドデータに問題が生じました。";
             }
             showStart();
         }
@@ -318,7 +326,7 @@ public class TitleSky : MonoBehaviour
         }
         else
         {
-            messageText.text += "\nデータをあたらしく作りましょう。";
+            messageText.text = "データをあたらしく作りましょう。";
             TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
             buttonText.text = "つくる";
             startButton.SetActive(true);
