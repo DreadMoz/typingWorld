@@ -24,6 +24,7 @@ public class Connection : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void SaveToGss(string dataPointer);
 
+
 #endif
 
     public void enetLogin()
@@ -154,7 +155,7 @@ public class Connection : MonoBehaviour
             gm.savedata.Settings[se.Extension] = 1;
 
             // finishDataLoadを呼び出して、組み合わせたデータを渡す
-            title.finishDataLoad(combinedJson);
+            title.finishDataLoadExt(combinedJson);
         }
     }
     private void getDummyGss()

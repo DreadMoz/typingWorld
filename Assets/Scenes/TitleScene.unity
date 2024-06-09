@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.13073657, g: 0.20176916, b: 0.36133218, a: 1}
+  m_IndirectSpecularColor: {r: 0.12329033, g: 0.18925087, b: 0.3379168, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -703,7 +703,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf85b56eddb72479cb78ff8fd029ab55, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 96144653f159c44298b43ae63830fbec, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2706,7 +2706,6 @@ GameObject:
   m_Component:
   - component: {fileID: 992936579}
   - component: {fileID: 992936578}
-  - component: {fileID: 992936580}
   m_Layer: 0
   m_Name: TitleScene
   m_TagString: Untagged
@@ -2760,20 +2759,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &992936580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 992936577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c0998b12915340a39d88c8b3edfc6c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clientId: 275626201978-pufmjihq3uvnidjedhf3tbdfcq6d6inv.apps.googleusercontent.com
-  clientSecret: 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
 --- !u!1 &994566807 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7031553045946190738, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
@@ -3032,7 +3017,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 0
+  m_IsOn: 1
 --- !u!1001 &1150857658
 PrefabInstance:
   m_ObjectHideFlags: 0

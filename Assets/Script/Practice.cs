@@ -27,10 +27,10 @@ public class Practice : MonoBehaviour
         {
             if (i < medals.Length - 1)    // 次があればステージオープン
             {
-                if ((medals[i] > 2) && (medals[i + 1] == 0))    // 星2つ以上で次がクローズだったら
+                if (((medals[i] == 3) || (medals[i] == 4)) && (medals[i + 1] == 0))    // 星2つ以上で次がクローズだったら
                 {
-                    gm.savedata.Medals[i + 1] = -1;       // Detailオープン
-                    medals[i + 1] = -1;                         // 花火セット
+                    gm.savedata.Medals[i + 1] = 5;       // Detailオープン
+                    medals[i + 1] = 5;                         // 花火セット
                     Debug.Log("Oepned detail id:" + (i + 1));
                 }
             }
@@ -39,7 +39,7 @@ public class Practice : MonoBehaviour
         for (int i = 0; i < medalTopNum; i++)
         {
             // ３つのステージの星の合計
-            medalSum[i] = medals[i * 3] + medals[i * 3 + 1] + medals[i * 3 + 2];
+            medalSum[i] = remove5(medals[i * 3]) + remove5(medals[i * 3 + 1]) + remove5(medals[i * 3 + 2]);
 
             if (medalSum[i] > 9)
             {
@@ -55,11 +55,11 @@ public class Practice : MonoBehaviour
                 {
                     if (medalTop[i + 1] == 0) // 次が錠状態なら
                     {
-                        medalTop[i + 1] = -1; // Room花火打ち上げセット
+                        medalTop[i + 1] = 5; // Room花火打ち上げセット
                         Debug.Log("Opend room id:" + (i + 1));
                         if (gm.savedata.Medals[(i + 1) * 3] == 0)
                         {
-                            gm.savedata.Medals[(i + 1) * 3] = -1; // Detail花火打ち上げセット
+                            gm.savedata.Medals[(i + 1) * 3] = 5; // Detail花火打ち上げセット
                             Debug.Log("Opend detail id:" + (i + 1) * 3);
                         }
                     }
@@ -69,7 +69,7 @@ public class Practice : MonoBehaviour
             {
                 medalTop[i] = 2;    // 星1つ
             }
-            else if (medalSum[i] != -1)     // 花火セット以外
+            else if (medalSum[i] != 5)     // 花火セット以外
             {
                 medalTop[i] = 1;    // 星0こ
             }
@@ -81,6 +81,15 @@ public class Practice : MonoBehaviour
                 }
             }
         }
+    }
+
+    private int remove5(int no)
+    {
+        if (no == 5)
+        {
+            return 0;
+        }
+        return no;
     }
 
     public int getMedalTop(int id)

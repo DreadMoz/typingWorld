@@ -27,7 +27,7 @@ public class NpcManager : MonoBehaviour
         pickedPlayers = new int[numberOfNPCs];
         for (int i = 0; i < numberOfNPCs; i++)
         {
-            int randomIndex = Random.Range(0, playerPool.Count);
+            int randomIndex = Random.Range(0, playerPool.Count - 1);
             pickedPlayers[i] = playerPool[randomIndex];
             playerPool.RemoveAt(randomIndex); // 選んだ数値をプールから削除して重複を防ぐ
         }
@@ -70,7 +70,7 @@ public class NpcManager : MonoBehaviour
                 if (gm.savedata.ExRankings.Count > 0)
                 {
                     string nickname;
-                    Item item = gm.db.GetItemList()[gm.savedata.ExRankings[pickedPlayers[i]].NickName];
+                    Item item = gm.db.GetItemList()[gm.savedata.ExRankings[pickedPlayers[i]].NickName]; // ここたまにエラー出るぞ
                     if (item != null)
                     {
                         nickname = item.MyItemName;

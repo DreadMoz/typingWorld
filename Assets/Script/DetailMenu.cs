@@ -63,10 +63,10 @@ public class DetailMenu : MonoBehaviour
                 star1.SetActive(true);
                 star2.SetActive(true);
                 break;
-            case -1:
+            case 5:
                 gm.savedata.Medals[id * 3 + level] = 1;       // 新規Detail表示から1へ
                 magicProof.SetActive(true);
-                ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
+                ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();   // 花火打ち上げ
                 particleSystem.Play();
                 break;
             default:

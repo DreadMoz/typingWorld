@@ -82,10 +82,10 @@ public class Player : MonoBehaviour
             if (GameManager.TypingTab == 2)
             {
                 // 直近のタイピングデータ前の情報を表示
+                gm.registerRecentTypingResult();
                 practice.calcStars();           // 表示する星を計算
                 practice.showRoomMenu();        // ルームメニュー表示
-                practice.showDetail();      // 詳細画面表示
-                gm.registerRecentTypingResult();
+                practice.showDetail();          // 詳細画面表示 ステージ番号が入るから星計算の後
             }
             exitHouse.SetActive(true);
             exitShop.SetActive(false);
@@ -156,7 +156,7 @@ public class Player : MonoBehaviour
             exitHouse.SetActive(false);
             tiikawa.SetActive(false);
 
-            transform.position = new Vector3(288, 1, 113);   // タイピングハウス前位置
+            transform.position = new Vector3(287.5f, 1, 113);   // タイピングハウス前位置
             transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
 
             // カメラ切り替え

@@ -7,6 +7,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+[System.Serializable]
+public class FileListData
+{
+    public List<string> fileNames;  // JSONファイル内のファイル名のリスト
+}
+
 public class Challenge : MonoBehaviour
 {
     [SerializeField]
@@ -17,7 +23,7 @@ public class Challenge : MonoBehaviour
     [SerializeField]
     private RectTransform menuParent;
     [SerializeField]
-    private string odaiDataPath = "TextChallange"; 
+    private string odaiDataPath = "TextChallange/"; 
 
     private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
 
@@ -29,13 +35,14 @@ public class Challenge : MonoBehaviour
 
     void LoadChallenges()
     {
-        string path = Path.Combine(Application.dataPath, "Resources/" + odaiDataPath);
-        foreach (string file in Directory.GetFiles(path, "*.json"))
-        {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-            string jsonText = File.ReadAllText(file);
-            ChallengeData data = JsonUtility.FromJson<ChallengeData>(jsonText);
-            CreateChallengeButton(fileNameWithoutExtension, data);
+        // JSON形式でファイル名をリスト化したメタファイルをロードする
+        TextAsset fileList = Resources.Load<TextAsset>(odaiDataPath+"0fileList");
+        FileListData fileListData = JsonUtility.FromJson<FileListData>(fileList.text);
+
+        foreach (var fileName in fileListData.fileNames) {
+            TextAsset jsonText = Resources.Load<TextAsset>(odaiDataPath+fileName);
+            ChallengeData data = JsonUtility.FromJson<ChallengeData>(jsonText.text);
+            CreateChallengeButton(fileName, data);
         }
     }
     
@@ -54,7 +61,7 @@ public class Challenge : MonoBehaviour
     }
     public void bootTyping(string title)
     {
-        GameManager.TypingDataName = odaiDataPath + "/" + title;
+        GameManager.TypingDataName = odaiDataPath + title;
         GameManager.Seeker = gm.savedata.Status[st.Gold];
 
         GameManager.SceneNo = (int)scene.Typing;

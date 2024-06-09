@@ -12,7 +12,7 @@ mergeInto(LibraryManager.library, {
         window.postMessage(message, "*");
 
         // タイムアウトを監視する
-        var timeoutDuration = 3000; // タイムアウトまでのミリ秒（ここでは3000ms = 3秒）
+        var timeoutDuration = 1000; // タイムアウトまでのミリ秒（ここでは3000ms = 3秒）
         var timeout = setTimeout(function() {
             // タイムアウト後の処理
             console.log("タイムアウトになりました。拡張機能からのレスポンスがありません。");
@@ -35,14 +35,14 @@ mergeInto(LibraryManager.library, {
         // タイムアウト監視の処理をここに追加することも可能
     },
 
-    LoadFromGss: function(dataInfo) {
-        loadFromGss(dataInfo);
+    LoadFromGss: function() {
+        loadFromGss();
     },
 
-    SaveToGss: function(dataPointer, dataInfo) {
+    SaveToGss: function(dataPointer) {
         console.log("Received pointer:", dataPointer); // ポインタ受け取り時のデバッグ
         var data = UTF8ToString(dataPointer);
         console.log("Converted data:", data); // 文字列変換後のデバッグ
-        saveToGss(data, dataInfo);
+        saveToGss(data);
     }
 });

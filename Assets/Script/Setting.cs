@@ -17,7 +17,8 @@ public class Setting : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if ((gm.savedata.Settings[se.Extension] == 0) || (gm.savedata.Settings[se.CatNum] == 0))
+//        if ((gm.savedata.Settings[se.Extension] == 0) || (gm.savedata.Settings[se.CatNum] == 0))
+        if (gm.savedata.Settings[se.Extension] == 0)
         {
             necoNumSlider.maxValue = 0;
         }

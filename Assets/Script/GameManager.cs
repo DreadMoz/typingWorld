@@ -224,6 +224,7 @@ public class GameManager : MonoBehaviour
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
         {
+            npcManager.SpawnNPCs();
             if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
                 chibiCat.setChara(savedata.Equipment[eq.CatBody] - 200);
