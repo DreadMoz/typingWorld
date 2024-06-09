@@ -26,9 +26,51 @@
     </div>
 
     <script type="module">// Import the functions you need from the SDKs you need
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js';
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
-
+        /**
+         * Callback after api.js is loaded.
+         */
+        // モジュールスクリプト内で関数をグローバルスコープに公開
+        window.gapiLoaded = function() {
+            gapi.load('client', initializeGapiClient);
+        };
+  
+        /**
+         * Initializes the API client library and sets up sign-in state listeners.
+         */
+        async function initializeGapiClient() {
+            try {
+                await gapi.client.init({
+                    apiKey: API_KEY,
+                    discoveryDocs: [
+                        "https://www.googleapis.com/discovery/v1/apis/people/v1/rest",  // Google People API
+                        "https://www.googleapis.com/discovery/v1/apis/script/v1/rest"   // Google Apps Script API
+                    ],
+                });
+                console.log('GAPI client initialized.');
+                gapiInited = true;
+            } catch (error) {
+                console.error('Error initializing GAPI client:', error);
+            }
+        }
+  
+        /**
+         * Callback after Google Identity Services are loaded.
+         */
+        window.gisLoaded = function() {
+            try {
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: SCOPES,
+                prompt: 'consent', // ユーザーにすべての権限に対して同意を求める
+                    callback: '', // Make sure to define later or handle appropriately
+            });
+            console.log('Google Identity Services initialized.');
+            gisInited = true;
+            } catch (error) {
+                console.error('Error initializing Google Identity Services:', error);
+            }
+        }
+        
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
         var loadingBar = document.querySelector("#unity-loading-bar");
@@ -123,91 +165,119 @@
         document.body.appendChild(script);
 
         //######################################################
-        // ゲームデータ保存https://docs.google.com/spreadsheets/d/1R-F1xijPBy_d4KczzqzEsf2EPbtJ8Qi98ToLkkZo9mg/edit
+        // ゲームデータ
         //######################################################
 
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD2uf3ULaqZQLfYYQa-9QLdamelA0CwguE",
-            authDomain: "firetyping-ad101.firebaseapp.com",
-            projectId: "firetyping-ad101",
-            storageBucket: "firetyping-ad101.appspot.com",
-            messagingSenderId: "658577906647",
-            appId: "1:658577906647:web:09e85b0541ca715bf94992",
-        };
-        const SCRIPT_ID = 'AKfycbxI79d1FhMhZDc_p2QDA-alSRMeXq7uulX6qvCGlzHx8wSY_JaKkmZtQpiYMxYsEni-Bg'
-        const TOKEN_URL = "https://oauth2.googleapis.com/token";
+        // Client ID and API key from the Developer Console
+        const CLIENT_ID = '901463776832-egpvuk7jiek55nq7krcqqtgo4dhu8hsb.apps.googleusercontent.com';
+        const API_KEY = 'AIzaSyBWYOzjmZyt1adNcPo62LFsGzARXZ_7GS0';
+        const SCRIPT_ID = 'AKfycbwbvgs_Qf86vLelNhmC_XhUquK1JGUZqY2ocok4WxdSZs9Cgt488hmbN-4NZsUunTLx';
+        const SCOPES = 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/spreadsheets';
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
 
-        // Firebaseアプリの初期化
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-
-        var user;
+        var email;
         /// <summary>
         /// Googleアカウントにログインします。
         /// </summary>
         /// <remarks>
-        /// FireBaseをつかったOAuth認証。メール、ユーザ名、プロフィール画像のURL取得
+        /// OAuth認証。メール、ユーザ名、プロフィール画像のURL取得
+        
         async function getOAuth() {
-            const data = {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded',
+            tokenClient.callback = async (resp) => {
+                if (resp.error !== undefined) {
+                    console.error('Authentication error:', resp);
+                    throw (resp);
                 }
+                console.log('User authenticated.');
+                await fetchUserProfile();
             };
-            const params = new URLSearchParams();
-            params.append('address', "https://script.google.com/macros/s/AKfycbxA-Xk9kKMssR7osU5_RnnZYyHutdC6BRInkRUtG-tEUnlSdUZ9b4zlXsZJlhFnFdUu/exec");
-            params.append('profile', JSON.stringify("profile"));
-            data.body = params;
-
-            try {
-                const res = await fetch("https://script.google.com/macros/s/AKfycbxA-Xk9kKMssR7osU5_RnnZYyHutdC6BRInkRUtG-tEUnlSdUZ9b4zlXsZJlhFnFdUu/exec", data);
-                const json = await res.json();
-                console.log("Response:", json);
-            } catch (e) {
-                console.error("Error:", e);
-            }
+            tokenClient.requestAccessToken({prompt: ''});
+            console.log('Requesting access token without consent.');
         }
         window.getOAuth = getOAuth;
 
+        async function fetchUserProfile() {
+            try {
+                // ユーザープロファイル情報の取得リクエスト
+                let response = await gapi.client.people.people.get({
+                    'resourceName': 'people/me',
+                    'personFields': 'names,emailAddresses,photos'
+                });
+                console.log('User profile retrieved:', response.result);
+
+                // 取得したユーザー情報の表示
+                console.log("Logged in as:", response.result.emailAddresses[0].value);
+                console.log('User display name:', response.result.names[0].displayName);
+                console.log('User photo URL:', response.result.photos[0].url);
+                var userInfo = response.result.emailAddresses[0].value + "," + response.result.names[0].displayName + "," + response.result.photos[0].url;
+                email = response.result.emailAddresses[0].value;
+                myGameInstance.SendMessage('TitleScene', 'finishOAuth', userInfo);
+
+            } catch (err) {
+                console.error('Error retrieving user profile:', err);
+                // err.messageがundefinedの場合、代替テキストを表示
+                document.getElementById('content').innerText = 'Failed to retrieve user profile: ' + (err.message || "No error message available.");
+            }
+        }
+        
         /// <summary>
         /// Googleアカウントからログアウトします。
         /// </summary>
         /// <remarks>
-        /// Firebaseを使ったOAuth認証セッションを終了します。
+        /// OAuth認証セッションを終了します。
         /// </remarks>
         async function oAuthLogout() {
-            try {
-                await signOut(auth);
-                console.log("User logged out successfully.");
-                // 任意の追加のクリーンアップやUIの更新処理をここで行います。
-                myGameInstance.SendMessage('TitleScene', 'finishLogout');
-            } catch (error) {
-                console.error("Error logging out:", error);
+            const token = gapi.client.getToken();
+            if (token !== null) {
+                google.accounts.oauth2.revoke(token.access_token, () => {
+                    console.log('Token revoked and user signed out.');
+                    gapi.client.setToken(null);  // トークンをnullで正しくクリア
+                    myGameInstance.SendMessage('TitleScene', 'finishLogout');
+                });
             }
         }
         window.oAuthLogout = oAuthLogout;
 
         /// <summary>
-        /// アクセストークンを取得して返します。
+        /// GAS (Google Apps Script) から受け取ったデータを処理し、ゲームの状態を更新します。
         /// </summary>
         /// <remarks>
+        /// GASから受け取るJSON形式は {}
         /// </remarks>
-        async function getAccessToken(dataInfo) {
-            const data = JSON.stringify({dataInfo});
-            const options = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: data
-            };
-            const response = await fetch(TOKEN_URL, options);
-            const responseData = await response.json();
-            return responseData.access_token;
+        async function loadFromGss() {
+            try {
+                const ACCESS_TOKEN = gapi.auth.getToken().access_token;  // OAuth2.0のアクセストークンを取得
+                const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
+                const sendData = JSON.stringify({
+                    function: 'loadData',
+                    parameters: [email]
+                });
+                const options = {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${ACCESS_TOKEN}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: sendData
+                };
+
+                const response = await fetch(url, options);
+                console.log("fetchきました", response);
+                const responseData = await response.json();
+                console.log("jsonきました", email);
+                if (responseData.error) {
+                    console.error("Error from GAS:", responseData.error);
+                } else {
+                    console.log("Data received successfully:", responseData);
+                    myGameInstance.SendMessage('TitleScene', 'finishDataLoadGas', JSON.stringify(responseData));
+                }
+            } catch (error) {
+                console.error("Error receiving data:", error);
+            }
         }
+        window.loadFromGss = loadFromGss;
 
         /// <summary>
         /// GASに保存データを送信します。
@@ -216,10 +286,10 @@
         /// <remarks>
         /// GASでスプレッドシートの同じメールアドレスの行が更新される
         /// </remarks>
-        async function saveToGss(data, dataInfo) {
-            console.log("data:", data);
+        async function saveToGss(data) {
+            console.log("saveToGss:", data);
             try {
-                const accessToken = await getAccessToken(dataInfo);
+                const ACCESS_TOKEN = gapi.auth.getToken().access_token;  // OAuth2.0のアクセストークンを取得
                 const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
                 const sendData = JSON.stringify({
                     function: 'saveData',
@@ -228,7 +298,7 @@
                 const options = {
                     method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${accessToken}`,
+                        "Authorization": `Bearer ${ACCESS_TOKEN}`,
                         "Content-Type": "application/json"
                     },
                     body: sendData
@@ -242,48 +312,6 @@
             }
         }
         window.saveToGss = saveToGss;
-
-        /// <summary>
-        /// GAS (Google Apps Script) から受け取ったデータを処理し、ゲームの状態を更新します。
-        /// </summary>
-        /// <remarks>
-        /// GASから受け取るJSON形式は {}
-        /// </remarks>
-        async function loadFromGss(dataInfo) {
-            const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
-
-            try {
-                console.log("アクセストークン要求");
-                const accessToken = await getAccessToken(dataInfo); // アクセストークンを取得
-                const data = JSON.stringify({
-                    function: 'loadData',
-                    parameters: [user.email]
-                });
-                console.log("POST");
-                const options = {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${accessToken}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: data
-                };
-
-                const response = await fetch(url, options);
-                console.log("fetchきました");
-                const responseData = await response.json();
-                console.log("jsonきました");
-                if (responseData.error) {
-                    console.error("Error from GAS:", responseData.error);
-                } else {
-                    console.log("Data received successfully:", responseData);
-                    myGameInstance.SendMessage('TitleScene', 'finishDataLoadGas', JSON.stringify(responseData));
-                }
-            } catch (error) {
-                console.error("Error receiving data:", error);
-            }
-        }
-        window.loadFromGss = loadFromGss;
 
         /// <summary>
         /// 拡張機能からのメッセージ受信
@@ -326,7 +354,7 @@
                             statusData: event.data.data.data.statusData
                         };
                         console.log("combinedData:", combinedData);
-                        myGameInstance.SendMessage('TitleScene', 'finishDataLoad', JSON.stringify(combinedData));
+                        myGameInstance.SendMessage('TitleScene', 'finishDataLoadExt', JSON.stringify(combinedData));
                     } else {
                         // 不足しているデータに応じたエラーメッセージを出力
                         if (!hasRankingData) console.log("rankingData is missing.");
@@ -339,6 +367,10 @@
                     myGameInstance.SendMessage('TitleScene', 'handleDataError', "Data is in the initial state or an error occurred.");
                 }
             }
-        });</script>
+        });
+        
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
 </html>
