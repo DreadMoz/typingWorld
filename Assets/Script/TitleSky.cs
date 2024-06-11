@@ -191,7 +191,7 @@ public class TitleSky : MonoBehaviour
                 'Email': 'xxxxx@gmail.com',
                 'Ou': '',
                 'LastName': 'Mori',
-                'Gold': 6,
+                'Gold': 100000,
                 'Stage': 0,
                 'Ranking': 0,
                 'Name': 'Ryosuke',

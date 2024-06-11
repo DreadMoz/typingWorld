@@ -24,6 +24,7 @@ public class GenerateSentence
 
     // ひらがな -> ローマ字マッピング
     private static readonly Dictionary<string, string[]> romanTypeMap = new Dictionary<string, string[]> {
+    {"・", new string[1] {"/"}},
     {"あ", new string[1] {"a"}},
     {"い", new string[2] {"i", "yi"}},
     {"う", new string[3] {"u", "wu", "whu"}},

@@ -194,7 +194,7 @@ public class SaveData : ScriptableObject
         Email = googleMail;
         Ou = googleOu;
         LastName = googleLastName;
-        Status[st.Gold] = 50;
+        Status[st.Gold] = 100;
 
         // ExRank に値を設定
         Status[st.Server] = 0;

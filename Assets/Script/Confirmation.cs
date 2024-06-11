@@ -74,7 +74,7 @@ public class Confirmation : MonoBehaviour
 
                 inventoryui.setAllItems();
                 statusui.dispStatus();
-                shopListReset.ShowItemList(0);
+                shopListReset.ShowItemList(shopListReset.tabNo);
 
                 inventoryui.turnImage(blankIndex);
             }

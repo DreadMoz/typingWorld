@@ -501,12 +501,12 @@ public class TypingSoft : MonoBehaviour
         // 判定器などの初期化
         InitSentenceData();
 
-        if (theme.hide < currentThemeIndex)
+        if (theme.hide < 1)
         {
-            UIJ.text = nQJ;
-            UIH.text = nQH;
-            UIR.text = nQR;
+            UIH.text = nQH;     // ひらがな表示
+            UIR.text = nQR;     // ローマ字表示
         }
+        UIJ.text = nQJ;     // 日本語表示
         // 変数等の初期化
         isRecMistype = false;
         isSentenceMistyped = false;

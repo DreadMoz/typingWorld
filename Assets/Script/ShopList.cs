@@ -32,6 +32,8 @@ public class ShopList : MonoBehaviour
     [SerializeField]
     private ShopData shopDatabase; // ShopDatabaseへの参照
 
+    public int tabNo = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,26 +42,29 @@ public class ShopList : MonoBehaviour
 
         kAnimator = kinoko.GetComponent<Animator>(); // kinokoのアニメーターを取得
         // 初期アイテムリストの表示
-        ShowItemList(0);
+        ShowItemList(tabNo);
     }
 
     public void ShowItemListWeapons()
     {
+        tabNo = 0;
         kAnimator.SetTrigger("tab");
         talk.text = "手にもつどうぐですよ。";
-        ShowItemList(0);
+        ShowItemList(tabNo);
     }
     public void ShowItemListGlasses()
     {
+        tabNo = 1;
         kAnimator.SetTrigger("tab");
         talk.text = "すてきなめがねですよ。";
-        ShowItemList(1);
+        ShowItemList(tabNo);
     }
     public void ShowItemListHats()
     {
+        tabNo = 2;
         kAnimator.SetTrigger("tab");
         talk.text = "かわいいぼうしですよ。";
-        ShowItemList(2);
+        ShowItemList(tabNo);
     }
 
     public void ShowItemList(int kind)
@@ -73,10 +78,10 @@ public class ShopList : MonoBehaviour
                 itemIDsToShow = shopDatabase.weaponIDs;
                 break;
             case 1:
-                itemIDsToShow = shopDatabase.hatIDs;
+                itemIDsToShow = shopDatabase.glassesIDs;
                 break;
             case 2:
-                itemIDsToShow = shopDatabase.glassesIDs;
+                itemIDsToShow = shopDatabase.hatIDs;
                 break;
             default:
                 break;
@@ -91,7 +96,7 @@ public class ShopList : MonoBehaviour
             }
         }
         // コンテンツエリアの高さをアイテム数に基づいて設定
-        float contentHeight = itemIDsToShow.Count * 83; // アイテムの高さ
+        float contentHeight = itemIDsToShow.Count * 70; // アイテムの高さ
         shopItemParentRectTransform.sizeDelta = new Vector2(shopItemParentRectTransform.sizeDelta.x, contentHeight);
     }
 
