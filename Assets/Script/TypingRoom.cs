@@ -112,22 +112,32 @@ public class TypingRoom : MonoBehaviour
     private void ShowMenuList(int menuNo)
     {
         float contentHeight;
+        double childLines;
         switch (menuNo)
         {
             case 1:
+                // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
+                childLines = Math.Ceiling((double)listParent.transform.childCount / 3);
+                // コンテンツエリアの高さをアイテム数に基づいて設定
+                contentHeight = (int)childLines * 200; // アイテムの高さ
                 break;
             case 2:
+                // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
+                childLines = Math.Ceiling((double)listParent.transform.childCount / 3);
+                // コンテンツエリアの高さをアイテム数に基づいて設定
+                contentHeight = (int)childLines * 200; // アイテムの高さ
                 break;
             case 3:
+                // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
+                childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
+                // コンテンツエリアの高さをアイテム数に基づいて設定
+                contentHeight = (int)childLines * 200; // アイテムの高さ
                 break;
             default:
+                childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
+                contentHeight = (int)childLines * 200; // アイテムの高さ
                 break;
         }
-        // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
-        double childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
-
-        // コンテンツエリアの高さをアイテム数に基づいて設定
-        contentHeight = (int)childLines * 200; // アイテムの高さ
 
         listParent.sizeDelta = new Vector2(listParent.sizeDelta.x, contentHeight);
     }

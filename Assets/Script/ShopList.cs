@@ -96,7 +96,8 @@ public class ShopList : MonoBehaviour
             }
         }
         // コンテンツエリアの高さをアイテム数に基づいて設定
-        float contentHeight = itemIDsToShow.Count * 70; // アイテムの高さ
+        float contentHeight = itemIDsToShow.Count * 77
+        ; // アイテムの高さ
         shopItemParentRectTransform.sizeDelta = new Vector2(shopItemParentRectTransform.sizeDelta.x, contentHeight);
     }
 
