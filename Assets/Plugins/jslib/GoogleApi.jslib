@@ -6,35 +6,49 @@ mergeInto(LibraryManager.library, {
     OAuthLogout: function() {
         oAuthLogout();
     },
+    LoadDataFromLocal: function() {
+        // LocalStorageからステータスデータを取得
+        var storedStatusData = localStorage.getItem('statusData');
+        try {
+            if (!storedStatusData) {
+                console.log("LocalStorageにステータスデータが見つかりません。");
+                SendMessage('TitleScene', 'handleInitialData');
+            }
+            else{
+                var statusData = JSON.parse(storedStatusData);
+                console.log("LocalStorageからステータスデータを読み込みました:", statusData);
 
-    LoadDataFromExtension: function() {
-        var message = { action: "loadDataFromExtension" };
-        window.postMessage(message, "*");
-
-        // タイムアウトを監視する
-        var timeoutDuration = 1000; // タイムアウトまでのミリ秒（ここでは3000ms = 3秒）
-        var timeout = setTimeout(function() {
-            // タイムアウト後の処理
-            console.log("タイムアウトになりました。拡張機能からのレスポンスがありません。");
-            SendMessage('TitleScene', 'OnRequestTimeout');
-        }, timeoutDuration);
-
-        // タイムアウトをキャンセルする関数をグローバルに保存する（後で呼び出せるように）
-        window.cancelRequestTimeout = function() {
-            clearTimeout(timeout);
-        };
+                // LocalStorageからランキングデータを取得
+                var storedRankingData = localStorage.getItem('rankingData'); // ランキングデータも取得
+                if (!storedRankingData) {
+                    console.log("LocalStorageにランキングデータが見つかりません。");
+                }
+                else
+                {
+                    var rankingData = JSON.parse(storedRankingData); // ランキングデータを解析
+                    console.log("LocalStorageからランキングデータを読み込みました:", rankingData);
+                    SendMessage('GameManager', 'finishDataLoadExtRanking', JSON.stringify(rankingData));
+                }
+                
+                SendMessage('TitleScene', 'finishDataLoadExtStatus', JSON.stringify(statusData));
+            }
+        } catch (e) {
+            console.error("データの解析中にエラーが発生しました:", e);
+            SendMessage('TitleScene', 'handleDataError');
+        }
     },
-
-    SaveStatusToExtension: function(dataPointer) {
+    SaveStatusToLocal: function(dataPointer) {
         // ポインタから実際の文字列を取得
         var data = UTF8ToString(dataPointer);
-    
-        // 拡張機能にメッセージを送信する新しい関数
-        window.postMessage({action: "sendStatusToExtension", data: data}, "*");
 
-        // タイムアウト監視の処理をここに追加することも可能
+        // LocalStorageにデータを保存
+        localStorage.setItem('statusData', data);
+        console.log("データをLocalStorageに保存しました:", data);
+        // タイムアウト監視などの追加のエラーハンドリングもここに実装可能
     },
-
+    GetNecoRank: function() {
+        getNecoRank();
+    },
     LoadFromGss: function() {
         loadFromGss();
     },

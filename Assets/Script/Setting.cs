@@ -11,21 +11,14 @@ public class Setting : MonoBehaviour
     [SerializeField]
     private GameManager gm;
     public TMP_Text necoNum;
+    public TMP_Text volume;
     public GameObject toGas;
     public Slider necoNumSlider;
 
     // Start is called before the first frame update
     void Start()
     {
-//        if ((gm.savedata.Settings[se.Extension] == 0) || (gm.savedata.Settings[se.CatNum] == 0))
-        if (gm.savedata.Settings[se.Extension] == 0)
-        {
-            necoNumSlider.maxValue = 0;
-        }
-        else
-        {
-            toGas.SetActive(false);
-        }
+        toGas.SetActive(false);
     }
 
     // Update is called once per frame
@@ -49,6 +42,11 @@ public class Setting : MonoBehaviour
     public void hide()
     {
         gm.npcManager.UpdateNPCCount(int.Parse(necoNum.text));
+
+
+        gm.savedata.Settings[se.CatNum] = int.Parse(necoNum.text);
+        gm.savedata.Settings[se.Volume] = int.Parse(volume.text);
+        
         // 画面サイズを都度取得しないと途中での最大化などに対応できない
         float screenWidth = Screen.width;
         float screenHeight = Screen.height;

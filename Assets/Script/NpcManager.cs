@@ -10,7 +10,7 @@ public class NpcManager : MonoBehaviour
     public GameObject npcPrefab; // NPCのプレハブ
     public Transform[] spawnPoints; // NPCを生成する位置を保持する配列
     public int numberOfNPCs = 10; // 生成するNPCの数、デフォルトは10
-    private int[] pickedPlayers;     // NPCとして登場するユーザーの順位
+    List<int> pickedPlayers = new List<int>();   // NPCとして登場するユーザーの順位
 
     void Start()
     {
@@ -19,34 +19,37 @@ public class NpcManager : MonoBehaviour
     void shufflePlayers()
     {
         List<int> playerPool = new List<int>();
-        for (int i = 1; i <= 150; i++)
+        for (int i = 1; i <= gm.savedata.Settings[se.maxRank]; i++)
         {
             playerPool.Add(i);
         }
 
-        pickedPlayers = new int[numberOfNPCs];
-        for (int i = 0; i < numberOfNPCs; i++)
+        for (int I = 0; I < numberOfNPCs; I++)
         {
-            int randomIndex = Random.Range(0, playerPool.Count - 1);
-            pickedPlayers[i] = playerPool[randomIndex];
-            playerPool.RemoveAt(randomIndex); // 選んだ数値をプールから削除して重複を防ぐ
+            if (playerPool.Count == 0) {
+                Debug.LogError("No more players to pick.");
+                break;
+            }
+            int randomIndex = Random.Range(0, playerPool.Count);
+            pickedPlayers.Add(playerPool[randomIndex]);
+            playerPool.RemoveAt(randomIndex);
         }
     }
 
     public void SpawnNPCs()
     {
-        if (gm.savedata.Settings[se.Extension] == 0)
+        if (gm.savedata.ExRankings.Count == 0 || gm.savedata.ExRankings[0].Name == "")
         {
-            return;
-        }
-        if (gm.savedata.ExRankings[0].Name == "")
-        {
+            Debug.LogWarning("SpawnNPCs：ExRankings is empty or first entry is invalid.");
             return;
         }
 
         shufflePlayers();
         // 生成するNPCの数をスポーンポイントの数と比較し、小さい方を使用
         int spawnCount = Mathf.Min(numberOfNPCs, spawnPoints.Length);
+        if (spawnPoints.Length < numberOfNPCs) {
+            Debug.LogError("Not enough spawn points for the number of NPCs.");
+        }
 
         // 既存のNPCをクリア
         foreach (Transform child in transform)
@@ -57,6 +60,10 @@ public class NpcManager : MonoBehaviour
         // 指定された数だけNPCをスポーン
         for (int i = 0; i < spawnCount; i++)
         {
+            if (i >= pickedPlayers.Count || pickedPlayers[i] >= gm.savedata.ExRankings.Count) {
+                Debug.LogError($"Invalid player index: {i}, pickedPlayers length: {pickedPlayers.Count}, ExRankings count: {gm.savedata.ExRankings.Count}");
+                continue; // 無効なインデックスをスキップ
+            }
             // Y軸周りでランダムな角度を選択
             Quaternion randomRotation = Quaternion.Euler(0, Random.Range(110, 220), 0);
             // NPCプレハブのインスタンスを生成し、指定された位置に配置
@@ -69,18 +76,7 @@ public class NpcManager : MonoBehaviour
             {
                 if (gm.savedata.ExRankings.Count > 0)
                 {
-                    string nickname;
-                    Item item = gm.db.GetItemList()[gm.savedata.ExRankings[pickedPlayers[i]].NickName]; // ここたまにエラー出るぞ
-                    if (item != null)
-                    {
-                        nickname = item.MyItemName;
-                    }
-                    else
-                    {
-                        nickname = "さん";
-                    }
-                    chibiCatScript.setName(gm.savedata.ExRankings[pickedPlayers[i]].Name + nickname);
-
+                    chibiCatScript.setName(gm.savedata.ExRankings[pickedPlayers[i]].Name + gm.getNickname(gm.savedata.ExRankings[pickedPlayers[i]].NickName));
                     chibiCatScript.setChara(gm.savedata.ExRankings[pickedPlayers[i]].CatBody - 200);
                     chibiCatScript.releaseAllEquip();
                     chibiCatScript.changeEquipHands(gm.savedata.ExRankings[pickedPlayers[i]].RightHand, gm.savedata.ExRankings[pickedPlayers[i]].LeftHand, 0);

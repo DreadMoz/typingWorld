@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Text;
+using Unity.VisualScripting;
 public class GssIndex
 {
     public const int Status = 3;
@@ -43,7 +44,7 @@ public class eq
 // Gold,Server,Rank,userName
 public class se
 {
-    public const int Extension = 0;
+    public const int maxRank = 0;
     public const int Volume = 1;
     public const int CatNum = 2;
     public const int dummy3 = 3;
@@ -54,24 +55,18 @@ public class se
     public const int dummy8 = 8;
     public const int dummy9 = 9;
 }
-[Serializable]
-public class ExtensionData
-{
-    public JsonData rankingData;
-    public SerializableExSaveData statusData; // StatusDataTypeはステータスデータの型
-}
 
 // dataオブジェクト
-public class JsonData
+public class SerializableRankingData
 {
-    public List<List<object>> value;
+    public List<List<object>> rankingData;
 }
 
 // 拡張機能ランキング
 [Serializable]
 public class ExRank
 {
-    public int Stage { get; set; }
+    public string Email { get; set; }
     public int Ranking { get; set; }
     public string Name { get; set; }
     public int RightHand { get; set; }
@@ -86,7 +81,7 @@ public class ExRank
 
 // 拡張機能ステータス
 [Serializable]
-public class SerializableExSaveData
+public class SerializableStatusData
 {
     public string Email;
     public string Ou;
@@ -115,6 +110,7 @@ public class SerializableExSaveData
 [CreateAssetMenu(fileName = "SaveData", menuName = "SaveData")]
 public class SaveData : ScriptableObject
 {
+    System.Random random = new System.Random(); // Random オブジェクトのインスタンスを作成
     // ExRankのリストを作成
     public List<ExRank> ExRankings = new List<ExRank>();
 
@@ -153,36 +149,108 @@ public class SaveData : ScriptableObject
 
 
     // 拡張機能からランキング一覧を取得する。
-    public void setRankingFromExtension(string rankingData)
+    public void setRankingFromLocal(string rankingData)
     {
         Debug.Log("Received Ranking JSON: " + rankingData);
 
-        // JSONデータをデシリアライズ
-        var jsonResponse = JsonConvert.DeserializeObject<JsonData>(rankingData);
+        ExRankings.Clear();
+        int existRanking = 0;
+        Settings[se.maxRank] = 149;     // 150引く自分
 
-        foreach (var item in jsonResponse.value)
+        try
         {
+            var jsonResponse = JsonConvert.DeserializeObject<SerializableRankingData>(rankingData);
+            if (jsonResponse != null && jsonResponse.rankingData != null)
+            {
+                foreach (var item in jsonResponse.rankingData)
+                {
+                    // Stageの値をチェックし、変換できない場合はこの項目の処理をスキップ
+                    if (item[0].ToString() == "")
+                    {
+                        break;
+                    }
+                    if (item[0].ToString() == Email)
+                    {
+                        continue;
+                    }
+                    var rank = new ExRank
+                    {
+                        Email = item[0].ToString(),
+                        Ranking = ++existRanking,
+                        Name = item[2].ToString(),
+                        RightHand = Convert.ToInt32(item[3]),
+                        Glasses = Convert.ToInt32(item[4]),
+                        Head = Convert.ToInt32(item[5]),
+                        LeftHand = Convert.ToInt32(item[6]),
+                        CatBody = Convert.ToInt32(item[7]),
+                        CatFace = Convert.ToInt32(item[8]),
+                        NickName = Convert.ToInt32(item[9]),
+                        Kpm = Convert.ToInt32(item[10])
+                    };
+                    ExRankings.Add(rank);
+                }
+                Settings[se.maxRank] = existRanking;
+
+                foreach (var rank in ExRankings)
+                {
+                    Debug.Log($"Ranking: {rank.Ranking}： {rank.Name}： {rank.Kpm}");
+                }
+            }
+            else
+            {
+                Debug.LogError("ランキングデータのデシリアライズに失敗しました。");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("データの読み込み中に例外発生: " + ex.Message);
+        }
+        // ダミーデータで２００まで埋める
+        int dummyNum = 199 - existRanking;           // 埋める数
+        int kpm = ExRankings[ExRankings.Count - 1].Kpm;
+
+        for (int i=0; i<dummyNum; i++)
+        {
+            kpm -= random.Next(0, 2);
+            if (kpm < 0)
+            {
+                kpm = 0;
+            }
             var rank = new ExRank
             {
-                Stage = Convert.ToInt32(item[0]),
-                Ranking = Convert.ToInt32(item[1]),
-                Name = (string)item[2],
-                RightHand = Convert.ToInt32(item[3]),
-                Glasses = Convert.ToInt32(item[4]),
-                Head = Convert.ToInt32(item[5]),
-                LeftHand = Convert.ToInt32(item[6]),
-                CatBody = Convert.ToInt32(item[7]),
-                CatFace = Convert.ToInt32(item[8]),
-                NickName = Convert.ToInt32(item[9]),
-                Kpm = Convert.ToInt32(item[10])
+                Ranking = ++existRanking,
+                Name = getDummyName(),
+                NickName = 0,
+                Kpm = kpm
             };
-            ExRankings.Add(rank);       // ランキングデータ格納場所
-        }
-        foreach (var rank in ExRankings)
-        {
-            Debug.Log($"Ranking: {rank.Ranking}： {rank.Name}： {rank.Kpm}");
+            ExRankings.Add(rank);
         }
     }
+
+    private string getDummyName()
+    {
+        List<string> names = new List<string> // ダミーの名前リスト
+        {
+            "ryosuke", "yuto", "yuki", "hayato", "haruki", "ryusei", "kaito", "kota", "yuma", "soma","riku", "sora",
+            "ryota", "daiki", "minato", "ren", "hinata", "kazuki", "takumi", "hiroto","ryuto", "sosuke", "ryu", "keita",
+            "koki", "toma", "seiji", "yu", "hana", "yui", "rin", "mei", "mio", "saki", "aoi", "yuna", "maika", "kokona",
+            "miku", "nana", "rika", "yuka", "haruka", "emi", "risa", "yuri", "sakura", "rei", "noa", "mai", "rio", "meika",
+            "erika", "airi", "marin", "aya", "mina", "yuko", "kaede", "ayumu", "taiga", "shota", "eito", "reo", "kensei",
+            "shin", "manato", "ryoga", "kanata", "tsubasa", "itsuki", "asahi", "mahiro", "haru", "ikki", "sho", "kyou",
+            "ayaka", "sena", "himari", "yume", "aina", "kanon", "saya", "kaho", "fumi", "sara", "momoka", "sumire", "aiko",
+            "akari", "hinako", "yuina", "riona", "manami", "sayaka", "nao", "yusuke", "tatsuya", "kazuma", "masato", "ai",
+            "shun", "kyohei", "takuya", "naoki", "kenta", "jun", "misaki", "riko", "chinatsu", "kumi", "miyu", "ryou",
+            "naoko", "keiko", "chie", "akiko", "asuka", "kaito", "natsuki", "ryohei", "satoshi", "takahiro", "yasuharu",
+            "yoshiki", "yota", "daigo", "ema", "himawari", "ichika", "juri", "kairi", "runa", "mao", "nagisa", "otoha",
+            "hina", "rena", "suzu", "ayane", "umi", "nami", "wakana", "haruto", "yuto", "sota", "ayana", "rokoro", "yuji",
+            "ryuji", "nozomi", "miyabi", "miyaka", "kotone", "atsushi", "atsuya", "riho", "tomoya", "kanako", "yamato",
+            "seiya", "kazuya", "hiroki", "yoichi", "masatomo", "shinichi", "mikasa"
+        };
+
+        int index = random.Next(names.Count); // namesリストの範囲内でランダムなインデックスを生成
+        return names[index]; // 選択された名前を返す
+    }
+
 
     // 初期データ登録。
     public void setNewData(string googleMail, string googleFirstName, string googleLastName, string googleOu)
@@ -205,7 +273,7 @@ public class SaveData : ScriptableObject
         Equipment[eq.LeftHand] = 0;
         Equipment[eq.CatFace] = 0;
         Equipment[eq.NickName] = 0;
-        Status[st.Kpm] = 0;
+        Status[st.Kpm] = 10;
 
         for (int i = 0; i < Inventory.Length; i++)
         {
@@ -222,57 +290,64 @@ public class SaveData : ScriptableObject
         Medals[0] = 1;
         for (int i = 0; i < Kpms.Length; i++)
         {
-            Kpms[i] = 0;
+            Kpms[i] = 10;
         }
-        Settings[se.Volume] = 50;
+        Settings[se.maxRank] = 149;
+        Settings[se.Volume] = 70;
     }
 
     // 拡張機能からステータスデータを取得する。
-    public void setStatusFromExtension(string statusData)
+    public void setStatusFromLocal(string statusData)
      {
         Debug.Log("Received Status JSON: " + statusData);
-
-        // JSONデータをデシリアライズ
-        SerializableExSaveData exData = JsonConvert.DeserializeObject<SerializableExSaveData>(statusData);
-
-        // ApiStatus に値を設定
-        Email = exData.Email;
-        Ou = exData.Ou;
-        LastName = exData.LastName;
-        Status[st.Gold] = exData.Gold;
-
-        // ExRank に値を設定
-        Status[st.Server] = exData.Stage;
-        Status[st.Rank] = exData.Ranking;
-        UserName = exData.Name;
-        Equipment[eq.RightHand] = exData.RightHand;
-        Equipment[eq.Glasses] = exData.Glasses;
-        Equipment[eq.Head] = exData.Head;
-        Equipment[eq.LeftHand] = exData.LeftHand;
-        Equipment[eq.CatBody] = exData.CatBody;
-        Equipment[eq.CatFace] = exData.CatFace;
-        Equipment[eq.NickName] = exData.NickName;
-        Status[st.Kpm] = exData.Kpm;
-
-        // ここは配列40のコピー
-        for (int i = 0; i < Inventory.Length; i++)
+        // JSONデータのトップレベルを取得
+        var wrappedData = JsonConvert.DeserializeObject<Dictionary<string, SerializableStatusData>>(statusData);
+        
+        if (wrappedData.TryGetValue("statusData", out SerializableStatusData exData))
         {
-            Inventory[i] = exData.Inventory[i];
+            // ApiStatus に値を設定
+            Email = exData.Email;
+            Ou = exData.Ou;
+            LastName = exData.LastName;
+            Status[st.Gold] = exData.Gold;
+
+            // ExRank に値を設定
+            Status[st.Server] = exData.Stage;
+            Status[st.Rank] = exData.Ranking;
+            UserName = exData.Name;
+            Equipment[eq.RightHand] = exData.RightHand;
+            Equipment[eq.Glasses] = exData.Glasses;
+            Equipment[eq.Head] = exData.Head;
+            Equipment[eq.LeftHand] = exData.LeftHand;
+            Equipment[eq.CatBody] = exData.CatBody;
+            Equipment[eq.CatFace] = exData.CatFace;
+            Equipment[eq.NickName] = exData.NickName;
+            Status[st.Kpm] = exData.Kpm;
+
+            // ここは配列40のコピー
+            for (int i = 0; i < Inventory.Length; i++)
+            {
+                Inventory[i] = exData.Inventory[i];
+            }
+
+            // ここはlong[4]をbool[100]に変換
+            DecodeItemData(exData.Items);
+
+            // ここはlong[5]をint[100]に変換
+            DecodeMedalData(exData.Medals);
+
+            // ここは配列8<-文字列
+            DecodeKpmData(exData.Kpms);
+
+            // ここは配列10のコピー
+            for (int i = 0; i < Settings.Length; i++)
+            {
+                Settings[i] = exData.Settings[i];
+            }
         }
-
-        // ここはlong[4]をbool[100]に変換
-        DecodeItemData(exData.Items);
-
-        // ここはlong[5]をint[100]に変換
-        DecodeMedalData(exData.Medals);
-
-        // ここは配列8<-文字列
-        DecodeKpmData(exData.Kpms);
-
-        // ここは配列10のコピー
-        for (int i = 0; i < Settings.Length; i++)
+        else
         {
-            Settings[i] = exData.Settings[i];
+            Debug.LogError("Failed to deserialize statusData.");
         }
     // testEncodeMedals();      // デバッグで使用した。Medalエンコード->デコードテスト
     }
@@ -400,9 +475,9 @@ public class SaveData : ScriptableObject
     }
 
     // 拡張機能に保存するためのデータを現在のゲームデータから作る。
-    public string CompileGameDataForExtension(SaveData sd)
+    public string CompileGameDataForLocal(SaveData sd)
     {
-        SerializableExSaveData data = new SerializableExSaveData
+        SerializableStatusData data = new SerializableStatusData
         {
             Email = sd.Email,
             Ou = sd.Ou,
@@ -437,7 +512,7 @@ public class SaveData : ScriptableObject
     // GSSに保存するためのデータを現在のゲームデータから作る。
     public string CompileGameDataForGss(SaveData sd)
     {
-        SerializableExSaveData data = new SerializableExSaveData
+        SerializableStatusData data = new SerializableStatusData
         {
             Email = sd.Email,
             Ou = sd.Ou,

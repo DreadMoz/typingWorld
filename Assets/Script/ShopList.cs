@@ -32,6 +32,8 @@ public class ShopList : MonoBehaviour
     [SerializeField]
     private ShopData shopDatabase; // ShopDatabaseへの参照
 
+    [SerializeField]
+    private ScrollRect scrollRect;
     public int tabNo = 0;
 
     // Start is called before the first frame update
@@ -51,6 +53,7 @@ public class ShopList : MonoBehaviour
         kAnimator.SetTrigger("tab");
         talk.text = "手にもつどうぐですよ。";
         ShowItemList(tabNo);
+        scrollRect.verticalNormalizedPosition = 1.0f;
     }
     public void ShowItemListGlasses()
     {
@@ -58,6 +61,7 @@ public class ShopList : MonoBehaviour
         kAnimator.SetTrigger("tab");
         talk.text = "すてきなめがねですよ。";
         ShowItemList(tabNo);
+        scrollRect.verticalNormalizedPosition = 1.0f;
     }
     public void ShowItemListHats()
     {
@@ -65,6 +69,7 @@ public class ShopList : MonoBehaviour
         kAnimator.SetTrigger("tab");
         talk.text = "かわいいぼうしですよ。";
         ShowItemList(tabNo);
+        scrollRect.verticalNormalizedPosition = 1.0f;
     }
 
     public void ShowItemList(int kind)

@@ -288,6 +288,16 @@
         /// </remarks>
         async function saveToGss(data) {
             console.log("saveToGss:", data);
+            const lastSavedTime = localStorage.getItem('lastSavedTime');
+            const currentTime = new Date();
+            const timestamp = new Date(lastSavedTime);
+
+            // 前回の保存から24時間が経過しているか確認
+            if (lastSavedTime && (currentTime - timestamp) < 86400000) { // 86400000 milliseconds = 24 hours
+                console.log("Skip saving, since last save was less than 24 hours ago.");
+                return; // 24時間以内なら保存処理をスキップ
+            }
+
             try {
                 const ACCESS_TOKEN = gapi.auth.getToken().access_token;  // OAuth2.0のアクセストークンを取得
                 const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
@@ -306,7 +316,21 @@
 
                 const response = await fetch(url, options);
                 const responseData = await response.json();
-                console.log(responseData);
+                console.log('Received data:', responseData); // デバッグ用に受け取ったデータをログ出力
+
+                // response.result を JSON として解析
+                if (responseData && responseData.response && responseData.response.result) {
+                    const resultData = JSON.parse(responseData.response.result);
+                    if (resultData.result === "success") {
+                        const timestamp = new Date().toISOString();
+                        localStorage.setItem('lastSavedTime', timestamp);
+                        console.log("Data saved successfully at:", timestamp);
+                    } else {
+                        console.error("Failed to save data:", resultData);
+                    }
+                } else {
+                    console.error("Failed to save data: Invalid response structure.");
+                }
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -314,61 +338,98 @@
         window.saveToGss = saveToGss;
 
         /// <summary>
-        /// 拡張機能からのメッセージ受信
+        /// ランキングデータを取得します。
         /// </summary>
-        /// <param name="event">受信データ</param>
+        /// <param name="data">GASに送るJSON形式のメッセージ文字列。データの内容はカンマ区切りで構成されています。</param>
         /// <remarks>
-        /// 拡張機能からランキングデータとステータスデータをJSON形式でまとめて取得する。
+        /// GASでスプレッドシートの同じメールアドレスの行が更新される
         /// </remarks>
-        window.addEventListener('message', function (event) {
-            // セキュリティを確保するために、信頼できるオリジンからのメッセージのみを受け入れる
-            if (event.origin !== "http://127.0.0.1:8000" && event.origin !== "https://dreadmoz.github.io") {
+        async function getNecoRank() {
+            // LocalStorageからstatusDataを取得
+            const storedData = localStorage.getItem('statusData');
+            if (!storedData) {
+                console.log("LocalStorageからstatusDataが見つかりません。");
                 return;
             }
 
-            // Content Scriptからのメッセージを確認する
-            if (event.data && event.data.type === "FROM_EXTENSION") {
-                console.log("Received data from extension:", event.data);
+            const parsedData = JSON.parse(storedData);
+            const statusData = parsedData.statusData; // ここでネストされたstatusDataにアクセス
+            console.log("Complete statusData:", statusData); // 全データをログ出力して確認
 
-                // タイムアウトタイマーをキャンセル
-                if (window.cancelRequestTimeout) {
-                    window.cancelRequestTimeout();
-                }
+            const Stage = statusData.Stage;
+            console.log("Extracted Stage:", Stage); // ステージ値のログ出力
 
-                // データが正しく受信できた場合の処理
-                if (event.data.data && event.data.data.status === "success") {
-                    // combinedDataの作成前にデータの存在をチェック
-                    const hasRankingData = !!event.data.data.data.rankingData;
-                    const hasStatusData = !!event.data.data.data.statusData;
+            // 前回のランキング取得から24時間が経過しているか確認
+            const lastLoadedTime = localStorage.getItem('lastLoadedTime');
+            const currentTime = new Date();
+            const timestamp = new Date(lastLoadedTime);
 
-                    if (hasRankingData && hasStatusData) {
-                        // statusDataを修正し、特定のフィールドを文字列として扱う
-                        const modifiedStatusData = {
-                            ...event.data.data.data.statusData,
-                            Kpms: event.data.data.data.statusData.Kpms.toString(),
-                            Items: event.data.data.data.statusData.Items.map(item => item.toString()),
-                            Medals: event.data.data.data.statusData.Medals.map(medal => medal.toString())
-                        };
-                        const combinedData = {
-                            rankingData: event.data.data.data.rankingData,
-                            statusData: event.data.data.data.statusData
-                        };
-                        console.log("combinedData:", combinedData);
-                        myGameInstance.SendMessage('TitleScene', 'finishDataLoadExt', JSON.stringify(combinedData));
-                    } else {
-                        // 不足しているデータに応じたエラーメッセージを出力
-                        if (!hasRankingData) console.log("rankingData is missing.");
-                        if (!hasStatusData) console.log("statusData is missing.");
-                        myGameInstance.SendMessage('TitleScene', 'handleDataError', "Some data is missing.");
-                    }
-                } else {
-                    // データが初期状態またはエラーである場合の処理
-                    console.log("Data is in the initial state or an error occurred.");
-                    myGameInstance.SendMessage('TitleScene', 'handleDataError', "Data is in the initial state or an error occurred.");
-                }
+            if (lastLoadedTime && (currentTime - timestamp) < 86400000) { // 86400000 milliseconds = 24 hours
+                console.log("Skip loading ranking, since last load was less than 24 hours ago.");
+                return; // 24時間以内ならロード処理をスキップ
             }
-        });
-        
+
+            if (Stage !== undefined) {
+                try {
+                    const ACCESS_TOKEN = gapi.auth.getToken().access_token; // OAuth2.0のアクセストークンを取得
+                    const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
+                    const sendData = JSON.stringify({
+                        function: 'getRanking',
+                        parameters: [Stage]
+                    });
+                    const options = {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${ACCESS_TOKEN}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: sendData
+                    };
+                    const response = await fetch(url, options);
+                    if (!response.ok) { 
+                        throw new Error(`Network response was not ok: ${response.status}`);
+                    }
+
+                    const responseData = await response.json();
+                    console.log('Data received successfully:', responseData);
+
+                    if (responseData && responseData.response && responseData.response.result) {
+                        try {
+                            // response.result を直接使用するか、必要に応じて JSON.parse を使用
+                            const rankingResult = typeof responseData.response.result === 'string'
+                                ? JSON.parse(responseData.response.result)
+                                : responseData.response.result;
+
+                            console.log("Parsed Ranking Data:", rankingResult);
+
+                            if (rankingResult.values) {
+                                localStorage.setItem('rankingData', JSON.stringify({rankingData: rankingResult.values}));
+                                console.log("ランキングデータをLocalStorageに保存しました");
+
+                                // データの取得が成功したらタイムスタンプを保存
+                                const timestamp = new Date().toISOString();
+                                localStorage.setItem('lastLoadedTime', timestamp);
+                                console.log("Data loaded successfully at:", timestamp);
+
+                                myGameInstance.SendMessage('GameManager', 'finishDataLoadExtRanking', JSON.stringify({rankingData: rankingResult.values}));
+                            } else {
+                                console.error("Failed to parse ranking data from response.");
+                            }
+                        } catch (e) {
+                            console.error("Error parsing JSON:", e);
+                        }
+                    } else {
+                        console.error("Failed to load data.");
+                    }
+                } catch (error) {
+                    console.error('Failed to send data:', error);
+                }
+            } else {
+                console.log("StageがstatusData内に存在しません。");
+            }
+        }
+        window.getNecoRank = getNecoRank;
+
     </script>
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>

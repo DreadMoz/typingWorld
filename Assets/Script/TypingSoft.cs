@@ -658,7 +658,14 @@ public class TypingSoft : MonoBehaviour
             if (inputStr.Equals(" "))
             {
                 AssistKeyboardObj.pushKeyAction(inputStr);
-                GameManager.NewKpm = (int)kpm;
+                if (theme.timer > 0)
+                {
+                    GameManager.NewKpm = (int)kpm;
+                }
+                else 
+                {
+                    GameManager.NewKpm = 0;
+                }
                 GameManager.KeyParSecond = correctN / totalTime;
                 GameManager.AnswerRate = correctAR;
                 GameManager.Seeker = totalSeeker;

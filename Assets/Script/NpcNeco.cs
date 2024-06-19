@@ -24,7 +24,7 @@ public class NpcNeco : MonoBehaviour
             agent = GetComponent<NavMeshAgent>();
         }
         // ◯秒後に最初の移動を開始し、その後◯秒ごとに繰り返し実行
-        InvokeRepeating("SetRandomDestination", interval, interval);
+        InvokeRepeating("SetRandomDestination", Random.Range(2f, interval), interval);
     }
 
     // Update is called once per frame

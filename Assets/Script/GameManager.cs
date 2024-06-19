@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
     public GameObject typingRoom;
     public GameObject shopRoom;
     public NpcManager npcManager;
+    public Ranking rankingWindow;
 
     public GameObject inventoryButton;  // インベントリボタン
     public GameObject rankingButton;    // ランキングボタン
@@ -103,6 +104,7 @@ public class GameManager : MonoBehaviour
     private int[] newInventory;
     private int[] oldEquip;
     private int[] newEquip;
+    private bool rankScroll = true;
 
     private void Awake()
     {
@@ -165,6 +167,8 @@ public class GameManager : MonoBehaviour
                 ranking.SetActive(false);
                 typingRoom.SetActive(false);
                 shopRoom.SetActive(false);
+
+                connection.getRanking();
             }
             // アニメーションステートが3タイピング後の場合
             else if (SceneNo == (int)scene.House)
@@ -183,7 +187,7 @@ public class GameManager : MonoBehaviour
                 rankingRectTransform.anchoredPosition = rankingShowPos;
                 typingRoom.SetActive(true);
                 shopRoom.SetActive(false);
-                exportExtension();
+                exportLocal();
             }
         }
     }
@@ -224,6 +228,7 @@ public class GameManager : MonoBehaviour
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
         {
+            rankingWindow.DisplayRankings();
             npcManager.SpawnNPCs();
             if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
@@ -236,6 +241,11 @@ public class GameManager : MonoBehaviour
             chibiCat2D.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
             chibiCat2D.changeEquipHead(savedata.Equipment[eq.Head]);
             chibiCat2D.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+            if (NewKpm != 0)
+            {
+                rankingWindow.SetTo(savedata.Status[st.Rank]);
+                rankingWindow.ScrollTo(savedata.Status[st.Rank]);
+            }
         }
         // シーンが2タイピングの場合
         else if (SceneNo == (int)scene.Typing)
@@ -364,6 +374,11 @@ public class GameManager : MonoBehaviour
                     {
                         statusRectTransform.anchoredPosition = statusShowPos;
                         rankingRectTransform.anchoredPosition = rankingShowPos;
+                        if (rankScroll)
+                        {
+                            rankingWindow.ScrollTo(savedata.Status[st.Rank]);
+                            rankScroll = false;
+                        }
                     }
                     count--;
                 }
@@ -455,7 +470,7 @@ public class GameManager : MonoBehaviour
         }
         if (!noChangeFlg)
         {
-            exportExtension();  // 拡張機能に保存
+            exportLocal();  // 拡張機能に保存
         }
         oldInventory = null;        // データクリア
         oldEquip = null;
@@ -463,7 +478,7 @@ public class GameManager : MonoBehaviour
 
     public void recalculateKpm()
     {
-        if ((savedata.Kpms[0] == 0) || (savedata.Status[st.Kpm] > NewKpm * kpmRatio))    // 今回の成績が一定の成績以上であれば
+        if ((savedata.Kpms[0] == 0) || (savedata.Status[st.Kpm] * kpmRatio < NewKpm))    // 今回の成績が一定の成績以上であれば
         {
             savedata.updateKpm(NewKpm);   // kpm更新
         }
@@ -544,7 +559,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private int checkBagItem()
+    public int checkBagItem()
     {
         int ret = 0;
         if (savedata.existInventory(6))
@@ -566,19 +581,18 @@ public class GameManager : MonoBehaviour
         return ret;
     }
 
-    public void exportExtension()
+    public void exportLocal()
     {
-        string saveExtensionJson = savedata.CompileGameDataForExtension(savedata);
-        Debug.Log("saveExtensionJson(GameManager): " + saveExtensionJson);  // ログ出力を追加
-        connection.saveExtension(saveExtensionJson);
+        string saveLocalJson = savedata.CompileGameDataForLocal(savedata);
+        Debug.Log("saveLocalJson(GameManager): " + saveLocalJson);  // ログ出力を追加
+        connection.saveLocal(saveLocalJson);
+        exportGas();        // 毎回GASアクセス要求。index.htmlで２４ｈに１回に制限される。
     }
 
     public void exportGas()
     {
         string saveGasObject = savedata.CompileGameDataForGss(savedata);
-//        string jsonData = JsonConvert.SerializeObject(saveGasObject, Formatting.Indented);
         Debug.Log("saveGasData(GameManager): " + saveGasObject);  // ログ出力を追加
-
         connection.saveGas(saveGasObject);
     }
 
@@ -590,5 +604,41 @@ public class GameManager : MonoBehaviour
     public void firstExtention()
     {
         connection.enetLogin();
+    }
+
+    public string getNickname(int nicknameNo)
+    {
+        string nickname;
+        Item item = db.GetItemList()[nicknameNo];
+        if (item != null)
+        {
+            nickname = item.MyItemName;
+        }
+        else
+        {
+            nickname = "さん";
+        }
+        return nickname;
+    }
+
+    public void finishDataLoadExtRanking(string rankingDataJson)
+    {
+        try
+        {
+            var rankingData = JsonConvert.DeserializeObject<SerializableRankingData>(rankingDataJson);
+            if (rankingData != null && rankingData.rankingData != null)
+            {
+                savedata.setRankingFromLocal(JsonConvert.SerializeObject(rankingData));
+                Debug.Log("ランキングデータをロードしました。");
+            }
+            else
+            {
+                Debug.Log("ランキングデータがnullまたは不完全");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("データの読み込み中に例外発生: " + ex);
+        }
     }
 }

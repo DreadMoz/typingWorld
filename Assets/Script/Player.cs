@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     [SerializeField] private ChibiCat chibiCat;
     [SerializeField] private float hitBackForce = 0.3f;
     [SerializeField] private GameObject keepOut;
+    public Ranking rankingWindow;
 
     private Animator pAnimator;
     public Camera playerCamera; // レイキャストに使用するカメラ
@@ -131,13 +132,14 @@ public class Player : MonoBehaviour
 
             // NavMeshAgentの目的地をリセット
             agent.ResetPath();
-            // "Bow" トリガーアニメーションを開始
+            // "hi" トリガーアニメーションを開始
             pAnimator.SetTrigger("hi");
 
             practice.calcStars();       // 表示する星を計算
             practice.showRoomMenu();    // ルームメニュー表示
 
             fadeDoor.StartFadeIn();
+
         }
         else if (typingWindow == -1)
         {
@@ -185,7 +187,7 @@ public class Player : MonoBehaviour
             // カメラ切り替え
             switchCam.SwitchCamera();
 
-            // "Bow" トリガーアニメーションを開始
+            // "hi" トリガーアニメーションを開始
             pAnimator.SetTrigger("hi");
 
             fadeDoor.StartFadeIn();
