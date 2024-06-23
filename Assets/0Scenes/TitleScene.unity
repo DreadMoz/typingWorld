@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.10269172, g: 0.15436515, b: 0.27270758, a: 1}
+  m_IndirectSpecularColor: {r: 0.13073657, g: 0.20176916, b: 0.36133218, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1531,6 +1531,7 @@ MonoBehaviour:
   typingRoom: {fileID: 0}
   shopRoom: {fileID: 0}
   npcManager: {fileID: 0}
+  rankingWindow: {fileID: 0}
   inventoryButton: {fileID: 0}
   rankingButton: {fileID: 0}
   settingButton: {fileID: 0}
@@ -5103,7 +5104,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1601968421
 RectTransform:
   m_ObjectHideFlags: 0
