@@ -261,39 +261,23 @@ public class TitleSky : MonoBehaviour
         }
     }
 
-    public void finishDataLoadGas(string jsonMsg)
+    public void finishDataLoadGas(string csvMsg)
     {
         reLogin.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
-        if (string.IsNullOrEmpty(jsonMsg))
+        if (string.IsNullOrEmpty(csvMsg))
         {
             messageText.text = "クラウドデータがありませんでした。あたらしくつくりましょう。";
             showStart();
         }
         else
         {
-            ResponseData responseData = JsonUtility.FromJson<ResponseData>(jsonMsg);
-
-            if (responseData.done && !string.IsNullOrEmpty(responseData.response.result))
-            {
-                if (responseData.response.result == "error:Email not found")
-                {
-                    messageText.text = "クラウドデータがありませんでした。あたらしくつくりましょう。";
-                }
-                else
-                {
-                    string[] dataParts = responseData.response.result.Split(',');
-                    List<object> dataList = new List<object>(dataParts);
-                    gm.savedata.LoadAllDataFromGss(dataList);
-                    Debug.Log("dataList: " + dataList);
-                    messageText.text = "クラウドデータを読み込みました。";
-                }
-            }
-            else
-            {
-                messageText.text += "\nクラウドデータに問題が生じました。";
-            }
+            string[] dataParts = csvMsg.Split(',');
+            List<object> dataList = new List<object>(dataParts);
+            gm.savedata.LoadAllDataFromGss(dataList);
+            Debug.Log("dataList: " + dataList);
+            messageText.text = "クラウドデータを読み込みました。";
             showStart();
         }
     }

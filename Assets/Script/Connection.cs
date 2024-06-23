@@ -312,14 +312,8 @@ public void getRanking()
         string gssData;
         if (gm.gssToggle.isOn)
         {
-            // rankingDataとstatusDataを含むダミーのJSON文字列
-            gssData = @"{
-            ""done"": true,
-            ""response"": {
-                ""type"": ""type.googleapis.com/google.apps.script.v1.ExecutionResponse"",
-                ""result"": ""demonstration@e-net.nara.jp,/公立学校/低学年/OU市/OU小学校,0603-24,65900,7,87,moru,6,0,121,3,0,0,0,333,122333444555666777,54100,476371964491057500,471305275021828740,511767441717405440,0,0,0,0,0""
-                }
-            }";
+            // rankingDataとstatusDataを含むダミーのカンマ区切り文字列
+            gssData = "demonstration@e-net.nara.jp,/公立学校/低学年/OU市/OU小学校,0603-24,65900,7,87,moru,6,0,121,3,0,0,0,333,122333444555666777,54100,476371964491057500,471305275021828740,511767441717405440,0,0,0,0,0";
         }
         else
         {
