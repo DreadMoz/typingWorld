@@ -183,7 +183,6 @@
         /// </summary>
         /// <remarks>
         /// OAuth認証。メール、ユーザ名、プロフィール画像のURL取得
-        
         async function getOAuth() {
             tokenClient.callback = async (resp) => {
                 if (resp.error !== undefined) {
