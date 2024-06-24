@@ -12,19 +12,6 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Collections;
 
-[System.Serializable]
-public class ResponseData       // GASデータ受信用フォーマット
-{
-    public bool done;
-    public Response response;
-}
-
-[System.Serializable]
-public class Response
-{
-    public string type;
-    public string result;
-}
 public class TitleSky : MonoBehaviour
 {
     [SerializeField]
@@ -154,16 +141,13 @@ public class TitleSky : MonoBehaviour
 
         string[] parts = userInfo.Split(',');
         string mail = parts[0];
-        string name = parts.Length > 1 ? parts[1] : "";
-        string imageUrl = parts.Length > 2 ? parts[2] : "";
+        string first_name = parts.Length > 1 ? parts[1] : "";
+        string last_name = parts.Length > 1 ? parts[2] : "";
+        string imageUrl = parts.Length > 2 ? parts[3] : "";
 
         mailText.text = mail;
-        int spaceIndex = name.IndexOf(' ');
-        if (spaceIndex != -1)
-        {
-            firstName.text = name.Substring(0, spaceIndex);
-            lastName.text = name.Substring(spaceIndex + 1);
-        }
+        firstName.text = first_name;
+        lastName.text = last_name;
         StartCoroutine(LoadImage(imageUrl));
 
         if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
@@ -261,23 +245,53 @@ public class TitleSky : MonoBehaviour
         }
     }
 
-    public void finishDataLoadGas(string csvMsg)
+    public void finishDataLoadGas(string jsonMsg)
     {
         reLogin.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
-        if (string.IsNullOrEmpty(csvMsg))
+        if (string.IsNullOrEmpty(jsonMsg))
         {
             messageText.text = "クラウドデータがありませんでした。あたらしくつくりましょう。";
             showStart();
         }
         else
         {
-            string[] dataParts = csvMsg.Split(',');
-            List<object> dataList = new List<object>(dataParts);
-            gm.savedata.LoadAllDataFromGss(dataList);
-            Debug.Log("dataList: " + dataList);
-            messageText.text = "クラウドデータを読み込みました。";
+            SerializableStatusData userData = JsonUtility.FromJson<SerializableStatusData>(jsonMsg);
+
+            if (userData != null)
+            {
+                // データをリストに変換
+                List<object> dataList = new List<object> {
+                    userData.Email,
+                    userData.Ou,
+                    userData.LastName,
+                    userData.Gold,
+                    userData.Stage,
+                    userData.Ranking,
+                    userData.Name,
+                    userData.RightHand,
+                    userData.Glasses,
+                    userData.Head,
+                    userData.LeftHand,
+                    userData.CatBody,
+                    userData.CatFace,
+                    userData.NickName,
+                    userData.Kpm,
+                    userData.Kpms
+                };
+
+                dataList.AddRange(userData.Medals);
+                dataList.AddRange(userData.Items);
+
+                gm.savedata.LoadAllDataFromGss(dataList);
+                Debug.Log("dataList: " + dataList);
+                messageText.text = "クラウドデータを読み込みました。";
+            }
+            else
+            {
+                messageText.text += "\nクラウドデータに問題が生じました。";
+            }
             showStart();
         }
     }
