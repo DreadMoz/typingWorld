@@ -12,19 +12,6 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Collections;
 
-[System.Serializable]
-public class ResponseData       // GASデータ受信用フォーマット
-{
-    public bool done;
-    public Response response;
-}
-
-[System.Serializable]
-public class Response
-{
-    public string type;
-    public string result;
-}
 public class TitleSky : MonoBehaviour
 {
     [SerializeField]
@@ -154,16 +141,13 @@ public class TitleSky : MonoBehaviour
 
         string[] parts = userInfo.Split(',');
         string mail = parts[0];
-        string name = parts.Length > 1 ? parts[1] : "";
-        string imageUrl = parts.Length > 2 ? parts[2] : "";
+        string first_name = parts.Length > 1 ? parts[1] : "";
+        string last_name = parts.Length > 1 ? parts[2] : "";
+        string imageUrl = parts.Length > 2 ? parts[3] : "";
 
         mailText.text = mail;
-        int spaceIndex = name.IndexOf(' ');
-        if (spaceIndex != -1)
-        {
-            firstName.text = name.Substring(0, spaceIndex);
-            lastName.text = name.Substring(spaceIndex + 1);
-        }
+        firstName.text = first_name;
+        lastName.text = last_name;
         StartCoroutine(LoadImage(imageUrl));
 
         if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
@@ -261,20 +245,49 @@ public class TitleSky : MonoBehaviour
         }
     }
 
-    public void finishDataLoadGas(string csvMsg)
+    public void finishDataLoadGas(string jsonMsg)
     {
         reLogin.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
-        if (string.IsNullOrEmpty(csvMsg))
+        if (string.IsNullOrEmpty(jsonMsg))
         {
             messageText.text = "クラウドデータがありませんでした。あたらしくつくりましょう。";
             showStart();
         }
         else
         {
-            string[] dataParts = csvMsg.Split(',');
-            List<object> dataList = new List<object>(dataParts);
+            string[] dataParts = jsonMsg.Split(',');
+
+            if (dataParts.Length < 25)
+            {
+                messageText.text += "\nクラウドデータに問題が生じました。";
+                showStart();
+                return;
+            }
+
+            List<object> dataList = new List<object> {
+                dataParts[0], // Email
+                dataParts[1], // Ou
+                dataParts[2], // LastName
+                Convert.ToInt32(dataParts[3]), // Gold
+                Convert.ToInt32(dataParts[4]), // Stage
+                Convert.ToInt32(dataParts[5]), // Ranking
+                dataParts[6], // Name
+                Convert.ToInt32(dataParts[7]), // RightHand
+                Convert.ToInt32(dataParts[8]), // Glasses
+                Convert.ToInt32(dataParts[9]), // Head
+                Convert.ToInt32(dataParts[10]), // LeftHand
+                Convert.ToInt32(dataParts[11]), // CatBody
+                Convert.ToInt32(dataParts[12]), // CatFace
+                Convert.ToInt32(dataParts[13]), // NickName
+                Convert.ToInt32(dataParts[14]), // Kpm
+                dataParts[15] // Kpms
+            };
+
+            dataList.AddRange(dataParts[16].Split('|')); // Medals
+            dataList.AddRange(dataParts[21].Split('|')); // Items
+
             gm.savedata.LoadAllDataFromGss(dataList);
             Debug.Log("dataList: " + dataList);
             messageText.text = "クラウドデータを読み込みました。";

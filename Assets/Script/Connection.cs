@@ -113,11 +113,11 @@ public void getRanking()
     {
         if (gm.enetToggle.isOn)
         {
-            title.finishOAuth("demonstration@e-net.nara.jp,Demo Robo,https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c");
+            title.finishOAuth("demonstration@e-net.nara.jp,Demo,Robo,https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c");
         }
         else
         {
-            title.finishOAuth("rochy2moo@gmail.com,Ryosuke Mori,https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c");
+            title.finishOAuth("rochy2moo@gmail.com,Ryosuke,Mori,https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c");
         }
     }
 
