@@ -257,7 +257,6 @@ public class TitleSky : MonoBehaviour
         }
         else
         {
-<<<<<<< HEAD
             string[] dataParts = jsonMsg.Split(',');
 
             if (dataParts.Length < 25)
@@ -292,43 +291,6 @@ public class TitleSky : MonoBehaviour
             gm.savedata.LoadAllDataFromGss(dataList);
             Debug.Log("dataList: " + dataList);
             messageText.text = "クラウドデータを読み込みました。";
-=======
-            SerializableStatusData userData = JsonUtility.FromJson<SerializableStatusData>(jsonMsg);
-
-            if (userData != null)
-            {
-                // データをリストに変換
-                List<object> dataList = new List<object> {
-                    userData.Email,
-                    userData.Ou,
-                    userData.LastName,
-                    userData.Gold,
-                    userData.Stage,
-                    userData.Ranking,
-                    userData.Name,
-                    userData.RightHand,
-                    userData.Glasses,
-                    userData.Head,
-                    userData.LeftHand,
-                    userData.CatBody,
-                    userData.CatFace,
-                    userData.NickName,
-                    userData.Kpm,
-                    userData.Kpms
-                };
-
-                dataList.AddRange(userData.Medals);
-                dataList.AddRange(userData.Items);
-
-                gm.savedata.LoadAllDataFromGss(dataList);
-                Debug.Log("dataList: " + dataList);
-                messageText.text = "クラウドデータを読み込みました。";
-            }
-            else
-            {
-                messageText.text += "\nクラウドデータに問題が生じました。";
-            }
->>>>>>> bd86c7417859cb2653b12a06247f8fef8aca314c
             showStart();
         }
     }
