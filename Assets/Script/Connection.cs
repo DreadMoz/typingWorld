@@ -109,15 +109,27 @@ public void getRanking()
     }
     */
 
-    private void getDummyOAuth()
+private void getDummyOAuth()
     {
         if (gm.enetToggle.isOn)
         {
-            title.finishOAuth("demonstration@e-net.nara.jp,Demo,Robo,https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c");
+            string jsonData = @"{
+                ""email"": ""demonstration@e-net.nara.jp"",
+                ""firstName"": ""Demo"",
+                ""lastName"": ""Robo"",
+                ""picture"": ""https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c""
+            }";
+            title.finishOAuth(jsonData);
         }
         else
         {
-            title.finishOAuth("rochy2moo@gmail.com,Ryosuke,Mori,https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c");
+            string jsonData = @"{
+                ""email"": ""rochy2moo@gmail.com"",
+                ""firstName"": ""Ryosuke"",
+                ""lastName"": ""Mori"",
+                ""picture"": ""https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c""
+            }";
+            title.finishOAuth(jsonData);
         }
     }
 
@@ -312,13 +324,32 @@ public void getRanking()
         string gssData;
         if (gm.gssToggle.isOn)
         {
-            // rankingDataとstatusDataを含むダミーのカンマ区切り文字列
-            gssData = "demonstration@e-net.nara.jp,/公立学校/低学年/OU市/OU小学校,0603-24,65900,7,87,moru,6,0,121,3,0,0,0,333,122333444555666777,54100,476371964491057500,471305275021828740,511767441717405440,0,0,0,0,0";
+            // rankingDataとstatusDataを含むダミーのJSON文字列
+            gssData = @"{
+                ""email"": ""demonstration@e-net.nara.jp"",
+                ""ou"": ""/公立学校/低学年/OU市/OU小学校"",
+                ""lastName"": ""0603-24"",
+                ""gold"": ""65900"",
+                ""stage"": ""7"",
+                ""ranking"": ""87"",
+                ""name"": ""moru"",
+                ""rightHand"": ""6"",
+                ""glasses"": ""0"",
+                ""head"": ""121"",
+                ""leftHand"": ""3"",
+                ""catBody"": ""0"",
+                ""catFace"": ""0"",
+                ""nickName"": ""0"",
+                ""kpm"": ""333"",
+                ""kpms"": ""122333444555666777"",
+                ""medals"": [""54100"", ""476371964491057500"", ""471305275021828740"", ""511767441717405440"", ""0""],
+                ""items"": [""0"", ""0"", ""0"", ""0""]
+            }";
         }
         else
         {
-            gssData = "";
+            gssData = @"{}";
         }
         title.finishDataLoadGas(gssData);
-    }
+}
 }

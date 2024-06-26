@@ -56,10 +56,10 @@ public class se
     public const int dummy9 = 9;
 }
 
-// dataオブジェクト
+[System.Serializable]
 public class SerializableRankingData
 {
-    public List<List<object>> rankingData;
+    public string[][] rankingData;
 }
 
 // 拡張機能ランキング
@@ -77,6 +77,30 @@ public class ExRank
     public int CatFace { get; set; }
     public int NickName { get; set; }
     public int Kpm { get; set; }
+}
+
+// GASステータス
+[System.Serializable]
+public class SerializableSympleStatusData
+{
+    public string email;
+    public string ou;
+    public string lastName;
+    public int gold;
+    public int stage;
+    public int ranking;
+    public string name;
+    public int rightHand;
+    public int glasses;
+    public int head;
+    public int leftHand;
+    public int catBody;
+    public int catFace;
+    public int nickName;
+    public int kpm;
+    public string kpms;
+    public string[] medals;
+    public string[] items;
 }
 
 // 拡張機能ステータス
