@@ -667,15 +667,24 @@ public class SaveData : ScriptableObject
 
     public void updateKpm(int newKpm)
     {
+        for (int i = 0; i < Kpms.Length-1; i++)
+        {
+            Debug.Log("Before Kpms["+i+"]:"+Kpms[i]);
+        }
         // 要素1から6までを0から7に移動
         for (int i = 0; i < Kpms.Length-1; i++)
         {
+            Debug.Log(Kpms[i]);
             Kpms[i] = Kpms[i + 1];
         }
 
+        for (int i = 0; i < Kpms.Length-1; i++)
+        {
+            Debug.Log("After Kpms["+i+"]:"+Kpms[i]);
+        }
         // 最後尾の要素に新しい値を代入
         Kpms[Kpms.Length-1] = newKpm;
-
+        Debug.Log("Plus Kpms["+(Kpms.Length-1)+"]:"+newKpm);
         // 平均を計算
         double average = 0;
         int kpmCount = 0;
@@ -685,11 +694,14 @@ public class SaveData : ScriptableObject
             {
                 average += Kpms[i];
                 kpmCount++;
+                Debug.Log("average:"+average);
             }
         }
         average /= kpmCount;
+        Debug.Log("average:"+average);
 
         Status[st.Kpm] = (int)Math.Round(average); // 四捨五入してintにキャスト;
+        Debug.Log("Status[st.Kpm]:"+Status[st.Kpm]);
 
         //        int[] saveKpis = newKpi.Concat(kpms).ToArray();
         //        saveGssKpis(-1, GssSize.Kpms, saveKpis);    // 先頭の前にKpmを追加しているため-1から
