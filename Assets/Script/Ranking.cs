@@ -60,7 +60,7 @@ public class Ranking : MonoBehaviour
 
         int kpm;
         int myBordSet = 0;
-        int rankingNo = 1;
+        int rankingNo = 0;
         // 新しいランキングデータをUIに表示する
         foreach (ExRank rank in gm.savedata.ExRankings)
         {

@@ -185,7 +185,6 @@ public class GameManager : MonoBehaviour
                 rankingRectTransform.anchoredPosition = rankingShowPos;
                 typingRoom.SetActive(true);
                 shopRoom.SetActive(false);
-                exportLocal();      // タイピング後のデータ保存ローカル＆GSS
             }
         }
     }
@@ -226,7 +225,8 @@ public class GameManager : MonoBehaviour
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
         {
-            rankingWindow.DisplayRankings();
+            rankingWindow.DisplayRankings();    // ランキング更新してから・・・
+            exportLocal();                      // タイピング後のデータ保存ローカル＆GSS
             npcManager.SpawnNPCs();
             if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
