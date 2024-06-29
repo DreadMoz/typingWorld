@@ -167,8 +167,6 @@ public class GameManager : MonoBehaviour
                 ranking.SetActive(false);
                 typingRoom.SetActive(false);
                 shopRoom.SetActive(false);
-
-                connection.getRanking();
             }
             // アニメーションステートが3タイピング後の場合
             else if (SceneNo == (int)scene.House)
@@ -187,7 +185,7 @@ public class GameManager : MonoBehaviour
                 rankingRectTransform.anchoredPosition = rankingShowPos;
                 typingRoom.SetActive(true);
                 shopRoom.SetActive(false);
-                exportLocal();
+                exportLocal();      // タイピング後のデータ保存ローカル＆GSS
             }
         }
     }
@@ -470,7 +468,7 @@ public class GameManager : MonoBehaviour
         }
         if (!noChangeFlg)
         {
-            exportLocal();  // 拡張機能に保存
+            exportLocal();  // インベントリ変更後のデータ保存ローカル＆GSS
         }
         oldInventory = null;        // データクリア
         oldEquip = null;

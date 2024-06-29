@@ -461,6 +461,8 @@ public class TitleSky : MonoBehaviour
         }
         else
         {
+            Text messageText = message.GetComponentInChildren<Text>();
+            messageText.text += "ねこをえらぶところからはじめましょう。";
             TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
             buttonText.text = "つくる";
             loginFlg = 2;
@@ -562,7 +564,7 @@ public class TitleSky : MonoBehaviour
         startButton.SetActive(true);
 
         gm.savedata.setNewData(mailText.text, firstName.text, lastName.text, ouText.text);
-        gm.exportLocal();  // 拡張機能に保存
+        gm.exportLocal();  // ねこ決定後のデータ保存ローカル＆GSS
 
         Text messageText = message.GetComponentInChildren<Text>();
         messageText.text = "あたらしいデータをつくりました。スタートしましょう。";

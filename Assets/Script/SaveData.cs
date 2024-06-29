@@ -175,7 +175,7 @@ public class SaveData : ScriptableObject
     // 拡張機能からランキング一覧を取得する。
     public void setRankingFromLocal(string rankingData)
     {
-        Debug.Log("Received Ranking JSON: " + rankingData);
+        Debug.Log("Received Ranking JSON 型をチェック: " + rankingData);
 
         ExRankings.Clear();
         int existRanking = 0;
