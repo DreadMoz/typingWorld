@@ -215,8 +215,8 @@ public class GameManager : MonoBehaviour
             npcManager.SpawnNPCs();
             if (savedata.Equipment[eq.CatBody] != 0)
             {
-                chibiCat.setChara(savedata.Equipment[eq.CatBody] - 200);
-                chibiCat2D.setChara(savedata.Equipment[eq.CatBody] - 200);
+                chibiCat.setChara(savedata.Equipment[eq.CatBody]);
+                chibiCat2D.setChara(savedata.Equipment[eq.CatBody]);
             }
             chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
             chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
@@ -232,8 +232,8 @@ public class GameManager : MonoBehaviour
             npcManager.SpawnNPCs();
             if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
-                chibiCat.setChara(savedata.Equipment[eq.CatBody] - 200);
-                chibiCat2D.setChara(savedata.Equipment[eq.CatBody] - 200);
+                chibiCat.setChara(savedata.Equipment[eq.CatBody]);
+                chibiCat2D.setChara(savedata.Equipment[eq.CatBody]);
             }
             chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
             chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
@@ -252,7 +252,7 @@ public class GameManager : MonoBehaviour
         {
             if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
-                chibiCat.setChara(savedata.Equipment[eq.CatBody] - 200);
+                chibiCat.setChara(savedata.Equipment[eq.CatBody]);
             }
             chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
             chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);

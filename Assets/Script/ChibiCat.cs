@@ -97,13 +97,21 @@ public class ChibiCat : MonoBehaviour
 
     public void setChara(int no)
     {
-        if (no > 9)
+        if (no == 0)
         {
-            no = 0;
+            no = 1;
+        }
+        else
+        {
+            no -= 200;
         }
         Material[] tmp = materials;
-        tmp[0] = cats[no];
-        GetComponent<Renderer>().materials = tmp;
+        if (tmp != null)
+        {
+            Debug.Log(no);
+            tmp[0] = cats[no];
+            GetComponent<Renderer>().materials = tmp;
+        }
     }
     public void setEmo(int no)
     {

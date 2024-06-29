@@ -19,7 +19,7 @@ public class NpcManager : MonoBehaviour
     void shufflePlayers()
     {
         List<int> playerPool = new List<int>();
-        for (int i = 1; i <= gm.savedata.Settings[se.maxRank]; i++)
+        for (int i = 1; i < gm.savedata.Settings[se.maxRank]; i++)
         {
             playerPool.Add(i);
         }
@@ -77,7 +77,7 @@ public class NpcManager : MonoBehaviour
                 if (gm.savedata.ExRankings.Count > 0)
                 {
                     chibiCatScript.setName(gm.savedata.ExRankings[pickedPlayers[i]].Name + gm.getNickname(gm.savedata.ExRankings[pickedPlayers[i]].NickName));
-                    chibiCatScript.setChara(gm.savedata.ExRankings[pickedPlayers[i]].CatBody - 200);
+                    chibiCatScript.setChara(gm.savedata.ExRankings[pickedPlayers[i]].CatBody);
                     chibiCatScript.releaseAllEquip();
                     chibiCatScript.changeEquipHands(gm.savedata.ExRankings[pickedPlayers[i]].RightHand, gm.savedata.ExRankings[pickedPlayers[i]].LeftHand, 0);
                     chibiCatScript.changeEquipHead(gm.savedata.ExRankings[pickedPlayers[i]].Head);

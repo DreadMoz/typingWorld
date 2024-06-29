@@ -67,7 +67,7 @@ public class TitleSky : MonoBehaviour
     private GameObject ashiato;
 
     private Animator animator;
-    private int necoNo = 1;
+    private int necoNo = 201;
     private bool firstPush = false;      // スタートボタンが2回以上押されないようにするためのフラグ
     private bool goNextScene = false;    // ワールドシーンに遷移するためのフラグ
 
@@ -450,7 +450,8 @@ public class TitleSky : MonoBehaviour
     {
         if (gm.savedata.Equipment[eq.CatBody] != 0)
         {
-            cat.setChara(gm.savedata.Equipment[eq.CatBody] - 200);
+            gm.connection.getRanking();
+            cat.setChara(gm.savedata.Equipment[eq.CatBody]);
             cat.changeEquipHands(gm.savedata.Equipment[eq.RightHand], gm.savedata.Equipment[eq.LeftHand], gm.checkBagItem());
             cat.changeEquipHead(gm.savedata.Equipment[eq.Head]);
             cat.changeEquipGlasses(gm.savedata.Equipment[eq.Glasses]);
@@ -496,6 +497,12 @@ public class TitleSky : MonoBehaviour
         confirmButton.SetActive(false);
 
         gm.savedata.Equipment[eq.CatBody] = 0;
+
+        cat.setChara(gm.savedata.Equipment[eq.CatBody]);
+        cat.changeEquipHands(0, 0, gm.checkBagItem());
+        cat.changeEquipHead(0);
+        cat.changeEquipGlasses(0);
+
         gm.connection.googleLogout();
     }
 
@@ -546,7 +553,7 @@ public class TitleSky : MonoBehaviour
     }
     public void confirmNeco()
     {
-        gm.savedata.Equipment[eq.CatBody] = 200 + necoNo;
+        gm.savedata.Equipment[eq.CatBody] = necoNo;
 
         standupButton.SetActive(false);
         nextButton.SetActive(false);
@@ -559,11 +566,7 @@ public class TitleSky : MonoBehaviour
 
         Text messageText = message.GetComponentInChildren<Text>();
         messageText.text = "あたらしいデータをつくりました。スタートしましょう。";
-        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-        buttonText.text = "スタート";
-        loginFlg = 1;
-
-        startButton.SetActive(true);   // スタートボタンにして表示
+        showStart();
     }
     public void updownNeco()
     {
@@ -582,18 +585,18 @@ public class TitleSky : MonoBehaviour
     public void nextNeco()
     {
         necoNo++;
-        if (necoNo > 9)
+        if (necoNo > 209)
         {
-            necoNo = 0;
+            necoNo = 201;
         }
         cat.setChara(necoNo);
     }
     public void prevNeco()
     {
         necoNo--;
-        if (necoNo < 0)
+        if (necoNo < 201)
         {
-            necoNo = 9;
+            necoNo = 209;
         }
         cat.setChara(necoNo);
     }
