@@ -12,6 +12,7 @@ using System.IO;
 using UnityEngine.Networking;
 using TMPro;
 using Shapes2D;
+using System.Linq;
 
 public class TypingSoft : MonoBehaviour
 {
@@ -262,7 +263,7 @@ public class TypingSoft : MonoBehaviour
             return;
         }
         messages = new List<Message>(theme.messages);
-        if (messages != null)
+        if (messages != null && messages.Count != 0)
         {
             nextMessageNo = 0;
             nextMessage = messages[nextMessageNo];
@@ -271,7 +272,7 @@ public class TypingSoft : MonoBehaviour
 
     private void setDescriptionByNo(int targetCount)
     {
-        if (theme.messages == null)
+        if (theme.messages == null || theme.messages.Count() == 0)
         {
             return;
         }

@@ -581,7 +581,6 @@ public class GameManager : MonoBehaviour
     public void exportLocal()
     {
         string saveLocalJson = savedata.CompileGameDataForLocal(savedata);
-        Debug.Log("saveLocalJson(GameManager): " + saveLocalJson);  // ログ出力を追加
         connection.saveLocal(saveLocalJson);
         exportGas();        // 毎回GASアクセス要求。index.htmlで２４ｈに１回に制限される。
     }
@@ -589,7 +588,6 @@ public class GameManager : MonoBehaviour
     public void exportGas()
     {
         string saveGasObject = savedata.CompileGameDataForGss(savedata);
-        Debug.Log("saveGasData(GameManager): " + saveGasObject);  // ログ出力を追加
         connection.saveGas(saveGasObject);
     }
 

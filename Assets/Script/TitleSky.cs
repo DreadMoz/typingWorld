@@ -155,7 +155,7 @@ public class TitleSky : MonoBehaviour
 
         if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
         {
-            messageText.text = firstName.text + "さんはいいネットならのなかまだね。ほぞんデータをさがします・・・";
+            messageText.text = firstName.text + "さんはいいネットならのなかまだね。";
             gm.connection.loadLocal(); // あしあとデータサーチ
         }
         else
@@ -200,14 +200,14 @@ public class TitleSky : MonoBehaviour
         if (gm.savedata.Equipment[eq.CatBody] == 0)        // ねこボディなし
         {
             Debug.Log("ネコボディなしGASアクセスへ");
-            messageText.text = "ほぞんデータがないので、クラウドをさがしてきます・・・";
+            messageText.text += "クラウドにデータがあるかさがしてきます・・・";
             gm.savedata.Settings[se.CatNum] = 0;        // NPC表示なし
             gm.connection.loadGas();    // GSSアクセス。
         }
         else
         {
             Debug.Log("拡張機能正常データあり");
-            messageText.text = "ほぞんデータがみつかったよ。スタートしましょう。";
+            messageText.text += "ほぞんデータがみつかったよ。スタートしましょう。";
             showStart();
         }
     }
@@ -219,7 +219,7 @@ public class TitleSky : MonoBehaviour
 
         if (string.IsNullOrEmpty(jsonMsg))
         {
-            messageText.text = "クラウドにもデータがありませんでした。";
+            messageText.text = "クラウドにデータがありませんでした。";
             showStart();
         }
         else
