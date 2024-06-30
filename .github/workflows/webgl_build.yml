@@ -27,6 +27,15 @@ jobs:
       - name: Check out my unity project
         uses: actions/checkout@v2
 
+      # Libraryフォルダのキャッシュ設定
+      - name: Cache Library
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ runner.os }}-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: |
+            Library-${{ runner.os }}-
+
       # Unityプロジェクトのビルド
       - name: Run the WebGL build
         uses: game-ci/unity-builder@v2
@@ -35,6 +44,7 @@ jobs:
         with:
           targetPlatform: WebGL
           unityVersion: 2021.3.24f1
+          versioning: Semantic  # セマンティックバージョニングを明示
           
       # ディスク使用状況を再度チェック
       - name: Check disk space after build
