@@ -155,7 +155,7 @@ public class TitleSky : MonoBehaviour
 
         if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
         {
-            messageText.text = firstName.text + "さんはいいネットならのなかまだね。あしあとデータをけんさく中・・・";
+            messageText.text = firstName.text + "さんはいいネットならのなかまだね。ほぞんデータをさがします・・・";
             gm.connection.loadLocal(); // あしあとデータサーチ
         }
         else
@@ -164,7 +164,260 @@ public class TitleSky : MonoBehaviour
         }
         reLogin.SetActive(true); // ログアウトボタン表示
     }
-    
+
+    public void finishDataLoadExtStatus(string statusDataJson)
+    {
+        message.SetActive(true);
+        Text messageText = message.GetComponentInChildren<Text>();
+
+        try
+        {
+            if (statusDataJson != null)
+            {
+                gm.savedata.setStatusFromLocal(statusDataJson);
+                ouText.text = gm.savedata.Ou;
+                Debug.Log("ステータスデータをロードしました。");
+                ashiato.SetActive(true);
+                checkLocalData();
+            }
+            else
+            {
+                Debug.Log("ステータスデータがnull");
+            }
+        }
+        catch (Exception ex)
+        {
+            messageText.text = "データを読み込む時にエラーが発生しました: ";
+            Debug.LogError("データの読み込み中に例外発生: " + ex);
+        }
+    }
+
+
+    private void checkLocalData()
+    {
+        Text messageText = message.GetComponentInChildren<Text>();
+
+        if (gm.savedata.Equipment[eq.CatBody] == 0)        // ねこボディなし
+        {
+            Debug.Log("ネコボディなしGASアクセスへ");
+            messageText.text = "ほぞんデータがないので、クラウドをさがしてきます・・・";
+            gm.savedata.Settings[se.CatNum] = 0;        // NPC表示なし
+            gm.connection.loadGas();    // GSSアクセス。
+        }
+        else
+        {
+            Debug.Log("拡張機能正常データあり");
+            messageText.text = "ほぞんデータがみつかったよ。スタートしましょう。";
+            showStart();
+        }
+    }
+
+    public void finishDataLoadGas(string jsonMsg)
+    {
+        reLogin.SetActive(true);
+        Text messageText = message.GetComponentInChildren<Text>();
+
+        if (string.IsNullOrEmpty(jsonMsg))
+        {
+            messageText.text = "クラウドにもデータがありませんでした。";
+            showStart();
+        }
+        else
+        {
+            SerializableSympleStatusData userData = JsonUtility.FromJson<SerializableSympleStatusData>(jsonMsg);
+
+            if (userData != null)
+            {
+                List<object> dataList = new List<object> {
+                    userData.email,
+                    userData.ou,
+                    userData.lastName,
+                    userData.gold,
+                    userData.stage,
+                    userData.ranking,
+                    userData.name,
+                    userData.rightHand,
+                    userData.glasses,
+                    userData.head,
+                    userData.leftHand,
+                    userData.catBody,
+                    userData.catFace,
+                    userData.nickName,
+                    userData.kpm,
+                    userData.kpms
+                };
+
+                dataList.AddRange(userData.medals);
+                dataList.AddRange(userData.items);
+
+                gm.savedata.LoadAllDataFromGss(dataList);
+                Debug.Log("dataList: " + dataList);
+                messageText.text = "クラウドデータを読み込みました。";
+            }
+            else
+            {
+                messageText.text += "\nクラウドデータに問題が生じました。";
+            }
+            showStart();
+        }
+    }
+
+    private void showStart()
+    {
+        if (gm.savedata.Equipment[eq.CatBody] != 0)
+        {
+            gm.connection.getRanking();
+            cat.setChara(gm.savedata.Equipment[eq.CatBody]);
+            cat.changeEquipHands(gm.savedata.Equipment[eq.RightHand], gm.savedata.Equipment[eq.LeftHand], gm.checkBagItem());
+            cat.changeEquipHead(gm.savedata.Equipment[eq.Head]);
+            cat.changeEquipGlasses(gm.savedata.Equipment[eq.Glasses]);
+            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+            buttonText.text = "スタート";
+            loginFlg = 1;
+        }
+        else
+        {
+            Text messageText = message.GetComponentInChildren<Text>();
+            messageText.text += "\nあたらしく" + firstName.text + "さんのデータをつくりましょう。";
+            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+            buttonText.text = "つくる";
+            loginFlg = 2;
+        }
+        startButton.SetActive(true);
+    }
+
+    IEnumerator LoadImage(string url)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url))
+        {
+            // リクエストを送信し、レスポンスを待つ
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Error: " + webRequest.error);
+            }
+            else
+            {
+                // 正常に画像を取得できた場合、TextureをImageに設定する
+                Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
+                picture.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            }
+        }
+    }
+
+    public void googleLogout()
+    {
+        confirmButton.SetActive(false);
+        standupButton.SetActive(false);
+        nextButton.SetActive(false);
+        prevButton.SetActive(false);
+        confirmButton.SetActive(false);
+
+        gm.savedata.Equipment[eq.CatBody] = 0;
+
+        cat.setChara(gm.savedata.Equipment[eq.CatBody]);
+        cat.changeEquipHands(0, 0, gm.checkBagItem());
+        cat.changeEquipHead(0);
+        cat.changeEquipGlasses(0);
+
+        gm.connection.googleLogout();
+    }
+
+    public void finishLogout()
+    {
+        loginFlg = 0;
+        ashiato.SetActive(false);
+        userData.SetActive(false);
+        reLogin.SetActive(false);
+        startButton.SetActive(true);
+        Text messageText = message.GetComponentInChildren<Text>();
+        messageText.text = "ログアウトしました。";
+
+        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+        buttonText.text = "ログイン";
+
+    }
+
+    public void handleDataError()
+    {
+        Debug.Log("handleDataError");
+        checkLocalData();
+    }
+
+    public void OnRequestTimeout()
+    {
+        Debug.Log("OnRequestTimeout");
+        checkLocalData();
+    }
+
+    public void handleInitialData()
+    {
+        Debug.Log("handleInitialData");
+        checkLocalData();
+    }
+
+    private void selectNeco()
+    {
+        Text messageText = message.GetComponentInChildren<Text>();
+        messageText.text = "さぁいっしょにタイピングをするねこをえらんでね。";
+        animator.SetBool("Standup", true);
+        message.SetActive(true);
+        standupButton.SetActive(true);
+        nextButton.SetActive(true);
+        prevButton.SetActive(true);
+        confirmButton.SetActive(true);
+        startButton.SetActive(false);
+    }
+    public void confirmNeco()
+    {
+        gm.savedata.Equipment[eq.CatBody] = necoNo;
+
+        standupButton.SetActive(false);
+        nextButton.SetActive(false);
+        prevButton.SetActive(false);
+        confirmButton.SetActive(false);
+        startButton.SetActive(true);
+
+        gm.savedata.setNewData(mailText.text, firstName.text, lastName.text, ouText.text);
+        gm.exportLocal();  // ねこ決定後のデータ保存ローカル＆GSS
+
+        Text messageText = message.GetComponentInChildren<Text>();
+        messageText.text = "あたらしいデータをつくりました。スタートしましょう。";
+        showStart();
+    }
+    public void updownNeco()
+    {
+        TMP_Text standText = standupButton.GetComponentInChildren<TMP_Text>();
+        if (animator.GetBool("Standup"))
+        {
+            standText.text = "↑";
+            animator.SetBool("Standup", false);
+        }
+        else
+        {
+            standText.text = "↓";
+            animator.SetBool("Standup", true);
+        }
+    }
+    public void nextNeco()
+    {
+        necoNo++;
+        if (necoNo > 209)
+        {
+            necoNo = 201;
+        }
+        cat.setChara(necoNo);
+    }
+    public void prevNeco()
+    {
+        necoNo--;
+        if (necoNo < 201)
+        {
+            necoNo = 209;
+        }
+        cat.setChara(necoNo);
+    }
     public void testFinishDataLoad()
     {
         string statusJson = @"{
@@ -347,259 +600,5 @@ public class TitleSky : MonoBehaviour
                 [500,150,'yu',1,0,0,0,201,0,211,250]]
             }";
         gm.finishDataLoadExtRanking(rankingJson);
-    }
-
-    public void finishDataLoadExtStatus(string statusDataJson)
-    {
-        message.SetActive(true);
-        Text messageText = message.GetComponentInChildren<Text>();
-
-        try
-        {
-            if (statusDataJson != null)
-            {
-                gm.savedata.setStatusFromLocal(statusDataJson);
-                ouText.text = gm.savedata.Ou;
-                Debug.Log("ステータスデータをロードしました。");
-                ashiato.SetActive(true);
-                checkLocalData();
-            }
-            else
-            {
-                Debug.Log("ステータスデータがnull");
-            }
-        }
-        catch (Exception ex)
-        {
-            messageText.text = "データを読み込む時にエラーが発生しました: ";
-            Debug.LogError("データの読み込み中に例外発生: " + ex);
-        }
-    }
-
-
-    private void checkLocalData()
-    {
-        Text messageText = message.GetComponentInChildren<Text>();
-
-        if (gm.savedata.Equipment[eq.CatBody] == 0)        // ねこボディなし
-        {
-            Debug.Log("ネコボディなしGASアクセスへ");
-            messageText.text = "あしあとデータがないので、クラウドのデータをさがしに行っています・・・";
-            gm.savedata.Settings[se.CatNum] = 0;        // NPC表示なし
-            gm.connection.loadGas();    // GSSアクセス。
-        }
-        else
-        {
-            Debug.Log("拡張機能正常データあり");
-            messageText.text = "あしあとデータがみつかったよ。スタートしましょう。";
-            showStart();
-        }
-    }
-
-    public void finishDataLoadGas(string jsonMsg)
-    {
-        reLogin.SetActive(true);
-        Text messageText = message.GetComponentInChildren<Text>();
-
-        if (string.IsNullOrEmpty(jsonMsg))
-        {
-            messageText.text = "クラウドデータがありませんでした。あたらしくつくりましょう。";
-            showStart();
-        }
-        else
-        {
-            SerializableSympleStatusData userData = JsonUtility.FromJson<SerializableSympleStatusData>(jsonMsg);
-
-            if (userData != null)
-            {
-                List<object> dataList = new List<object> {
-                    userData.email,
-                    userData.ou,
-                    userData.lastName,
-                    userData.gold,
-                    userData.stage,
-                    userData.ranking,
-                    userData.name,
-                    userData.rightHand,
-                    userData.glasses,
-                    userData.head,
-                    userData.leftHand,
-                    userData.catBody,
-                    userData.catFace,
-                    userData.nickName,
-                    userData.kpm,
-                    userData.kpms
-                };
-
-                dataList.AddRange(userData.medals);
-                dataList.AddRange(userData.items);
-
-                gm.savedata.LoadAllDataFromGss(dataList);
-                Debug.Log("dataList: " + dataList);
-                messageText.text = "クラウドデータを読み込みました。";
-            }
-            else
-            {
-                messageText.text += "\nクラウドデータに問題が生じました。";
-            }
-            showStart();
-        }
-    }
-
-    private void showStart()
-    {
-        if (gm.savedata.Equipment[eq.CatBody] != 0)
-        {
-            gm.connection.getRanking();
-            cat.setChara(gm.savedata.Equipment[eq.CatBody]);
-            cat.changeEquipHands(gm.savedata.Equipment[eq.RightHand], gm.savedata.Equipment[eq.LeftHand], gm.checkBagItem());
-            cat.changeEquipHead(gm.savedata.Equipment[eq.Head]);
-            cat.changeEquipGlasses(gm.savedata.Equipment[eq.Glasses]);
-            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-            buttonText.text = "スタート";
-            loginFlg = 1;
-        }
-        else
-        {
-            Text messageText = message.GetComponentInChildren<Text>();
-            messageText.text += "ねこをえらぶところからはじめましょう。";
-            TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-            buttonText.text = "つくる";
-            loginFlg = 2;
-        }
-        startButton.SetActive(true);
-    }
-
-    IEnumerator LoadImage(string url)
-    {
-        using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url))
-        {
-            // リクエストを送信し、レスポンスを待つ
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError("Error: " + webRequest.error);
-            }
-            else
-            {
-                // 正常に画像を取得できた場合、TextureをImageに設定する
-                Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
-                picture.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-            }
-        }
-    }
-
-    public void googleLogout()
-    {
-        confirmButton.SetActive(false);
-        standupButton.SetActive(false);
-        nextButton.SetActive(false);
-        prevButton.SetActive(false);
-        confirmButton.SetActive(false);
-
-        gm.savedata.Equipment[eq.CatBody] = 0;
-
-        cat.setChara(gm.savedata.Equipment[eq.CatBody]);
-        cat.changeEquipHands(0, 0, gm.checkBagItem());
-        cat.changeEquipHead(0);
-        cat.changeEquipGlasses(0);
-
-        gm.connection.googleLogout();
-    }
-
-    public void finishLogout()
-    {
-        loginFlg = 0;
-        ashiato.SetActive(false);
-        userData.SetActive(false);
-        reLogin.SetActive(false);
-        startButton.SetActive(true);
-        Text messageText = message.GetComponentInChildren<Text>();
-        messageText.text = "ログアウトしました。";
-
-        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-        buttonText.text = "ログイン";
-
-    }
-
-    public void handleDataError()
-    {
-        Debug.Log("handleDataError");
-        checkLocalData();
-    }
-
-    public void OnRequestTimeout()
-    {
-        Debug.Log("OnRequestTimeout");
-        checkLocalData();
-    }
-
-    public void handleInitialData()
-    {
-        Debug.Log("handleInitialData");
-        checkLocalData();
-    }
-
-    private void selectNeco()
-    {
-        Text messageText = message.GetComponentInChildren<Text>();
-        messageText.text = "あたらしくデータをつくるね。いっしょにタイピングをするねこをえらんでね。";
-        animator.SetBool("Standup", true);
-        message.SetActive(true);
-        standupButton.SetActive(true);
-        nextButton.SetActive(true);
-        prevButton.SetActive(true);
-        confirmButton.SetActive(true);
-        startButton.SetActive(false);
-    }
-    public void confirmNeco()
-    {
-        gm.savedata.Equipment[eq.CatBody] = necoNo;
-
-        standupButton.SetActive(false);
-        nextButton.SetActive(false);
-        prevButton.SetActive(false);
-        confirmButton.SetActive(false);
-        startButton.SetActive(true);
-
-        gm.savedata.setNewData(mailText.text, firstName.text, lastName.text, ouText.text);
-        gm.exportLocal();  // ねこ決定後のデータ保存ローカル＆GSS
-
-        Text messageText = message.GetComponentInChildren<Text>();
-        messageText.text = "あたらしいデータをつくりました。スタートしましょう。";
-        showStart();
-    }
-    public void updownNeco()
-    {
-        TMP_Text standText = standupButton.GetComponentInChildren<TMP_Text>();
-        if (animator.GetBool("Standup"))
-        {
-            standText.text = "↑";
-            animator.SetBool("Standup", false);
-        }
-        else
-        {
-            standText.text = "↓";
-            animator.SetBool("Standup", true);
-        }
-    }
-    public void nextNeco()
-    {
-        necoNo++;
-        if (necoNo > 209)
-        {
-            necoNo = 201;
-        }
-        cat.setChara(necoNo);
-    }
-    public void prevNeco()
-    {
-        necoNo--;
-        if (necoNo < 201)
-        {
-            necoNo = 209;
-        }
-        cat.setChara(necoNo);
     }
 }

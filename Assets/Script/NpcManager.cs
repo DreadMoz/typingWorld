@@ -40,7 +40,7 @@ public class NpcManager : MonoBehaviour
     {
         if (gm.savedata.ExRankings.Count == 0 || gm.savedata.ExRankings[0].Name == "")
         {
-            Debug.LogWarning("SpawnNPCs：ExRankings is empty or first entry is invalid.");
+            Debug.LogWarning("SpawnNPCs:ExRankings is empty or first entry is invalid.");
             return;
         }
 

@@ -8,9 +8,9 @@ public class NpcNeco : MonoBehaviour
 {
     private Animator animator;
     private NavMeshAgent agent; // NavMeshAgentへの参照
-    public float radius = 20f; // ランダムな目的地を探す範囲
+    public float radius = 16f; // ランダムな目的地を探す範囲
     private float speed = 5f;
-    public float interval = 7f;
+    public float interval = 8f;
     private bool moveFlg = false;
 
     // Start is called before the first frame update
@@ -24,7 +24,7 @@ public class NpcNeco : MonoBehaviour
             agent = GetComponent<NavMeshAgent>();
         }
         // ◯秒後に最初の移動を開始し、その後◯秒ごとに繰り返し実行
-        InvokeRepeating("SetRandomDestination", Random.Range(2f, interval), interval);
+        InvokeRepeating("SetRandomDestination", Random.Range(1f, interval), interval);
     }
 
     // Update is called once per frame
@@ -35,8 +35,7 @@ public class NpcNeco : MonoBehaviour
             if (Vector3.Distance(transform.position, agent.destination) < 0.2f)
             {
                 moveFlg = false;
-                animator.SetBool("run", false);
-                animator.SetBool("walk", false);
+                animator.SetTrigger("idol");
 
                 // 目的地を解除し、エージェントの移動を停止します。
                 agent.ResetPath(); // 目的地を解除する
@@ -61,18 +60,18 @@ public class NpcNeco : MonoBehaviour
         Vector3 randomDirection = Random.insideUnitSphere;
         double distance = System.Math.Sqrt(randomDirection.x * randomDirection.x + randomDirection.z * randomDirection.z);
 
-        if (distance < 0.4)
+        if (distance < 0.5f)
         {
             return;
         }
-        else if (0.9 < distance)
+        else if (1.0f < distance)
         {
-            animator.SetBool("run", true);
+            animator.SetTrigger("run");
             agent.speed = speed;
         }
         else
         {
-            animator.SetBool("walk", true);
+            animator.SetTrigger("walk");
             agent.speed = speed / 3;
         }
         moveFlg = true;
@@ -96,8 +95,8 @@ public class NpcNeco : MonoBehaviour
     {
         if (col.gameObject.name != "Terrain")
         {
-            animator.SetBool("run", false);
-            animator.SetBool("walk", false);
+            animator.SetTrigger("run");
+            animator.SetTrigger("walk");
             agent.ResetPath(); // 目的地を解除する
             if (col.gameObject.name == "Player")
             {

@@ -108,7 +108,6 @@ public class ChibiCat : MonoBehaviour
         Material[] tmp = materials;
         if (tmp != null)
         {
-            Debug.Log(no);
             tmp[0] = cats[no];
             GetComponent<Renderer>().materials = tmp;
         }

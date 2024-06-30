@@ -87,6 +87,7 @@ public class Player : MonoBehaviour
                 practice.calcStars();           // 表示する星を計算
                 practice.showRoomMenu();        // ルームメニュー表示
                 practice.showDetail();          // 詳細画面表示 ステージ番号が入るから星計算の後
+                gm.exportLocal();                      // タイピング後のデータ保存ローカル＆GSS
             }
             exitHouse.SetActive(true);
             exitShop.SetActive(false);

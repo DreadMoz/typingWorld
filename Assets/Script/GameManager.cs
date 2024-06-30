@@ -225,8 +225,7 @@ public class GameManager : MonoBehaviour
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
         {
-            rankingWindow.DisplayRankings();    // ランキング更新してから・・・
-            exportLocal();                      // タイピング後のデータ保存ローカル＆GSS
+            rankingWindow.DisplayRankings();    // ランキング更新してから・・・プレイヤーのタイピング更新してから・・・保存したい
             npcManager.SpawnNPCs();
             if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
