@@ -18,6 +18,7 @@ public class UserInfo
     public string firstName;
     public string lastName;
     public string picture;
+    public string department;
 }
 public class TitleSky : MonoBehaviour
 {
@@ -41,6 +42,8 @@ public class TitleSky : MonoBehaviour
     private Text firstName; // データ表示用
     [SerializeField]
     private Text lastName; // データ表示用
+    [SerializeField]
+    private Text department; // データ表示用
     [SerializeField]
     private Text mailText; // データ表示用
     [SerializeField]
@@ -142,15 +145,15 @@ public class TitleSky : MonoBehaviour
 
     public void finishOAuth(string jsonUserInfo)
     {
-        UserInfo userInfo = JsonUtility.FromJson<UserInfo>(jsonUserInfo);
-        
         userData.SetActive(true);
         message.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
 
+        UserInfo userInfo = JsonUtility.FromJson<UserInfo>(jsonUserInfo);
         mailText.text = userInfo.email;
         firstName.text = userInfo.firstName;
         lastName.text = userInfo.lastName;
+        department.text = userInfo.department;
         StartCoroutine(LoadImage(userInfo.picture));
 
         if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)

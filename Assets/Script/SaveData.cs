@@ -667,10 +667,13 @@ public class SaveData : ScriptableObject
 
     public void updateKpm(int newKpm)
     {
-        // 要素1から6までを0から7に移動
+        // 要素1から6までを0から5に移動
         for (int i = 0; i < Kpms.Length-1; i++)
         {
-            Debug.Log(Kpms[i]);
+            if (Kpms[i + 1] < 0)
+            {
+                Kpms[i + 1] = 10;
+            }
             Kpms[i] = Kpms[i + 1];
         }
         // 最後尾の要素に新しい値を代入
