@@ -231,10 +231,13 @@ public class Player : MonoBehaviour
             animator.SetBool("Walk", false);
             agent.speed = speed;
         }
-        // ダメージまたは"Hi"アニメーション中またなウィンドウを開いたときはプレイヤーの位置を固定
+        // ダメージまたは"Hi"アニメーション中またはウィンドウを開いたときはプレイヤーの位置を固定
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage") || animator.GetCurrentAnimatorStateInfo(0).IsName("Hi") || gm.getWindowOpen())
         {
             agent.ResetPath(); // 目的地を解除する
+            agent.velocity = Vector3.zero; // 速度を0にする
+            rb.velocity = Vector3.zero; // 速度を0にする
+            rb.angularVelocity = Vector3.zero; // 角速度を0にする
         }
         else
         {
@@ -256,6 +259,7 @@ public class Player : MonoBehaviour
                     Quaternion rotation = Quaternion.Euler(0, targetAngle, 0);
                     transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 10);
 
+                    rb.velocity = Vector3.zero; // プレイヤーの速度をリセット
                     agent.SetDestination(transform.position + direction * 5f);  // 5は前方への移動距離です
                 }
 
@@ -266,6 +270,11 @@ public class Player : MonoBehaviour
                     if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
                     {
                         agent.SetDestination(hit.point);
+                        // 目的地に到着したら速度をリセット
+                        if (agent.remainingDistance <= agent.stoppingDistance)
+                        {
+                            agent.velocity = Vector3.zero;
+                        }
                     }
                 }
                 // アニメーション状態の更新

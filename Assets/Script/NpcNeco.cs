@@ -39,6 +39,7 @@ public class NpcNeco : MonoBehaviour
 
                 // 目的地を解除し、エージェントの移動を停止します。
                 agent.ResetPath(); // 目的地を解除する
+                agent.velocity = Vector3.zero; // 速度を0にする
 
                 // ランダムな整数を生成
                 int randomIndex = Random.Range(0, 10);
@@ -89,6 +90,11 @@ public class NpcNeco : MonoBehaviour
 
         // 計算された位置に移動する
         agent.SetDestination(finalPosition);
+        // 目的地に到着したら速度をリセット
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            agent.velocity = Vector3.zero;
+        }
     }
 
     void OnCollisionEnter(Collision col)
