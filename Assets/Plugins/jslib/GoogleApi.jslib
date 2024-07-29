@@ -52,11 +52,16 @@ mergeInto(LibraryManager.library, {
     LoadFromGss: function() {
         loadFromGss();
     },
-
     SaveToGss: function(dataPointer) {
         console.log("Received pointer:", dataPointer); // ポインタ受け取り時のデバッグ
         var data = UTF8ToString(dataPointer);
         console.log("Converted data:", data); // 文字列変換後のデバッグ
         saveToGss(data);
+    },
+    ThroughGemini: function(dataPointer) {
+        console.log("Received pointer:", dataPointer); // ポインタ受け取り時のデバッグ
+        var data = UTF8ToString(dataPointer);
+        console.log("Converted data:", data); // 文字列変換後のデバッグ
+        throughGemini(data);
     }
 });

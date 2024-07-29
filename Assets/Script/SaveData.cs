@@ -130,6 +130,23 @@ public class SerializableStatusData
     // 必要に応じて他のフィールドも追加
 }
 
+// Gemini送信用データ
+[Serializable]
+public class SerializableGemini
+{
+    public string LastName;
+    public int Gold;
+    public int Stage;
+    public int Ranking;
+    public string typingTitle;
+    public string maxCombo;
+    public string resultKpm;
+    public List<string> mistypedSentences;
+    public SerializableGemini()
+    {
+        mistypedSentences = new List<string>(); // リストの初期化
+    }
+}
 
 [CreateAssetMenu(fileName = "SaveData", menuName = "SaveData")]
 public class SaveData : ScriptableObject
@@ -562,6 +579,26 @@ public class SaveData : ScriptableObject
 
         // statusDataプロパティを持つ新しいオブジェクトを作成し、JSONにシリアライズ
         Debug.Log("wrappedData(GssSaveData): " + JsonConvert.SerializeObject(data));    // ログ出力を追加
+        return JsonConvert.SerializeObject(data);
+    }
+
+    // Geminiに送るためのデータを現在のゲームデータから作る。
+    public string CompileGeminiData(SaveData sd)
+    {
+        SerializableGemini data = new SerializableGemini
+        {
+            LastName = sd.LastName,
+            Gold = sd.Status[st.Gold],
+            Stage = sd.Status[st.Server],
+            Ranking = sd.Status[st.Rank],
+            typingTitle = GameManager.TypingTitle,
+            maxCombo = GameManager.MaxCombo,
+            resultKpm = GameManager.ResultKpm,
+            mistypedSentences = GameManager.MistypedSentences,
+        };
+
+        // statusDataプロパティを持つ新しいオブジェクトを作成し、JSONにシリアライズ
+        Debug.Log("wrappedData(GeminiData): " + JsonConvert.SerializeObject(data));    // ログ出力を追加
         return JsonConvert.SerializeObject(data);
     }
 

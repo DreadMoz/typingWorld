@@ -25,24 +25,19 @@ public class GameManager : MonoBehaviour
     public SaveData savedata;
     public Connection connection;
 
-    static private int sceneNo;             // ワールドシーンの状態番号
-    static private int typingTab;           // タイピングステージのタブNo
-    static private int newKpm;              // 直近のタイピング結果のkpm
-    static private float keyRate;           // 回答数
-    static private float answerRate;        // 解答率
-    static private int seeker;            // お金
-    static private int typingTime;          // お題の解答時間
-    static private int typingDataId;        // タイピングデータのJson呼び出しID練習のファイル名は数字
-    static private string typingDataName;   // タイピングデータのJson呼び出し用ファイル名
 
-    static public int SceneNo { get => sceneNo; set => sceneNo = value; }
-    static public int TypingTab { get => typingTab; set => typingTab = value; }
-    static public int NewKpm { get => newKpm; set => newKpm = value; }
-    static public float KeyParSecond { get => keyRate; set => keyRate = value; }
-    static public float AnswerRate { get => answerRate; set => answerRate = value; }
-    static public int Seeker { get => seeker; set => seeker = value; }
-    static public int TypingDataId { get => typingDataId; set => typingDataId = value; }
-    static public string TypingDataName { get => typingDataName; set => typingDataName = value; }
+    static public int SceneNo { get; set; }
+    static public int TypingTab { get; set; }
+    static public int NewKpm { get; set; }
+    static public float KeyParSecond { get; set; }
+    static public float AnswerRate { get; set; }
+    static public int Seeker { get; set; }
+    static public int TypingDataId { get; set; }
+    static public string TypingDataPath { get; set; }
+    static public string TypingTitle { get; set; }
+    static public string MaxCombo { get; set; }
+    public static string ResultKpm { get; set; }
+    public static List<string> MistypedSentences { get; set; } = new List<string>();
 
     [SerializeField] private float kpmRatio = 0.5f;
 
@@ -77,6 +72,9 @@ public class GameManager : MonoBehaviour
     private int inventoryOpen = 0;
     private int rankingOpen = 0;
     private int cameraMove = 0;          // 0:標準 1:右回転 2:左回転 3:ズームイン
+
+    [SerializeField]
+    private TMP_Text talk;
 
     Vector3 chaseOffset = new Vector3(0f, 8f, -14f);
     Quaternion chaseRotation = Quaternion.Euler(18.5f, 0f, 0f);
@@ -243,6 +241,9 @@ public class GameManager : MonoBehaviour
                 rankingWindow.SetTo(savedata.Status[st.Rank]);
                 rankingWindow.ScrollTo(savedata.Status[st.Rank]);
             }
+            setGemini();
+
+            MistypedSentences.Clear();  // リストから全ての要素を削除
         }
         // シーンが2タイピングの場合
         else if (SceneNo == (int)scene.Typing)
@@ -532,7 +533,7 @@ public class GameManager : MonoBehaviour
     public static void SetTypingDataLevel(int no)
     {
         TypingDataId += no;
-        TypingDataName = "TextPrompts/" + TypingDataId.ToString();
+        TypingDataPath = "TextPrompts/" + TypingDataId.ToString();
     }
 
     public void changeEquip(int parts)
@@ -601,6 +602,12 @@ public class GameManager : MonoBehaviour
         connection.enetLogin();
     }
 
+    public void setGemini()
+    {
+        string promptData = savedata.CompileGeminiData(savedata);
+        connection.throughGemini(promptData);
+    }
+
     public string getNickname(int nicknameNo)
     {
         string nickname;
@@ -635,5 +642,10 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("データの読み込み中に例外発生: " + ex);
         }
+    }
+
+    public void returnGemini(string response)
+    {
+        talk.text = response;
     }
 }

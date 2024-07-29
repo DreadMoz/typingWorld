@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
         }
         else if (GameManager.SceneNo == scene.House)
         {
-            if (GameManager.TypingDataName == null)
+            if (GameManager.TypingDataPath == null)
             {
                 talk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
             }

@@ -25,6 +25,8 @@ public class Connection : MonoBehaviour
     private static extern void SaveToGss(string dataPointer);
     [DllImport("__Internal")]
     private static extern void GetNecoRank();
+    [DllImport("__Internal")]
+    private static extern void ThroughGemini(string dataPointer);
 
 #endif
 
@@ -82,6 +84,13 @@ public void getRanking()
         LoadFromGss();
 #else
         getDummyGss();
+#endif
+    }
+
+    public void throughGemini(string dataPointer)
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        ThroughGemini(dataPointer);
 #endif
     }
 

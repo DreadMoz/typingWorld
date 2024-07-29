@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
+using Newtonsoft.Json;
 using Unity.VisualScripting;
 using UnityEngine.XR;
 using UnityEngine.SceneManagement;
@@ -37,6 +38,7 @@ public class TypingSoft : MonoBehaviour
     private int seekerKey;
     private int seekerTime;
     private int totalSeeker;
+    private int maxCombo = 0;
 
     public float totalTime = 1.0f; // タイマーの総時間（秒）
     private float currentTime; // 現在の経過時間
@@ -134,17 +136,26 @@ public class TypingSoft : MonoBehaviour
     private int nextMessageNo;
     private Message nextMessage;
 
+    [SerializeField] private GameObject lHand;
+    [SerializeField] private GameObject rHand;
     [SerializeField] private GameObject ObjKPM;
     [SerializeField] private GameObject Objkpm;
     [SerializeField] private GameObject ObjTimer;
     [SerializeField] private GameObject Objnokori;
-    [SerializeField] private GameObject Combo;
-    [SerializeField] private GameObject konbo;
     [SerializeField] private GameObject input;
 
     [SerializeField] private GameObject Fukidashi;
     [SerializeField] private Text messageText;
 
+
+    // 結果画面
+    [SerializeField] private GameObject resultWindow;
+    // 結果お題
+    [SerializeField] private Text resultTitle;
+    // 結果MaxCombo
+    [SerializeField] private Text resultCombo;
+    // 結果Kpm
+    [SerializeField] private Text resultKpm;
 
     [Serializable]
     public class Theme
@@ -163,6 +174,8 @@ public class TypingSoft : MonoBehaviour
     [Serializable]
     public class ThemeCollection
     {
+        public string title;
+        public string description;
         public int timer;
         public int random;
         public int hide;
@@ -187,7 +200,7 @@ public class TypingSoft : MonoBehaviour
         lAnimator = lPlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator.SetTrigger("jump");
         player.transform.LookAt(targetCam.transform);   // カメラを向く
-
+        
         animator.SetFloat("walkSpeed", 1.0f);
         animator.SetFloat("moveSpeed", 1.0f);
         animator.SetFloat("runSpeed", 1.0f);
@@ -226,7 +239,7 @@ public class TypingSoft : MonoBehaviour
 
         AssistKeyboardObj.SetNextHighlight(" ");
 
-        if (LoadThemes(GameManager.TypingDataName))
+        if (LoadThemes(GameManager.TypingDataPath))
         {
             setMessage();
             ShuffleThemes(theme.random);
@@ -290,7 +303,6 @@ public class TypingSoft : MonoBehaviour
             animator.SetTrigger(randAtk);
         }
     }
-
 
     private bool LoadThemes(string fileName)
     {
@@ -586,19 +598,7 @@ public class TypingSoft : MonoBehaviour
                 Fukidashi.SetActive(false);
 
                 checkSeekerTimer();
-                
-                END.text = "おしまい！";
-                UIJ.text = "";
-                UIH.text = "";
-                UIR.text = "";
-                UII.text = "";
-
-                // キーカラークリア
-                AssistKeyboardObj.SetAllKeyColorWhite();
-                AssistKeyboardObj.SetNextHighlight(" ");
-                string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
-                animator.SetTrigger(randEnd);
-                player.transform.LookAt(targetCam.transform);   // カメラを向く
+                dispResult();
 
                 spaceEnd = true;
             }
@@ -635,6 +635,34 @@ public class TypingSoft : MonoBehaviour
         }
     }
 
+    private void dispResult()
+    {
+        END.text = "おしまい！";
+        UIJ.text = "";
+        UIH.text = "";
+        UIR.text = "";
+        UII.text = "";
+
+        GameManager.TypingTitle = theme.title;
+        GameManager.ResultKpm = UIkpm.text;            // 今回のKPM
+        GameManager.MaxCombo = maxCombo.ToString();    // 最大コンボ数
+
+        // 結果ウィンドウ表示
+        resultTitle.text = GameManager.TypingTitle;
+        resultKpm.text = GameManager.ResultKpm;
+        resultCombo.text = GameManager.MaxCombo;
+        resultWindow.SetActive(true);
+        lHand.SetActive(false);
+        rHand.SetActive(false);
+
+        // キーカラークリア
+        AssistKeyboardObj.SetAllKeyColorWhite();
+        AssistKeyboardObj.SetNextHighlight(" ");
+        string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
+        animator.SetTrigger(randEnd);
+        player.transform.LookAt(targetCam.transform);   // カメラを向く
+    }
+    
     private void OnGUI()
     {
         Event e = Event.current;
@@ -925,6 +953,10 @@ public class TypingSoft : MonoBehaviour
     {
         correctN++;
         comboN++;
+        if (maxCombo < comboN)
+        {
+            maxCombo = comboN;
+        }
         UIcorrect.text = string.Format("{0:0}", correctN);
         UIcombo.text = string.Format("{0:0}", comboN);
 
@@ -1107,7 +1139,6 @@ public class TypingSoft : MonoBehaviour
         mistakeN++;
         UImistake.text = string.Format("{0:0}", mistakeN);
 
-        isSentenceMistyped = true;
         // 打つべき文字を赤く表示
         if (!isRecMistype)
         {
@@ -1124,5 +1155,11 @@ public class TypingSoft : MonoBehaviour
         }
         // color タグを多重で入れないようにする
         isRecMistype = true;
+        // 最初のミスタイプ時にのみ保存
+        if (!isSentenceMistyped)
+        {
+            GameManager.MistypedSentences.Add(nQH.ToString());
+            isSentenceMistyped = true;
+        }
     }
 }
