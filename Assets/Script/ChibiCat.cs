@@ -40,7 +40,6 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject panR;
     [SerializeField] private GameObject donutChocoR;
     [SerializeField] private GameObject donutStrawberryR;
-    [SerializeField] private GameObject joroR;
     [SerializeField] private GameObject pencilR;
     [SerializeField] private GameObject eraserR;
 
@@ -52,7 +51,6 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject panL;
     [SerializeField] private GameObject donutChocoL;
     [SerializeField] private GameObject donutStrawberryL;
-    [SerializeField] private GameObject joroL;
     [SerializeField] private GameObject pencilL;
     [SerializeField] private GameObject eraserL;
 
@@ -152,7 +150,6 @@ public class ChibiCat : MonoBehaviour
                 donutStrawberryR.SetActive(true);
                 break;
             case 9:
-                joroR.SetActive(true);
                 break;
             case 10:
                 pencilR.SetActive(true);
@@ -192,7 +189,6 @@ public class ChibiCat : MonoBehaviour
                 donutStrawberryL.SetActive(true);
                 break;
             case 9:
-                joroL.SetActive(true);
                 break;
             case 10:
                 pencilL.SetActive(true);
@@ -276,7 +272,6 @@ public class ChibiCat : MonoBehaviour
         meatR.SetActive(false);
         donutChocoR.SetActive(false);
         donutStrawberryR.SetActive(false);
-        joroR.SetActive(false);
         pencilR.SetActive(false);
         eraserR.SetActive(false);
 
@@ -288,7 +283,6 @@ public class ChibiCat : MonoBehaviour
         meatL.SetActive(false);
         donutChocoL.SetActive(false);
         donutStrawberryL.SetActive(false);
-        joroL.SetActive(false);
         pencilL.SetActive(false);
         eraserL.SetActive(false);
     }
