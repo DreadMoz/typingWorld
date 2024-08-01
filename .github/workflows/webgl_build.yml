@@ -38,7 +38,7 @@ jobs:
 
       # Unityプロジェクトのビルド
       - name: Run the WebGL build
-        uses: game-ci/unity-builder@v2
+        uses: game-ci/unity-builder@v3
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
