@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject exitHouse;
     [SerializeField] private GameObject exitShop;
     [SerializeField] private TMP_Text talk;
+    [SerializeField] private GameObject talkObject;
+    [SerializeField] private GameObject fukidashiObject;
     [SerializeField] private GameObject inventoryFilter;
     [SerializeField] private TypingDetail typingDetail;
     [SerializeField] private ChibiCat chibiCat;
@@ -128,6 +130,9 @@ public class Player : MonoBehaviour
             exitShop.SetActive(false);
             exitHouse.SetActive(true);
 
+            fukidashiObject.SetActive(false);
+            talkObject.SetActive(true);
+
             // カメラ切り替え
             switchCam.SwitchCamera();
 
@@ -159,6 +164,8 @@ public class Player : MonoBehaviour
             exitHouse.SetActive(false);
             tiikawa.SetActive(false);
 
+            talkObject.SetActive(false);
+
             transform.position = new Vector3(287.5f, 1, 113);   // タイピングハウス前位置
             transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
 
@@ -185,6 +192,9 @@ public class Player : MonoBehaviour
             exitShop.SetActive(true);
             kinoko.SetActive(true);
 
+            fukidashiObject.SetActive(true);
+            talkObject.SetActive(false);
+
             // カメラ切り替え
             switchCam.SwitchCamera();
 
@@ -208,6 +218,8 @@ public class Player : MonoBehaviour
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);
             kinoko.SetActive(false);
+
+            fukidashiObject.SetActive(false);
 
             transform.position = new Vector3(238.5f, 1, 141.4f);      // ショップ前場所
             transform.rotation = Quaternion.Euler(0, -57, 0);   // ショップ前角度
