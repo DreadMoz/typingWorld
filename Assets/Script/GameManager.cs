@@ -646,7 +646,7 @@ public class GameManager : MonoBehaviour
 
     public void returnGemini(string response)
     {
-        Debug.LogError("GameManager returnGemini: " + response);
+        Debug.Log("GameManager returnGemini: " + response);
         talk.text = response;
     }
 }
