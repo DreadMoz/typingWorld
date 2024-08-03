@@ -612,7 +612,10 @@ public class GameManager : MonoBehaviour
         getRanking();
         savedata.Status[st.Gold] = Seeker;
         string promptData = savedata.CompileGeminiData(savedata, db.GetServerList()[savedata.Status[st.Server]]);
-        connection.throughGemini(promptData);
+        if (connection)
+        {
+            connection.throughGemini(promptData);
+        }
     }
 
     private void getRanking()
@@ -681,10 +684,10 @@ public class GameManager : MonoBehaviour
         // 改行を削除
         string geminiResponse = response.Replace("\r", "").Replace("\n", "");
 
-        // 140文字を超えた場合の処理
-        if (geminiResponse.Length > 140)
+        // 130文字を超えた場合の処理
+        if (geminiResponse.Length > 130)
         {
-            int lastPeriodIndex = geminiResponse.LastIndexOf("。", 140);
+            int lastPeriodIndex = geminiResponse.LastIndexOf("。", 130);
             
             // 「。」が見つかった場合、その「。」以降を削除
             if (lastPeriodIndex != -1)
