@@ -182,6 +182,11 @@ public class GameManager : MonoBehaviour
                 rankingRectTransform.anchoredPosition = rankingShowPos;
                 typingRoom.SetActive(true);
                 shopRoom.SetActive(false);
+
+                if (geminiResponce != null)
+                {
+                    talk.text = geminiResponce;
+                }
             }
         }
     }
@@ -246,6 +251,7 @@ public class GameManager : MonoBehaviour
         // シーンが2タイピングの場合
         else if (SceneNo == (int)scene.Typing)
         {
+            geminiResponce = null;
             if (savedata.Equipment[(int)eq.CatBody] != 0)
             {
                 chibiCat.setChara(savedata.Equipment[eq.CatBody]);
@@ -661,9 +667,8 @@ public class GameManager : MonoBehaviour
 
     public void returnGemini(string response)
     {
-        string correctString = correctResponse(response);
-        Debug.Log("GameManager returnGemini: " + correctString);
-        talk.text = correctString;
+        geminiResponce = correctResponse(response);
+        Debug.Log("GameManager returnGemini: " + geminiResponce);
     }
 
     private string correctResponse(string response)
