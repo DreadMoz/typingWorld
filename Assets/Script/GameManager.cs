@@ -612,10 +612,9 @@ public class GameManager : MonoBehaviour
         getRanking();
         savedata.Status[st.Gold] = Seeker;
         string promptData = savedata.CompileGeminiData(savedata, db.GetServerList()[savedata.Status[st.Server]]);
-        if (connection)
-        {
+        #if UNITY_WEBGL && !UNITY_EDITOR
             connection.throughGemini(promptData);
-        }
+        #endif
     }
 
     private void getRanking()
