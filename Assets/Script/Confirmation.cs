@@ -67,7 +67,7 @@ public class Confirmation : MonoBehaviour
                 pAnimator.SetTrigger("yes");
                 kAnimator.SetTrigger("buy");
                 gm.savedata.Inventory[blankIndex] = itemId;
-                gm.savedata.Status[0] = saifu - itemPrice;
+                gm.savedata.Status[st.Gold] = saifu - itemPrice;
                 gm.savedata.Items[itemId] = true;
                 talk.text = "まいどありがとうございます！";
                 hide();

@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     static public string MaxCombo { get; set; }
     public static string ResultKpm { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
+    public static string geminiResponce { get; set; }
 
     [SerializeField] private float kpmRatio = 0.5f;
 
@@ -169,8 +170,6 @@ public class GameManager : MonoBehaviour
             // アニメーションステートが3タイピング後の場合
             else if (SceneNo == (int)scene.House)
             {
-                recalculateKpm();
-                savedata.Status[st.Gold] = Seeker;
                 inventory.SetActive(false);
                 equip.SetActive(false);
                 settingButton.SetActive(false);
@@ -241,7 +240,6 @@ public class GameManager : MonoBehaviour
                 rankingWindow.SetTo(savedata.Status[st.Rank]);
                 rankingWindow.ScrollTo(savedata.Status[st.Rank]);
             }
-            setGemini();
 
             MistypedSentences.Clear();  // リストから全ての要素を削除
         }
@@ -604,8 +602,25 @@ public class GameManager : MonoBehaviour
 
     public void setGemini()
     {
-        string promptData = savedata.CompileGeminiData(savedata);
+        recalculateKpm();
+        getRanking();
+        savedata.Status[st.Gold] = Seeker;
+        string promptData = savedata.CompileGeminiData(savedata, db.GetServerList()[savedata.Status[st.Server]]);
         connection.throughGemini(promptData);
+    }
+
+    private void getRanking()
+    {
+        int myKpm = savedata.Status[st.Kpm];
+        int ranking = 1;
+        foreach (ExRank rank in savedata.ExRankings)
+        {
+            if(myKpm >= rank.Kpm)
+            {
+                savedata.Status[st.Rank] = ranking;
+            }
+            ranking++;
+        }
     }
 
     public string getNickname(int nicknameNo)
@@ -646,7 +661,27 @@ public class GameManager : MonoBehaviour
 
     public void returnGemini(string response)
     {
-        Debug.Log("GameManager returnGemini: " + response);
-        talk.text = response;
+        string correctString = correctResponse(response);
+        Debug.Log("GameManager returnGemini: " + correctString);
+        talk.text = correctString;
+    }
+
+    private string correctResponse(string response)
+    {
+        // 改行を削除
+        string geminiResponse = response.Replace("\r", "").Replace("\n", "");
+
+        // 140文字を超えた場合の処理
+        if (geminiResponse.Length > 140)
+        {
+            int lastPeriodIndex = geminiResponse.LastIndexOf("。", 140);
+            
+            // 「。」が見つかった場合、その「。」以降を削除
+            if (lastPeriodIndex != -1)
+            {
+                geminiResponse = geminiResponse.Substring(0, lastPeriodIndex + 1);
+            }
+        }
+        return geminiResponse;
     }
 }

@@ -17,6 +17,7 @@ using System.Linq;
 
 public class TypingSoft : MonoBehaviour
 {
+    [SerializeField] private GameManager gm;
     // Assist Keyboard JIS
     private static AssistKeyboardJIS AssistKeyboardObj;
 
@@ -661,6 +662,20 @@ public class TypingSoft : MonoBehaviour
         string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
         animator.SetTrigger(randEnd);
         player.transform.LookAt(targetCam.transform);   // カメラを向く
+
+        if (theme.timer > 0)
+        {
+            GameManager.NewKpm = (int)kpm;
+        }
+        else 
+        {
+            GameManager.NewKpm = 0;
+        }
+        GameManager.KeyParSecond = correctN / totalTime;
+        GameManager.AnswerRate = correctAR;
+        GameManager.Seeker = totalSeeker;
+
+        gm.setGemini();
     }
     
     private void OnGUI()
@@ -687,17 +702,6 @@ public class TypingSoft : MonoBehaviour
             if (inputStr.Equals(" "))
             {
                 AssistKeyboardObj.pushKeyAction(inputStr);
-                if (theme.timer > 0)
-                {
-                    GameManager.NewKpm = (int)kpm;
-                }
-                else 
-                {
-                    GameManager.NewKpm = 0;
-                }
-                GameManager.KeyParSecond = correctN / totalTime;
-                GameManager.AnswerRate = correctAR;
-                GameManager.Seeker = totalSeeker;
                 if (!goNextScene)
                 {
                     GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前

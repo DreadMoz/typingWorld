@@ -136,7 +136,7 @@ public class SerializableGemini
 {
     public string LastName;
     public int Gold;
-    public int Stage;
+    public string Stage;
     public int Ranking;
     public string typingTitle;
     public string maxCombo;
@@ -583,13 +583,13 @@ public class SaveData : ScriptableObject
     }
 
     // Geminiに送るためのデータを現在のゲームデータから作る。
-    public string CompileGeminiData(SaveData sd)
+    public string CompileGeminiData(SaveData sd, string server)
     {
         SerializableGemini data = new SerializableGemini
         {
             LastName = sd.LastName,
             Gold = sd.Status[st.Gold],
-            Stage = sd.Status[st.Server],
+            Stage = server,
             Ranking = sd.Status[st.Rank],
             typingTitle = GameManager.TypingTitle,
             maxCombo = GameManager.MaxCombo,
