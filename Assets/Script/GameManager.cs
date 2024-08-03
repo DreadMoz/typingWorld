@@ -624,6 +624,7 @@ public class GameManager : MonoBehaviour
             if(myKpm >= rank.Kpm)
             {
                 savedata.Status[st.Rank] = ranking;
+                return;
             }
             ranking++;
         }
@@ -669,6 +670,10 @@ public class GameManager : MonoBehaviour
     {
         geminiResponce = correctResponse(response);
         Debug.Log("GameManager returnGemini: " + geminiResponce);
+        if (talk != null)
+        {
+            talk.text = geminiResponce;
+        }
     }
 
     private string correctResponse(string response)
