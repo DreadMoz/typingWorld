@@ -134,13 +134,13 @@ public class SerializableStatusData
 [Serializable]
 public class SerializableGemini
 {
-    public string LastName;
+    public string FirstName;
     public int Gold;
     public string Stage;
     public int Ranking;
     public string typingTitle;
     public string maxCombo;
-    public string resultKpm;
+    public int resultKpm;
     public List<string> mistypedSentences;
     public SerializableGemini()
     {
@@ -587,13 +587,13 @@ public class SaveData : ScriptableObject
     {
         SerializableGemini data = new SerializableGemini
         {
-            LastName = sd.LastName,
+            FirstName = sd.UserName,
             Gold = sd.Status[st.Gold],
             Stage = server,
             Ranking = sd.Status[st.Rank],
             typingTitle = GameManager.TypingTitle,
             maxCombo = GameManager.MaxCombo,
-            resultKpm = GameManager.ResultKpm,
+            resultKpm = sd.Status[st.Kpm],
             mistypedSentences = GameManager.MistypedSentences,
         };
 
@@ -704,7 +704,7 @@ public class SaveData : ScriptableObject
 
     public void updateKpm(int newKpm)
     {
-        // 要素1から6までを0から5に移動
+        // 要素1から6までを0からxに移動
         for (int i = 0; i < Kpms.Length-1; i++)
         {
             if (Kpms[i + 1] < 0)
@@ -729,8 +729,5 @@ public class SaveData : ScriptableObject
         average /= kpmCount;
 
         Status[st.Kpm] = (int)Math.Round(average); // 四捨五入してintにキャスト;
-
-        //        int[] saveKpis = newKpi.Concat(kpms).ToArray();
-        //        saveGssKpis(-1, GssSize.Kpms, saveKpis);    // 先頭の前にKpmを追加しているため-1から
     }
 }
