@@ -670,6 +670,7 @@ public class GameManager : MonoBehaviour
 
     public void returnGemini(string response)
     {
+        geminiResponce = response;      // ジェミニレスポンスをWorldに戻ったとき用に保存
         Debug.Log("GameManager returnGemini: " + response);
         if (talk != null)
         {
