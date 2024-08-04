@@ -35,8 +35,8 @@ public class GameManager : MonoBehaviour
     static public int TypingDataId { get; set; }
     static public string TypingDataPath { get; set; }
     static public string TypingTitle { get; set; }
-    static public string MaxCombo { get; set; }
-    public static string ResultKpm { get; set; }
+    static public int MaxCombo { get; set; }
+    public static int ResultKpm { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
 
@@ -183,6 +183,7 @@ public class GameManager : MonoBehaviour
                 typingRoom.SetActive(true);
                 shopRoom.SetActive(false);
 
+                talk.text = "いらっしゃいませ。タイピングがんばろうね！";
                 if (geminiResponce != null)
                 {
                     talk.text = geminiResponce;

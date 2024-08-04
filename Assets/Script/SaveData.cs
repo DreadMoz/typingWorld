@@ -139,8 +139,9 @@ public class SerializableGemini
     public string Stage;
     public int Ranking;
     public string typingTitle;
-    public string maxCombo;
+    public int maxCombo;
     public int resultKpm;
+    public int averageKpm;
     public List<string> mistypedSentences;
     public SerializableGemini()
     {
@@ -593,7 +594,8 @@ public class SaveData : ScriptableObject
             Ranking = sd.Status[st.Rank],
             typingTitle = GameManager.TypingTitle,
             maxCombo = GameManager.MaxCombo,
-            resultKpm = sd.Status[st.Kpm],
+            resultKpm = GameManager.ResultKpm,
+            averageKpm = sd.Status[st.Kpm],
             mistypedSentences = GameManager.MistypedSentences,
         };
 

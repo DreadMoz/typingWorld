@@ -645,13 +645,13 @@ public class TypingSoft : MonoBehaviour
         UII.text = "";
 
         GameManager.TypingTitle = theme.title;
-        GameManager.ResultKpm = UIkpm.text;            // 今回のKPM
-        GameManager.MaxCombo = maxCombo.ToString();    // 最大コンボ数
+        GameManager.ResultKpm = int.Parse(UIkpm.text); // 今回のKPM
+        GameManager.MaxCombo = maxCombo;    // 最大コンボ数
 
         // 結果ウィンドウ表示
         resultTitle.text = GameManager.TypingTitle;
-        resultKpm.text = GameManager.ResultKpm;
-        resultCombo.text = GameManager.MaxCombo;
+        resultKpm.text = UIkpm.text;
+        resultCombo.text = maxCombo.ToString();
         resultWindow.SetActive(true);
         lHand.SetActive(false);
         rHand.SetActive(false);

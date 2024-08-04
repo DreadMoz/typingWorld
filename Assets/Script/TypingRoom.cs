@@ -53,6 +53,7 @@ public class TypingRoom : MonoBehaviour
         }
         pAnimator = housePlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator = littleCat.GetComponent<Animator>(); // littleCatのアニメーターを取得
+        lAnimator.SetTrigger("jump");
     }
 
     // Update is called once per frame
