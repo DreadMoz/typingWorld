@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject exitHouse;
     [SerializeField] private GameObject exitShop;
     [SerializeField] private TMP_Text talk;
+    [SerializeField] private TMP_Text skyTalk;
     [SerializeField] private GameObject talkObject;
     [SerializeField] private GameObject fukidashiObject;
     [SerializeField] private GameObject inventoryFilter;
@@ -320,7 +321,7 @@ public class Player : MonoBehaviour
         {
             if (!gm.getWindowOpen())
             {
-                talk.text = "タイピング練習場へようこそ！";
+                skyTalk.text = "タイピング練習場へようこそ！";
                 // "Hi" トリガーアニメーションを開始
                 animator.SetTrigger("Hi");
                 agent.destination = this.transform.position;

@@ -645,8 +645,18 @@ public class TypingSoft : MonoBehaviour
         UII.text = "";
 
         GameManager.TypingTitle = theme.title;
-        GameManager.ResultKpm = int.Parse(UIkpm.text); // 今回のKPM
         GameManager.MaxCombo = maxCombo;    // 最大コンボ数
+        int intKpm;
+        if (int.TryParse(UIkpm.text, out intKpm))
+        {
+            GameManager.ResultKpm = intKpm; // 今回のKPM
+        }
+        else
+        {
+            // 無効な入力に対する処理
+            Debug.LogError("無効なKPM値: " + UIkpm.text);
+            GameManager.ResultKpm = 0;
+        }
 
         // 結果ウィンドウ表示
         resultTitle.text = GameManager.TypingTitle;

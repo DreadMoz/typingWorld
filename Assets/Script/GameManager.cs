@@ -183,11 +183,11 @@ public class GameManager : MonoBehaviour
                 typingRoom.SetActive(true);
                 shopRoom.SetActive(false);
 
-                talk.text = "いらっしゃいませ。タイピングがんばろうね！";
                 if (geminiResponce != null)
                 {
                     talk.text = geminiResponce;
                 }
+                geminiResponce = null;
             }
         }
     }
