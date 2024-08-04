@@ -670,30 +670,10 @@ public class GameManager : MonoBehaviour
 
     public void returnGemini(string response)
     {
-        geminiResponce = correctResponse(response);
-        Debug.Log("GameManager returnGemini: " + geminiResponce);
+        Debug.Log("GameManager returnGemini: " + response);
         if (talk != null)
         {
-            talk.text = geminiResponce;
+            talk.text = response;
         }
-    }
-
-    private string correctResponse(string response)
-    {
-        // 改行を削除
-        string geminiResponse = response.Replace("\r", "").Replace("\n", "");
-
-        // 130文字を超えた場合の処理
-        if (geminiResponse.Length > 130)
-        {
-            int lastPeriodIndex = geminiResponse.LastIndexOf("。", 130);
-            
-            // 「。」が見つかった場合、その「。」以降を削除
-            if (lastPeriodIndex != -1)
-            {
-                geminiResponse = geminiResponse.Substring(0, lastPeriodIndex + 1);
-            }
-        }
-        return geminiResponse;
     }
 }
