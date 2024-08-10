@@ -19,6 +19,8 @@ public class UserInfo
     public string lastName;
     public string picture;
     public string department;
+    public string message;
+    public string access;
 }
 public class TitleSky : MonoBehaviour
 {
@@ -155,15 +157,11 @@ public class TitleSky : MonoBehaviour
         lastName.text = userInfo.lastName;
         department.text = userInfo.department;
         StartCoroutine(LoadImage(userInfo.picture));
+        messageText.text = userInfo.message;
 
-        if ((mailText.text.Substring(mailText.text.Length - 13) == "e-net.nara.jp") || gm.gmailToggle.isOn)
+        if (userInfo.access == "true")
         {
-            messageText.text = firstName.text + "さんはいいネットならのなかまだね。";
             gm.connection.loadLocal(); // あしあとデータサーチ
-        }
-        else
-        {
-            messageText.text = "これはいいネットならのアプリなんだ。e-net.nara.jpのアカウントでログインしてね。";
         }
         reLogin.SetActive(true); // ログアウトボタン表示
     }

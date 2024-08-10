@@ -1,3 +1,4 @@
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -23,7 +24,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject exitHouse;
     [SerializeField] private GameObject exitShop;
     [SerializeField] private TMP_Text talk;
-    [SerializeField] private TMP_Text skyTalk;
+//    [SerializeField] private TMP_Text skyTalk;
+    [SerializeField] private Text skyTalk;
     [SerializeField] private GameObject talkObject;
     [SerializeField] private GameObject fukidashiObject;
     [SerializeField] private GameObject inventoryFilter;

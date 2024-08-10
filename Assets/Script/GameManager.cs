@@ -75,7 +75,8 @@ public class GameManager : MonoBehaviour
     private int cameraMove = 0;          // 0:標準 1:右回転 2:左回転 3:ズームイン
 
     [SerializeField]
-    private TMP_Text talk;
+//    private TMP_Text talk;
+    private Text talk;
 
     Vector3 chaseOffset = new Vector3(0f, 8f, -14f);
     Quaternion chaseRotation = Quaternion.Euler(18.5f, 0f, 0f);
