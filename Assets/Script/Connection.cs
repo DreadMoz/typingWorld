@@ -94,39 +94,17 @@ public void getRanking()
 #endif
     }
 
-    /*
-    private void getDummyDb()
-    {
-        string msg = "dummyneco";
-        string msgK = "100, 101, 102, 103, 104, 105, 106, 107, 108, 109";
-        // Gold,Server,Rank,Kpm
-        string msgS = "30, 1, 150, 0";
-        // RightHnad,Glasses(121),Head(151),LeftHand,CatBody(201)あえて0,CatFace(101),NickName(211)
-        string msgE = "0, 120, 150, 0, 0, 100, 210";
-        string msgI = "0, 0, 0, 0, 0, 0, 5, 0, 121, 0, 0, 6, 0, 151, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0";
-        string msgM = "4, 4, 4, 4, 3, 3, 3, 3, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0";
-
-        gm.savedata.setUserNameFromFireBase(msg);
-        gm.setKpm(msgK);
-        gm.setStatus(msgS);
-        gm.setEquipment(msgE);
-        gm.setInventory(msgI);
-        gm.setMedals(msgM);
-
-        title.setDummyData();
-        //        title.finishDataLoad();
-    }
-    */
-
 private void getDummyOAuth()
     {
         if (gm.enetToggle.isOn)
         {
             string jsonData = @"{
-                ""email"": ""demonstration@e-net.nara.jp"",
+                ""email"": ""demo@e-net.jp"",
                 ""firstName"": ""Demo"",
                 ""lastName"": ""Robo"",
-                ""picture"": ""https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c""
+                ""picture"": ""https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c"",
+                ""Message"": ""ろぼさんはいいネットならの仲間だね。スタートしましょう。"",
+                ""access"": ""true""
             }";
             title.finishOAuth(jsonData);
         }
@@ -136,7 +114,9 @@ private void getDummyOAuth()
                 ""email"": ""rochy2moo@gmail.com"",
                 ""firstName"": ""Ryosuke"",
                 ""lastName"": ""Mori"",
-                ""picture"": ""https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c""
+                ""picture"": ""https://lh3.googleusercontent.com/a/AAcHTtdjq-TTMMygrjVNtRA6vb15AMinz6HfsldU-_wzQYF3F2j8=s96-c"",
+                ""Message"": ""いいネットならじゃない・・・"",
+                ""access"": ""false""
             }";
             title.finishOAuth(jsonData);
         }
@@ -335,7 +315,7 @@ private void getDummyOAuth()
         {
             // rankingDataとstatusDataを含むダミーのJSON文字列
             gssData = @"{
-                ""email"": ""demonstration@e-net.nara.jp"",
+                ""email"": ""demo@e-net.jp"",
                 ""ou"": ""/公立学校/低学年/OU市/OU小学校"",
                 ""lastName"": ""0603-24"",
                 ""gold"": ""65900"",
