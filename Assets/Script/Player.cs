@@ -79,11 +79,11 @@ public class Player : MonoBehaviour
         {
             if (GameManager.TypingDataPath == null)
             {
-                talk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
+                skyTalk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
             }
             else
             {
-                talk.text = "がんばったね^ ^";
+                skyTalk.text = "がんばったね^ ^";
             }
             if (GameManager.TypingTab == 2)
             {

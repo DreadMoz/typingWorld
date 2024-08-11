@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.13073657, g: 0.20176916, b: 0.36133218, a: 1}
+  m_IndirectSpecularColor: {r: 0.11328054, g: 0.17153779, b: 0.30411682, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1716,6 +1716,7 @@ MonoBehaviour:
   gmailToggle: {fileID: 1405924328}
   statusui: {fileID: 0}
   windowOpenCount: 20
+  talk: {fileID: 0}
 --- !u!4 &529254025
 Transform:
   m_ObjectHideFlags: 0
@@ -5453,7 +5454,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1601968421
 RectTransform:
   m_ObjectHideFlags: 0

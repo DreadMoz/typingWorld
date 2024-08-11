@@ -1019,7 +1019,7 @@ public class TypingSoft : MonoBehaviour
         UII.text = $"<color=#20A01D>{UII.text}</color>";
         answers++;
 
-        if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))
+        if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))     // 時間制じゃない時の終わり
         {
             currentTime = 0;
             isTimerRunning = false;
@@ -1038,6 +1038,13 @@ public class TypingSoft : MonoBehaviour
             animator.SetTrigger("end3");
 
             spaceEnd = true;
+
+            GameManager.NewKpm = 0;
+            GameManager.KeyParSecond = 2;
+            GameManager.AnswerRate = correctAR;
+            GameManager.Seeker = totalSeeker;
+
+            gm.setGemini();
         }
         else
         {

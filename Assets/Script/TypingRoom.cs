@@ -5,12 +5,13 @@ using TMPro;
 using Unity.VisualScripting;
 //using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class TypingRoom : MonoBehaviour
 {
     [SerializeField]
-    private TMP_Text talk;
+    private Text talk;
 
     [SerializeField]
     private GameObject housePlayer;
