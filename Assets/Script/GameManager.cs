@@ -188,6 +188,9 @@ public class GameManager : MonoBehaviour
                 {
                     talk.text = geminiResponce;
                 }
+                else{
+                    talk.text = "よくがんばったね＾＾";
+                }
                 geminiResponce = null;
             }
         }
@@ -672,6 +675,8 @@ public class GameManager : MonoBehaviour
 
     public void returnGemini(string response)
     {
+        // 改行をすべて削除
+        response = response.Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
         geminiResponce = response;      // ジェミニレスポンスをWorldに戻ったとき用に保存
         Debug.Log("GameManager returnGemini: " + response);
         if (talk != null)

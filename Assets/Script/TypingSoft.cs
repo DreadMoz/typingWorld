@@ -1043,6 +1043,7 @@ public class TypingSoft : MonoBehaviour
             GameManager.KeyParSecond = 2;
             GameManager.AnswerRate = correctAR;
             GameManager.Seeker = totalSeeker;
+            GameManager.MaxCombo = maxCombo;
 
             gm.setGemini();
         }

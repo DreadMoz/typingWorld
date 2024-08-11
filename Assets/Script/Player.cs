@@ -81,10 +81,6 @@ public class Player : MonoBehaviour
             {
                 skyTalk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
             }
-            else
-            {
-                skyTalk.text = "がんばったね^ ^";
-            }
             if (GameManager.TypingTab == 2)
             {
                 // 直近のタイピングデータ前の情報を表示
