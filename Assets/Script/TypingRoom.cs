@@ -10,8 +10,9 @@ using UnityEngine.SceneManagement;
 
 public class TypingRoom : MonoBehaviour
 {
+
     [SerializeField]
-    private Text talk;
+    private TMP_Text talk;
 
     [SerializeField]
     private GameObject housePlayer;

@@ -74,8 +74,7 @@ public class GameManager : MonoBehaviour
     private int cameraMove = 0;          // 0:標準 1:右回転 2:左回転 3:ズームイン
 
     [SerializeField]
-//    private TMP_Text talk;
-    private Text talk;
+    private TMP_Text talk;
 
     Vector3 chaseOffset = new Vector3(0f, 8f, -14f);
     Quaternion chaseRotation = Quaternion.Euler(18.5f, 0f, 0f);
@@ -188,7 +187,7 @@ public class GameManager : MonoBehaviour
                     talk.text = geminiResponce;
                 }
                 else{
-                    talk.text = "よくがんばったね＾＾";
+                    talk.text = "よくがんばったにゃん＾＾";
                 }
                 geminiResponce = null;
             }
@@ -673,13 +672,14 @@ public class GameManager : MonoBehaviour
     }
     public void returnGemini(string response)
     {
-        // 明示的にすべての改行文字を削除
-        response = response.Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
+        // 絵文字や特殊文字を削除する（Unicodeの特定の範囲をフィルタリング）
+        response = new string(response.Where(c => (c >= 32 && c <= 126) || // 基本ラテン文字 (ASCII)
+                                                (c >= 0x3040 && c <= 0x309F) || // ひらがな
+                                                (c >= 0x30A0 && c <= 0x30FF) || // カタカナ
+                                                (c >= 0x4E00 && c <= 0x9FAF) // 漢字
+                                                ).ToArray());
 
-        // 制御文字と疑われる範囲を削除
-        response = new string(response.Where(c => (int)c >= 32 && (int)c <= 126).ToArray());
-
-        geminiResponce = response;
+        geminiResponce = response; // ジェミニレスポンスをWorldに戻ったとき用に保存
         Debug.Log("GameManager returnGemini: " + response);
 
         if (talk != null)
