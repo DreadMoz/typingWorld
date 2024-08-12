@@ -671,16 +671,13 @@ public class GameManager : MonoBehaviour
             Debug.LogError("データの読み込み中に例外発生: " + ex);
         }
     }
-
     public void returnGemini(string response)
     {
-        // 特殊文字のASCIIコードを出力してデバッグする
-        foreach (char c in response)
-        {
-            Debug.Log($"Character: {c}, ASCII: {(int)c}");
-        }
+        // 明示的にすべての改行文字を削除
+        response = response.Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
 
-        response = new string(response.Where(c => !char.IsControl(c)).ToArray());
+        // 制御文字と疑われる範囲を削除
+        response = new string(response.Where(c => (int)c >= 32 && (int)c <= 126).ToArray());
 
         geminiResponce = response;
         Debug.Log("GameManager returnGemini: " + response);
