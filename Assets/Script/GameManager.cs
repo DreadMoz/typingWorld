@@ -672,12 +672,19 @@ public class GameManager : MonoBehaviour
     }
     public void returnGemini(string response)
     {
-        // 絵文字や特殊文字を削除する（Unicodeの特定の範囲をフィルタリング）
-        response = new string(response.Where(c => (c >= 32 && c <= 126) || // 基本ラテン文字 (ASCII)
+        // フィルタリング前の文字列をログに出力
+        Debug.Log("Before Filtering: " + response);
+
+        // ここでフィルタリングを試みる
+        response = new string(response.Where(c => (c >= 0x0020 && c <= 0x007E) || // 基本ラテン文字と記号 (スペース, 英数字, 記号)
                                                 (c >= 0x3040 && c <= 0x309F) || // ひらがな
                                                 (c >= 0x30A0 && c <= 0x30FF) || // カタカナ
-                                                (c >= 0x4E00 && c <= 0x9FAF) // 漢字
+                                                (c >= 0x4E00 && c <= 0x9FFF) || // CJK統合漢字
+                                                (c >= 0xFF00 && c <= 0xFFEF)    // 全角の記号、数字、アルファベットなど
                                                 ).ToArray());
+
+        // フィルタリング後の文字列をログに出力
+        Debug.Log("After Filtering: " + response);
 
         geminiResponce = response; // ジェミニレスポンスをWorldに戻ったとき用に保存
         Debug.Log("GameManager returnGemini: " + response);
