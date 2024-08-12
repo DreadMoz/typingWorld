@@ -594,7 +594,7 @@ public class SaveData : ScriptableObject
             Ranking = sd.Status[st.Rank],
             typingTitle = GameManager.TypingTitle,
             maxCombo = GameManager.MaxCombo,
-            resultKpm = GameManager.ResultKpm,
+            resultKpm = GameManager.NewKpm,
             averageKpm = sd.Status[st.Kpm],
             mistypedSentences = GameManager.MistypedSentences,
         };

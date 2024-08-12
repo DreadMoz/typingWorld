@@ -599,7 +599,7 @@ public class TypingSoft : MonoBehaviour
                 Fukidashi.SetActive(false);
 
                 checkSeekerTimer();
-                dispResult();
+                dispResultTimerVer();
 
                 spaceEnd = true;
             }
@@ -636,7 +636,39 @@ public class TypingSoft : MonoBehaviour
         }
     }
 
-    private void dispResult()
+    private void dispResultNonTimerVer()
+    {
+        END.text = "よくできました！";
+        UIJ.text = "";
+        UIH.text = "";
+        UIR.text = "";
+        UII.text = "";
+
+        GameManager.NewKpm = 0;                 // 今回のKPM
+        GameManager.KeyParSecond = 2;           // 今回の１秒あたりのキー入力。常にOKとするため１より大を設定
+        GameManager.AnswerRate = correctAR;     // 今回の正答率
+        GameManager.Seeker = totalSeeker;       // 所持シーカー
+        GameManager.TypingTitle = theme.title;  // 実施したテーマ
+        GameManager.MaxCombo = maxCombo;        // 今回の最大コンボ数
+
+        // キーカラークリア
+        AssistKeyboardObj.SetAllKeyColorWhite();
+        AssistKeyboardObj.SetNextHighlight(" ");
+
+        // アニメーション
+        animator.SetTrigger("end3");
+
+        // 結果処理
+        currentTime = 0;
+        isTimerRunning = false;
+        isInputValid = false;
+        Fukidashi.SetActive(false);
+        spaceEnd = true;
+
+        gm.setGemini();
+    }
+
+    private void dispResultTimerVer()
     {
         END.text = "おしまい！";
         UIJ.text = "";
@@ -644,19 +676,21 @@ public class TypingSoft : MonoBehaviour
         UIR.text = "";
         UII.text = "";
 
-        GameManager.TypingTitle = theme.title;
-        GameManager.MaxCombo = maxCombo;    // 最大コンボ数
-        int intKpm;
-        if (int.TryParse(UIkpm.text, out intKpm))
-        {
-            GameManager.ResultKpm = intKpm; // 今回のKPM
-        }
-        else
-        {
-            // 無効な入力に対する処理
-            Debug.LogError("無効なKPM値: " + UIkpm.text);
-            GameManager.ResultKpm = 0;
-        }
+        GameManager.NewKpm = (theme.timer > 0) ? (int)kpm : 0;  // 今回のKPM
+        GameManager.KeyParSecond = correctN / totalTime;        // 今回の１秒あたりのキー入力
+        GameManager.AnswerRate = correctAR;     // 今回の正答率
+        GameManager.Seeker = totalSeeker;       // 所持シーカー
+        GameManager.TypingTitle = theme.title;  // 実施したテーマ
+        GameManager.MaxCombo = maxCombo;        // 今回の最大コンボ数
+
+        // キーカラークリア
+        AssistKeyboardObj.SetAllKeyColorWhite();
+        AssistKeyboardObj.SetNextHighlight(" ");
+
+        // アニメーション
+        string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
+        animator.SetTrigger(randEnd);
+        player.transform.LookAt(targetCam.transform);   // カメラを向く
 
         // 結果ウィンドウ表示
         resultTitle.text = GameManager.TypingTitle;
@@ -666,25 +700,6 @@ public class TypingSoft : MonoBehaviour
         lHand.SetActive(false);
         rHand.SetActive(false);
 
-        // キーカラークリア
-        AssistKeyboardObj.SetAllKeyColorWhite();
-        AssistKeyboardObj.SetNextHighlight(" ");
-        string randEnd = "end" + (new System.Random().Next(1, 6)).ToString();
-        animator.SetTrigger(randEnd);
-        player.transform.LookAt(targetCam.transform);   // カメラを向く
-
-        if (theme.timer > 0)
-        {
-            GameManager.NewKpm = (int)kpm;
-        }
-        else 
-        {
-            GameManager.NewKpm = 0;
-        }
-        GameManager.KeyParSecond = correctN / totalTime;
-        GameManager.AnswerRate = correctAR;
-        GameManager.Seeker = totalSeeker;
-
         gm.setGemini();
     }
     
@@ -693,7 +708,7 @@ public class TypingSoft : MonoBehaviour
         Event e = Event.current;
         var isPushedShiftKey = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        if (spaceStart)
+        if (spaceStart)     // スペースでスタート状態のとき
         {
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
             if (e.type == EventType.KeyDown && inputStr.Equals(" "))
@@ -706,7 +721,7 @@ public class TypingSoft : MonoBehaviour
                 return;
             }
         }
-        else if (spaceEnd)
+        else if (spaceEnd)    // スペースで終了状態のとき
         {
             var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
             if (inputStr.Equals(" "))
@@ -720,6 +735,7 @@ public class TypingSoft : MonoBehaviour
                 }
             }
         }
+
         if (isInputValid && e.type == EventType.KeyDown && e.keyCode != KeyCode.None
         && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
@@ -867,7 +883,7 @@ public class TypingSoft : MonoBehaviour
         correctAR = (float)correctN / ((float)correctN + (float)mistakeN);
         UIcorrectAR.text = string.Format("{0:0.0} %", correctAR*100);
 
-        if (comboN == 0)
+        if (comboN == 0)   // コンボ依存のアニメーション
         {
             UIcombo.rectTransform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
 
@@ -931,7 +947,6 @@ public class TypingSoft : MonoBehaviour
             animator.SetFloat("runSpeed", 1.0f);
             animator.SetFloat("moveSpeed", 1.0f);
         }
-
         yield return null;
     }
 
@@ -1021,36 +1036,11 @@ public class TypingSoft : MonoBehaviour
 
         if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))     // 時間制じゃない時の終わり
         {
-            currentTime = 0;
-            isTimerRunning = false;
-            isInputValid = false;
-            Fukidashi.SetActive(false);
-
-            END.text = "よくできました！";
-            UIJ.text = "";
-            UIH.text = "";
-            UIR.text = "";
-            UII.text = "";
-
-            // キーカラークリア
-            AssistKeyboardObj.SetAllKeyColorWhite();
-            AssistKeyboardObj.SetNextHighlight(" ");
-            animator.SetTrigger("end3");
-
-            spaceEnd = true;
-
-            GameManager.NewKpm = 0;
-            GameManager.KeyParSecond = 2;
-            GameManager.AnswerRate = correctAR;
-            GameManager.Seeker = totalSeeker;
-            GameManager.MaxCombo = maxCombo;
-
-            gm.setGemini();
+            dispResultNonTimerVer();            // 終了処理
         }
         else
         {
-            // 次の文章
-            StartCoroutine(ChangeSentence());
+            StartCoroutine(ChangeSentence());   // 次の文章
         }
     }
 

@@ -38,7 +38,7 @@ public class NpcManager : MonoBehaviour
 
     public void SpawnNPCs()
     {
-        Debug.LogWarning("ランキング数"+gm.savedata.ExRankings.Count+"0番の名前"+gm.savedata.ExRankings[0].Name);
+        Debug.Log("ランキング数"+gm.savedata.ExRankings.Count);
         if (gm.savedata.ExRankings.Count == 0 || gm.savedata.ExRankings[0].Name == "")
         {
             Debug.LogWarning("SpawnNPCs:ExRankingsが空なのでNPCを作りません。");
