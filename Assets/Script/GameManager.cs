@@ -36,7 +36,6 @@ public class GameManager : MonoBehaviour
     static public string TypingDataPath { get; set; }
     static public string TypingTitle { get; set; }
     static public int MaxCombo { get; set; }
-    public static int ResultKpm { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
 
@@ -675,10 +674,17 @@ public class GameManager : MonoBehaviour
 
     public void returnGemini(string response)
     {
-        // 改行をすべて削除
-        response = response.Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
-        geminiResponce = response;      // ジェミニレスポンスをWorldに戻ったとき用に保存
+        // 特殊文字のASCIIコードを出力してデバッグする
+        foreach (char c in response)
+        {
+            Debug.Log($"Character: {c}, ASCII: {(int)c}");
+        }
+
+        response = new string(response.Where(c => !char.IsControl(c)).ToArray());
+
+        geminiResponce = response;
         Debug.Log("GameManager returnGemini: " + response);
+
         if (talk != null)
         {
             talk.text = response;
