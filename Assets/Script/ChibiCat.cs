@@ -27,6 +27,8 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject vikingHelm;
     [SerializeField] private GameObject mexicoHat;
     [SerializeField] private GameObject cakeS;
+    [SerializeField] private GameObject ducks;
+    [SerializeField] private GameObject pingpong;
 
     [SerializeField] private GameObject grassARed;
     [SerializeField] private GameObject grassABlue;
@@ -42,6 +44,18 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject donutStrawberryR;
     [SerializeField] private GameObject pencilR;
     [SerializeField] private GameObject eraserR;
+    [SerializeField] private GameObject pingpongRacketR;
+    [SerializeField] private GameObject duckPinkR;
+    [SerializeField] private GameObject duckPondR;
+    [SerializeField] private GameObject soccerR;
+    [SerializeField] private GameObject volleyR;
+    [SerializeField] private GameObject clipboardR;
+    [SerializeField] private GameObject smartphoneR;
+    [SerializeField] private GameObject laptopR;
+    [SerializeField] private GameObject tennisR;
+    [SerializeField] private GameObject tennisBatR;
+    [SerializeField] private GameObject basketBallR;
+
 
     [SerializeField] private GameObject spadL;
     [SerializeField] private GameObject driedFishL;
@@ -53,6 +67,17 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject donutStrawberryL;
     [SerializeField] private GameObject pencilL;
     [SerializeField] private GameObject eraserL;
+    [SerializeField] private GameObject pingpongRacketL;
+    [SerializeField] private GameObject duckPinkL;
+    [SerializeField] private GameObject duckPondL;
+    [SerializeField] private GameObject soccerL;
+    [SerializeField] private GameObject volleyL;
+    [SerializeField] private GameObject clipboardL;
+    [SerializeField] private GameObject smartphoneL;
+    [SerializeField] private GameObject laptopL;
+    [SerializeField] private GameObject tennisL;
+    [SerializeField] private GameObject tennisBatL;
+    [SerializeField] private GameObject basketBallL;
 
     // Start is called before the first frame update
     void Awake()
@@ -150,12 +175,43 @@ public class ChibiCat : MonoBehaviour
                 donutStrawberryR.SetActive(true);
                 break;
             case 9:
+                pingpongRacketR.SetActive(true);
                 break;
             case 10:
                 pencilR.SetActive(true);
                 break;
             case 11:
                 eraserR.SetActive(true);
+                break;
+            case 12:
+                duckPondR.SetActive(true);
+                break;
+            case 13:
+                duckPinkR.SetActive(true);
+                break;
+            case 14:
+                soccerR.SetActive(true);
+                break;
+            case 15:
+                volleyR.SetActive(true);
+                break;
+            case 16:
+                clipboardR.SetActive(true);
+                break;
+            case 17:
+                smartphoneR.SetActive(true);
+                break;
+            case 18:
+                laptopR.SetActive(true);
+                break;
+            case 19:
+                tennisR.SetActive(true);
+                break;
+            case 20:
+                tennisBatR.SetActive(true);
+                break;
+            case 21:
+                basketBallR.SetActive(true);
                 break;
         }
         switch (itemIdLeft)     // 左手
@@ -189,12 +245,43 @@ public class ChibiCat : MonoBehaviour
                 donutStrawberryL.SetActive(true);
                 break;
             case 9:
+                pingpongRacketL.SetActive(true);
                 break;
             case 10:
                 pencilL.SetActive(true);
                 break;
             case 11:
                 eraserL.SetActive(true);
+                break;
+            case 12:
+                duckPondL.SetActive(true);
+                break;
+            case 13:
+                duckPinkL.SetActive(true);
+                break;
+            case 14:
+                soccerL.SetActive(true);
+                break;
+            case 15:
+                volleyL.SetActive(true);
+                break;
+            case 16:
+                clipboardL.SetActive(true);
+                break;
+            case 17:
+                smartphoneL.SetActive(true);
+                break;
+            case 18:
+                laptopL.SetActive(true);
+                break;
+            case 19:
+                tennisL.SetActive(true);
+                break;
+            case 20:
+                tennisBatL.SetActive(true);
+                break;
+            case 21:
+                basketBallL.SetActive(true);
                 break;
         }
     }
@@ -247,6 +334,12 @@ public class ChibiCat : MonoBehaviour
             case 159:
                 cakeS.SetActive(true);
                 break;
+            case 160:
+                ducks.SetActive(true);
+                break;
+            case 161:
+                pingpong.SetActive(true);
+                break;
         }
     }
 
@@ -274,6 +367,17 @@ public class ChibiCat : MonoBehaviour
         donutStrawberryR.SetActive(false);
         pencilR.SetActive(false);
         eraserR.SetActive(false);
+        pingpongRacketR.SetActive(false);
+        duckPinkR.SetActive(false);
+        duckPondR.SetActive(false);
+        soccerR.SetActive(false);
+        volleyR.SetActive(false);
+        clipboardR.SetActive(false);
+        smartphoneR.SetActive(false);
+        laptopR.SetActive(false);
+        tennisR.SetActive(false);
+        tennisBatR.SetActive(false);
+        basketBallR.SetActive(false);
 
         battonWoodL.SetActive(false);   // 左手解除
         spadL.SetActive(false);
@@ -285,6 +389,17 @@ public class ChibiCat : MonoBehaviour
         donutStrawberryL.SetActive(false);
         pencilL.SetActive(false);
         eraserL.SetActive(false);
+        pingpongRacketL.SetActive(false);
+        duckPinkL.SetActive(false);
+        duckPondL.SetActive(false);
+        soccerL.SetActive(false);
+        volleyL.SetActive(false);
+        clipboardL.SetActive(false);
+        smartphoneL.SetActive(false);
+        laptopL.SetActive(false);
+        tennisL.SetActive(false);
+        tennisBatL.SetActive(false);
+        basketBallL.SetActive(false);
     }
 
     private void releaseGlasses()
@@ -305,5 +420,7 @@ public class ChibiCat : MonoBehaviour
         vikingHelm.SetActive(false);
         mexicoHat.SetActive(false);
         cakeS.SetActive(false);
+        pingpong.SetActive(false);
+        ducks.SetActive(false);
     }
 }
