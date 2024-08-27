@@ -33,6 +33,14 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject grassARed;
     [SerializeField] private GameObject grassABlue;
     [SerializeField] private GameObject grassABlack;
+    [SerializeField] private GameObject sunglasMaruB;
+    [SerializeField] private GameObject sunglasMaruG;
+    [SerializeField] private GameObject sunglasB;
+    [SerializeField] private GameObject sunglasR;
+    [SerializeField] private GameObject sunglasY;
+    [SerializeField] private GameObject sunglasMono;
+    [SerializeField] private GameObject steampunk;
+    [SerializeField] private GameObject vrGoggle;
 
     [SerializeField] private GameObject spadR;
     [SerializeField] private GameObject driedFishR;
@@ -300,6 +308,30 @@ public class ChibiCat : MonoBehaviour
             case 123:
                 grassABlack.SetActive(true);
                 break;
+            case 124:
+                sunglasMaruB.SetActive(true);
+                break;
+            case 125:
+                sunglasMaruG.SetActive(true);
+                break;
+            case 126:
+                sunglasB.SetActive(true);
+                break;
+            case 127:
+                sunglasR.SetActive(true);
+                break;
+            case 128:
+                sunglasY.SetActive(true);
+                break;
+            case 129:
+                sunglasMono.SetActive(true);
+                break;
+            case 130:
+                steampunk.SetActive(true);
+                break;
+            case 131:
+                vrGoggle.SetActive(true);
+                break;
         }
     }
     public void changeEquipHead(int itemIdHead)
@@ -407,6 +439,14 @@ public class ChibiCat : MonoBehaviour
         grassARed.SetActive(false);
         grassABlue.SetActive(false);
         grassABlack.SetActive(false);
+        sunglasMaruB.SetActive(false);
+        sunglasMaruG.SetActive(false);
+        sunglasB.SetActive(false);
+        sunglasR.SetActive(false);
+        sunglasY.SetActive(false);
+        sunglasMono.SetActive(false);
+        steampunk.SetActive(false);
+        vrGoggle.SetActive(false);
     }
 
     private void releaseHead()

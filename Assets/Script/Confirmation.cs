@@ -118,7 +118,7 @@ public class Confirmation : MonoBehaviour
         float screenWidth = Screen.width;
         float screenHeight = Screen.height;
         Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
-        transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
+        transform.position = new Vector2(screenWidth * 0.5f, 2000);
     }
 
     public void show()
