@@ -41,18 +41,7 @@ public class TypingRoom : MonoBehaviour
         challengeList.SetActive(false);
         customList.SetActive(false);
         trainingList.SetActive(false);
-        switch (GameManager.TypingTab)
-        {
-            case 0:
-                challengeList.SetActive(true);
-                break;
-            case 1:
-                customList.SetActive(true);
-                break;
-            case 2:
-                trainingList.SetActive(true);
-                break;
-        }
+        panelReset(GameManager.TypingTab);
         pAnimator = housePlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator = littleCat.GetComponent<Animator>(); // littleCatのアニメーターを取得
         lAnimator.SetTrigger("jump");
@@ -74,6 +63,14 @@ public class TypingRoom : MonoBehaviour
         }
     }
 
+    public void panelReset(int panelNo)
+    {
+        challengeList.SetActive(panelNo==0);
+        customList.SetActive(panelNo==1);
+        trainingList.SetActive(panelNo==2);
+        ShowMenuList(panelNo);
+    }
+
     public void openChallenge()
     {
         GameManager.TypingTab = 0;
@@ -83,7 +80,7 @@ public class TypingRoom : MonoBehaviour
         pAnimator.SetTrigger("fuda");
         lAnimator.SetTrigger("jump");
         talk.text = "ここでいろんなタイピングにちょうせんしてみてね。";
-        ShowMenuList(1);
+        ShowMenuList(0);
     }
 
     public void openCustom()
@@ -95,8 +92,7 @@ public class TypingRoom : MonoBehaviour
         pAnimator.SetTrigger("fuda");
         lAnimator.SetTrigger("jump");
         talk.text = "みんなが作ってくれたメニューだよ。\nたのしんでいってね。";
-        ShowMenuList(2);
-
+        ShowMenuList(1);
     }
 
     public void openTraining()
@@ -108,8 +104,7 @@ public class TypingRoom : MonoBehaviour
         pAnimator.SetTrigger("fuda");
         lAnimator.SetTrigger("jump");
         talk.text = "タイピングがうまくなりたい人はここでれんしゅうをしよう。";
-        ShowMenuList(3);
-
+        ShowMenuList(2);
     }
 
     private void ShowMenuList(int menuNo)
@@ -118,22 +113,18 @@ public class TypingRoom : MonoBehaviour
         double childLines;
         switch (menuNo)
         {
-            case 1:
+            case 0:
                 // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
                 childLines = Math.Ceiling((double)listParent.transform.childCount / 3);
                 // コンテンツエリアの高さをアイテム数に基づいて設定
+                contentHeight = (int)childLines * 200; // アイテムの高さ
+                break;
+            case 1:
+                childLines = Math.Ceiling((double)listParent.transform.childCount / 3);
                 contentHeight = (int)childLines * 200; // アイテムの高さ
                 break;
             case 2:
-                // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
-                childLines = Math.Ceiling((double)listParent.transform.childCount / 3);
-                // コンテンツエリアの高さをアイテム数に基づいて設定
-                contentHeight = (int)childLines * 200; // アイテムの高さ
-                break;
-            case 3:
-                // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
                 childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
-                // コンテンツエリアの高さをアイテム数に基づいて設定
                 contentHeight = (int)childLines * 200; // アイテムの高さ
                 break;
             default:

@@ -35,6 +35,7 @@ public class RoomMenu : MonoBehaviour
     private GameObject littleCat;
     private Animator lAnimator;
 
+    [SerializeField]
     private Practice practice;
 
     void Awake()

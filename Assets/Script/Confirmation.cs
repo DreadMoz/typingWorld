@@ -48,6 +48,10 @@ public class Confirmation : MonoBehaviour
         pAnimator = housePlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
         kAnimator = kinoko.GetComponent<Animator>(); // kinokoのアニメーターを取得
     }
+    void Start()
+    {
+        hide();
+    }
 
     // Update is called once per frame
     void Update()

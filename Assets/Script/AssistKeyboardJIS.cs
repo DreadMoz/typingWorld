@@ -651,7 +651,6 @@ public class AssistKeyboardJIS : MonoBehaviour
         leftHandAnim.ResetTrigger("3");
         leftHandAnim.ResetTrigger("4");
         leftHandAnim.ResetTrigger("5");
-        leftHandAnim.ResetTrigger("6");
         leftHandAnim.ResetTrigger("q");
         leftHandAnim.ResetTrigger("w");
         leftHandAnim.ResetTrigger("e");
@@ -669,6 +668,7 @@ public class AssistKeyboardJIS : MonoBehaviour
         leftHandAnim.ResetTrigger("b");
         leftHandAnim.ResetTrigger("home");
 
+        rightHandAnim.ResetTrigger("6");
         rightHandAnim.ResetTrigger("7");
         rightHandAnim.ResetTrigger("8");
         rightHandAnim.ResetTrigger("9");
@@ -714,9 +714,6 @@ public class AssistKeyboardJIS : MonoBehaviour
                 break;
             case "5":
                 leftHandAnim.SetTrigger("5");
-                break;
-            case "6":
-                leftHandAnim.SetTrigger("6");
                 break;
             case "q":
                 leftHandAnim.SetTrigger("q");
@@ -771,6 +768,9 @@ public class AssistKeyboardJIS : MonoBehaviour
 
         switch (word)
         {
+            case "6":
+                rightHandAnim.SetTrigger("6");
+                break;
             case "7":
                 rightHandAnim.SetTrigger("7");
                 break;

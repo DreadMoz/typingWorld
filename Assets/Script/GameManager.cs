@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     public GameObject cam;           // カメラ
     private Animator animator;       // Playerのアニメーター
     public GameObject inventory;
+    public GameObject inventoryFilter;
     public GameObject equip;
     public GameObject ranking;
     public GameObject status;
@@ -87,6 +88,7 @@ public class GameManager : MonoBehaviour
     RectTransform inventoryRectTransform;
     RectTransform rankingRectTransform;
     RectTransform equipRectTransform;
+    RectTransform inventoryFilterRectTransform;
 
     // 目標位置
     Vector2 statusShowPos;
@@ -97,6 +99,7 @@ public class GameManager : MonoBehaviour
     Vector2 inventoryHidePos;
     Vector2 rankingHidePos;
     Vector2 equipmentHidePos;
+    Vector2 inventoryFilterPos;
 
     private int[] oldInventory;
     private int[] newInventory;
@@ -145,15 +148,18 @@ public class GameManager : MonoBehaviour
             inventoryRectTransform = inventory.GetComponent<RectTransform>();
             rankingRectTransform = ranking.GetComponent<RectTransform>();
             equipRectTransform = equip.GetComponent<RectTransform>();
+            inventoryFilterRectTransform = inventoryFilter.GetComponent<RectTransform>();
             // 目標位置
-            statusShowPos = new Vector2(-statusRectTransform.sizeDelta.x / 2 - 20, -statusRectTransform.sizeDelta.y / 2 - 20);
+            statusShowPos = new Vector2(-statusRectTransform.sizeDelta.x / 2 - 10, -statusRectTransform.sizeDelta.y / 2 - 20);
             statusHidePos = new Vector2(-statusRectTransform.sizeDelta.x / 2 - 20, statusRectTransform.sizeDelta.y / 2);
-            inventoryShowPos = new Vector2(-inventoryRectTransform.sizeDelta.x / 2 - 20, -statusRectTransform.sizeDelta.y - inventoryRectTransform.sizeDelta.y / 2 - 20);
+            inventoryShowPos = new Vector2(-inventoryRectTransform.sizeDelta.x / 2 - 10, -statusRectTransform.sizeDelta.y - inventoryRectTransform.sizeDelta.y / 2 - 20);
             inventoryHidePos = new Vector2(inventoryRectTransform.sizeDelta.x / 2, -statusRectTransform.sizeDelta.y - inventoryRectTransform.sizeDelta.y / 2 - 20);
-            rankingShowPos = new Vector2(-rankingRectTransform.sizeDelta.x / 2 - 20, -statusRectTransform.sizeDelta.y - rankingRectTransform.sizeDelta.y / 2 - 20);
+            rankingShowPos = new Vector2(-rankingRectTransform.sizeDelta.x / 2 - 10, -statusRectTransform.sizeDelta.y - rankingRectTransform.sizeDelta.y / 2 - 20);
             rankingHidePos = new Vector2(rankingRectTransform.sizeDelta.x / 2, -statusRectTransform.sizeDelta.y - rankingRectTransform.sizeDelta.y / 2 - 20);
             equipmentShowPos = new Vector2(0, equipRectTransform.sizeDelta.y / 2 + 30);
             equipmentHidePos = new Vector2(0, -equipRectTransform.sizeDelta.y / 2);
+            inventoryFilterPos = new Vector2(-inventoryRectTransform.sizeDelta.x / 2 - 40, -statusRectTransform.sizeDelta.y - inventoryRectTransform.sizeDelta.y / 2 - 20);
+            inventoryFilterRectTransform.anchoredPosition = inventoryFilterPos;
 
             // アニメーションステートが1最初のワールドの場合
             if (SceneNo == (int)scene.World)

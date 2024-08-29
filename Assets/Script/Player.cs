@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject rankingButton;
     [SerializeField] private GameObject settingButton;
     [SerializeField] private GameObject itemShop;
+    [SerializeField] private ShopList shopList;
+    [SerializeField] private TypingRoom typingList;
     [SerializeField] private GameObject status;
     [SerializeField] private Fade fade;
     [SerializeField] private Fade fadeDoor;
@@ -95,6 +97,7 @@ public class Player : MonoBehaviour
 
             switchCam.SwitchCamera();           // カメラ切り替え
         }
+        resetTypingPanel();
     }
 
     // Update is called once per frame
@@ -140,7 +143,6 @@ public class Player : MonoBehaviour
             pAnimator.SetTrigger("hi");
 
             practice.calcStars();       // 表示する星を計算
-            practice.showRoomMenu();    // ルームメニュー表示
 
             fadeDoor.StartFadeIn();
 
@@ -161,6 +163,7 @@ public class Player : MonoBehaviour
             exitShop.SetActive(false);
             exitHouse.SetActive(false);
             tiikawa.SetActive(false);
+            resetTypingPanel();
 
             talkObject.SetActive(false);
 
@@ -216,6 +219,7 @@ public class Player : MonoBehaviour
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);
             kinoko.SetActive(false);
+            shopList.listReset();
 
             fukidashiObject.SetActive(false);
 
@@ -309,6 +313,21 @@ public class Player : MonoBehaviour
                 animator.SetBool("Run", true);
             }
         }
+    }
+    
+    void resetTypingPanel()
+    {
+        for (int i=0; i<66; i++)
+        {
+            if (gm.savedata.Medals[i] != 4)
+            {
+                GameManager.TypingTab = 2;
+                typingList.panelReset(2);
+                return;
+            }
+        }
+        GameManager.TypingTab = 0;
+        typingList.panelReset(0);
     }
     
     void OnCollisionEnter(Collision col)

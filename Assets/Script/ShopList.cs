@@ -47,6 +47,13 @@ public class ShopList : MonoBehaviour
         ShowItemList(tabNo);
     }
 
+    public void listReset()
+    {
+        kAnimator.SetTrigger("tab");
+        scrollRect.verticalNormalizedPosition = 1.0f;
+        ShowItemList(0);
+    }
+
     public void ShowItemListWeapons()
     {
         tabNo = 0;
