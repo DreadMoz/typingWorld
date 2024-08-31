@@ -175,7 +175,7 @@ public class SaveData : ScriptableObject
     public int[] Equipment = new int[7];
 
     [SerializeField]
-    public int[] Inventory = new int[40];
+    public int[] Inventory = new int[60];
 
     [SerializeField]
     public bool[] Items = new bool [256];
