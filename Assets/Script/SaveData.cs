@@ -197,7 +197,6 @@ public class SaveData : ScriptableObject
 
         ExRankings.Clear();
         int existRanking = 0;
-        Settings[se.MaxRank] = 149;     // 150引く自分
 
         try
         {
@@ -207,11 +206,15 @@ public class SaveData : ScriptableObject
                 foreach (var item in jsonResponse.rankingData)
                 {
                     // Stageの値をチェックし、変換できない場合はこの項目の処理をスキップ
-                    if (item[0].ToString() == "")
+                    if (item[2].ToString() == "")       // 名前がなければ終了
                     {
                         break;
                     }
-                    if (item[0].ToString() == Email)
+                    if (existRanking >= 200)            // 自分を入れて２００を超えたら終了
+                    {
+                        break;
+                    }
+                    if (item[0].ToString() == Email)    // 自分自身は登録しない。スキップ
                     {
                         continue;
                     }
@@ -231,8 +234,6 @@ public class SaveData : ScriptableObject
                     };
                     ExRankings.Add(rank);
                 }
-                Settings[se.MaxRank] = existRanking;
-
                 foreach (var rank in ExRankings)
                 {
                     Debug.Log($"Ranking: {rank.Ranking}： {rank.Name}： {rank.Kpm}");
@@ -247,52 +248,7 @@ public class SaveData : ScriptableObject
         {
             Debug.LogError("データの読み込み中に例外発生: " + ex.Message);
         }
-        // ダミーデータで２００まで埋める
-        int dummyNum = 199 - existRanking;           // 埋める数
-        int kpm = ExRankings[ExRankings.Count - 1].Kpm;
-
-        for (int i=0; i<dummyNum; i++)
-        {
-            kpm -= random.Next(0, 2);
-            if (kpm < 0)
-            {
-                kpm = 0;
-            }
-            var rank = new ExRank
-            {
-                Ranking = ++existRanking,
-                Name = getDummyName(),
-                NickName = 0,
-                Kpm = kpm
-            };
-            ExRankings.Add(rank);
-        }
     }
-
-    private string getDummyName()
-    {
-        List<string> names = new List<string> // ダミーの名前リスト
-        {
-            "ryosuke", "yuto", "yuki", "hayato", "haruki", "ryusei", "kaito", "kota", "yuma", "soma","riku", "sora",
-            "ryota", "daiki", "minato", "ren", "hinata", "kazuki", "takumi", "hiroto","ryuto", "sosuke", "ryu", "keita",
-            "koki", "toma", "seiji", "yu", "hana", "yui", "rin", "mei", "mio", "saki", "aoi", "yuna", "maika", "kokona",
-            "miku", "nana", "rika", "yuka", "haruka", "emi", "risa", "yuri", "sakura", "rei", "noa", "mai", "rio", "meika",
-            "erika", "airi", "marin", "aya", "mina", "yuko", "kaede", "ayumu", "taiga", "shota", "eito", "reo", "kensei",
-            "shin", "manato", "ryoga", "kanata", "tsubasa", "itsuki", "asahi", "mahiro", "haru", "ikki", "sho", "kyou",
-            "ayaka", "sena", "himari", "yume", "aina", "kanon", "saya", "kaho", "fumi", "sara", "momoka", "sumire", "aiko",
-            "akari", "hinako", "yuina", "riona", "manami", "sayaka", "nao", "yusuke", "tatsuya", "kazuma", "masato", "ai",
-            "shun", "kyohei", "takuya", "naoki", "kenta", "jun", "misaki", "riko", "chinatsu", "kumi", "miyu", "ryou",
-            "naoko", "keiko", "chie", "akiko", "asuka", "kaito", "natsuki", "ryohei", "satoshi", "takahiro", "yasuharu",
-            "yoshiki", "yota", "daigo", "ema", "himawari", "ichika", "juri", "kairi", "runa", "mao", "nagisa", "otoha",
-            "hina", "rena", "suzu", "ayane", "umi", "nami", "wakana", "haruto", "yuto", "sota", "ayana", "rokoro", "yuji",
-            "ryuji", "nozomi", "miyabi", "miyaka", "kotone", "atsushi", "atsuya", "riho", "tomoya", "kanako", "yamato",
-            "seiya", "kazuya", "hiroki", "yoichi", "masatomo", "shinichi", "mikasa"
-        };
-
-        int index = random.Next(names.Count); // namesリストの範囲内でランダムなインデックスを生成
-        return names[index]; // 選択された名前を返す
-    }
-
 
     // 初期データ登録。
     public void setNewData(string googleMail, string googleFirstName, string googleLastName, string googleOu)
@@ -334,7 +290,7 @@ public class SaveData : ScriptableObject
         {
             Kpms[i] = 10;
         }
-        Settings[se.MaxRank] = 149;
+        Settings[se.MaxRank] = 149;     // NPC候補
         Settings[se.Volume] = 70;
         Settings[se.Mute] = 0;
         Settings[se.MailChar] = 1;
