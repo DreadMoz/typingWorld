@@ -193,7 +193,7 @@ public class GameManager : MonoBehaviour
                     talk.text = geminiResponce;
                 }
                 else{
-                    talk.text = "よくがんばったにゃん＾＾";
+                    talk.text = "よくがんばりましたね";
                 }
                 geminiResponce = null;
             }
@@ -232,6 +232,8 @@ public class GameManager : MonoBehaviour
             chibiCat2D.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
             chibiCat2D.changeEquipHead(savedata.Equipment[eq.Head]);
             chibiCat2D.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+
+            setVolume();
         }
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
@@ -676,6 +678,22 @@ public class GameManager : MonoBehaviour
             Debug.LogError("データの読み込み中に例外発生: " + ex);
         }
     }
+
+    public void setVolume()
+    {
+        float systemVolume;
+
+        if (savedata.Settings[se.Mute] == 0)
+        {
+            systemVolume = savedata.Settings[se.Volume];
+        }
+        else
+        {
+            systemVolume = 0;
+        }
+        AudioListener.volume = systemVolume / 100f;
+    }
+
     public void returnGemini(string response)
     {
         // フィルタリング前の文字列をログに出力

@@ -40,16 +40,8 @@ public class Practice : MonoBehaviour
             // ３つのステージの星の合計
             medalSum[i] = remove5(medals[i * 3]) + remove5(medals[i * 3 + 1]) + remove5(medals[i * 3 + 2]);
 
-            if (medalSum[i] > 9)
+            if (medalSum[i] >= 10)      // 4 + 4 + 2
             {
-                if (medalSum[i] == 12)
-                {
-                    medalTop[i] = 4;    // 星3つ
-                }
-                else
-                {
-                    medalTop[i] = 3;    // 星2つ
-                }
                 if (i < medalTopNum - 1)    // 次があればRoomオープンチェック
                 {
                     if (medalTop[i + 1] == 0) // 次が錠状態なら
@@ -64,17 +56,25 @@ public class Practice : MonoBehaviour
                     }
                 }
             }
-            else if (medalSum[i] > 2)
+            if (medalSum[i] == 12)      // 4 + 4 + 4
+            {
+                medalTop[i] = 4;    // 星3つ
+            }
+            else if (medalSum[i] >= 9)   // 4 + 4 + 1
+            {
+                medalTop[i] = 3;    // 星2つ
+            }
+            else if (medalSum[i] >= 3)   // 2 + 1 + 0
             {
                 medalTop[i] = 2;    // 星1つ
             }
-            else if (medalSum[i] != 5)     // 花火セット以外
+            else
             {
                 medalTop[i] = 1;    // 星0こ
             }
             if (i > 0)
             {
-                if (medalTop[i - 1] < 3)    // １つ前が星2つ未満なら
+                if (medalSum[i - 1] < 10)    // １つ前が 4 + 4 + 2 未満なら
                 {
                     medalTop[i] = 0;    // 錠
                 }

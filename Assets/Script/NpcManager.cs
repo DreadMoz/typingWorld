@@ -19,7 +19,7 @@ public class NpcManager : MonoBehaviour
     void shufflePlayers()
     {
         List<int> playerPool = new List<int>();
-        for (int i = 1; i < gm.savedata.Settings[se.maxRank]; i++)
+        for (int i = 1; i < gm.savedata.Settings[se.MaxRank]; i++)
         {
             playerPool.Add(i);
         }

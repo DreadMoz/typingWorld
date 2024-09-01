@@ -44,11 +44,11 @@ public class eq
 // Gold,Server,Rank,userName
 public class se
 {
-    public const int maxRank = 0;
+    public const int MaxRank = 0;
     public const int Volume = 1;
     public const int CatNum = 2;
-    public const int dummy3 = 3;
-    public const int dummy4 = 4;
+    public const int MailChar = 3;
+    public const int Mute = 4;
     public const int dummy5 = 5;
     public const int dummy6 = 6;
     public const int dummy7 = 7;
@@ -197,7 +197,7 @@ public class SaveData : ScriptableObject
 
         ExRankings.Clear();
         int existRanking = 0;
-        Settings[se.maxRank] = 149;     // 150引く自分
+        Settings[se.MaxRank] = 149;     // 150引く自分
 
         try
         {
@@ -231,7 +231,7 @@ public class SaveData : ScriptableObject
                     };
                     ExRankings.Add(rank);
                 }
-                Settings[se.maxRank] = existRanking;
+                Settings[se.MaxRank] = existRanking;
 
                 foreach (var rank in ExRankings)
                 {
@@ -334,8 +334,10 @@ public class SaveData : ScriptableObject
         {
             Kpms[i] = 10;
         }
-        Settings[se.maxRank] = 149;
+        Settings[se.MaxRank] = 149;
         Settings[se.Volume] = 70;
+        Settings[se.Mute] = 0;
+        Settings[se.MailChar] = 1;
     }
 
     // 拡張機能からステータスデータを取得する。

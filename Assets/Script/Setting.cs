@@ -10,10 +10,11 @@ public class Setting : MonoBehaviour
 
     [SerializeField]
     private GameManager gm;
-    public TMP_Text necoNum;
-    public TMP_Text volume;
-    public GameObject toGas;
+    public Slider volumeSlider;
+    public Slider muteSlider;
+    public Slider mailCharSlider;
     public Slider necoNumSlider;
+    public GameObject toGas;
 
     // Start is called before the first frame update
     void Start()
@@ -42,11 +43,14 @@ public class Setting : MonoBehaviour
 
     public void hide()
     {
-        gm.npcManager.UpdateNPCCount(int.Parse(necoNum.text));
+        gm.npcManager.UpdateNPCCount((int)necoNumSlider.value);
 
+        gm.savedata.Settings[se.Volume] = (int)volumeSlider.value;
+        gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
+        gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
+        gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
 
-        gm.savedata.Settings[se.CatNum] = int.Parse(necoNum.text);
-        gm.savedata.Settings[se.Volume] = int.Parse(volume.text);
+        gm.setVolume();
         
         // 画面サイズを都度取得しないと途中での最大化などに対応できない
         float screenWidth = Screen.width;
@@ -58,6 +62,11 @@ public class Setting : MonoBehaviour
 
     public void show()
     {
+        volumeSlider.value = gm.savedata.Settings[se.Volume];
+        muteSlider.value = gm.savedata.Settings[se.Mute];
+        necoNumSlider.value = gm.savedata.Settings[se.CatNum];
+        mailCharSlider.value = gm.savedata.Settings[se.MailChar];
+
         // 画面サイズを都度取得しないと途中での最大化などに対応できない
         float screenWidth = Screen.width;
         float screenHeight = Screen.height;

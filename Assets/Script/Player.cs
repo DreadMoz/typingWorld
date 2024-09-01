@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     [SerializeField] private ChibiCat chibiCat;
     [SerializeField] private float hitBackForce = 0.3f;
     [SerializeField] private GameObject keepOut;
+    [SerializeField] private Setting setting;
     public Ranking rankingWindow;
 
     private Animator pAnimator;
@@ -80,15 +81,19 @@ public class Player : MonoBehaviour
         {
             if (GameManager.TypingDataPath == null)
             {
-                skyTalk.text = "あれれ...おかしいなぁ...\nデータが見つからないよぅ > <;";
+                skyTalk.text = "メニューをえらんでね。";
             }
-            if (GameManager.TypingTab == 2)
-            {
-                // 直近のタイピングデータ前の情報を表示
-                gm.registerRecentTypingResult();
+            else{
+                if (GameManager.TypingTab == 2)
+                {
+                    gm.registerRecentTypingResult();
+                }
                 practice.calcStars();           // 表示する星を計算
-                practice.showRoomMenu();        // ルームメニュー表示
-                practice.showDetail();          // 詳細画面表示 ステージ番号が入るから星計算の後
+                if (GameManager.TypingTab == 2)
+                {
+                    practice.showRoomMenu();        // ルームメニュー表示
+                    practice.showDetail();          // 詳細画面表示 ステージ番号が入るから星計算の後
+                }
                 gm.exportLocal();                      // タイピング後のデータ保存ローカル＆GSS
             }
             exitHouse.SetActive(true);
@@ -116,6 +121,7 @@ public class Player : MonoBehaviour
         }
         if (typingWindow == 1)
         {
+            setting.hide();
             if (!fadeDoor.IsFadeOutComplete())
             {
                 return;
@@ -180,6 +186,7 @@ public class Player : MonoBehaviour
         }
         if (shopWindow == 1)
         {
+            setting.hide();
             if (!fadeDoor.IsFadeOutComplete())
             {
                 return;
