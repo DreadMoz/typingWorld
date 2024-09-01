@@ -206,9 +206,9 @@ public class SaveData : ScriptableObject
                 foreach (var item in jsonResponse.rankingData)
                 {
                     // Stageの値をチェックし、変換できない場合はこの項目の処理をスキップ
-                    if (item[2].ToString() == "")       // 名前がなければ終了
+                    if (item[2].ToString() == "")       // 名前がなければ飛ばす
                     {
-                        break;
+                        continue;
                     }
                     if (existRanking >= 200)            // 自分を入れて２００を超えたら終了
                     {
