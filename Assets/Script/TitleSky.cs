@@ -70,6 +70,8 @@ public class TitleSky : MonoBehaviour
     private GameObject confirmButton; // confirmボタン
     [SerializeField]
     private GameObject ashiato;
+    [SerializeField]
+    private GameObject deverop;
 
     private Animator animator;
     private int necoNo = 201;
@@ -79,6 +81,12 @@ public class TitleSky : MonoBehaviour
     private int loginFlg = 0;
 
 
+    void Awake()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        deverop.SetActive(false);
+#endif
+    }
     // Start is called before the first frame update
     void Start()
     {

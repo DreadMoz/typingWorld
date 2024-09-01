@@ -12,6 +12,8 @@ public class NpcManager : MonoBehaviour
     public int numberOfNPCs = 10; // 生成するNPCの数、デフォルトは10
     List<int> pickedPlayers = new List<int>();   // NPCとして登場するユーザーの順位
 
+    private int maxUser = 149;
+
     void Start()
     {
     }
@@ -19,7 +21,7 @@ public class NpcManager : MonoBehaviour
     void shufflePlayers()
     {
         List<int> playerPool = new List<int>();
-        for (int i = 1; i < gm.savedata.Settings[se.MaxRank]; i++)
+        for (int i = 1; i < maxUser; i++)
         {
             playerPool.Add(i);
         }

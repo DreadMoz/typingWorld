@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.13059373, g: 0.20172095, b: 0.36123845, a: 1}
+  m_IndirectSpecularColor: {r: 0.1025984, g: 0.15435301, b: 0.2726531, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3007,6 +3007,7 @@ MonoBehaviour:
   prevButton: {fileID: 1981573550}
   confirmButton: {fileID: 288632614}
   ashiato: {fileID: 246828329}
+  deverop: {fileID: 1601968420}
 --- !u!4 &992936579
 Transform:
   m_ObjectHideFlags: 0
@@ -5455,7 +5456,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1601968421
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7109,6 +7110,18 @@ PrefabInstance:
       value: 768
       objectReference: {fileID: 0}
     - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -7155,6 +7168,10 @@ PrefabInstance:
     - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7354686175377531455, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8726772760927977463, guid: efb0cf9ca56a1e84088b82ebd1bbeb15, type: 3}
       propertyPath: firstFadeInComp
