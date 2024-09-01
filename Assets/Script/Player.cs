@@ -76,6 +76,7 @@ public class Player : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 180, 0);
         
             animator.SetTrigger("Hi");    // "Hi" トリガーアニメーションを開始
+            fade.StartFadeIn();
         }
         else if (GameManager.SceneNo == scene.House)
         {
@@ -83,18 +84,12 @@ public class Player : MonoBehaviour
             {
                 skyTalk.text = "メニューをえらんでね。";
             }
-            else{
+            else
+            {
                 if (GameManager.TypingTab == 2)
                 {
                     gm.registerRecentTypingResult();
                 }
-                practice.calcStars();           // 表示する星を計算
-                if (GameManager.TypingTab == 2)
-                {
-                    practice.showRoomMenu();        // ルームメニュー表示
-                    practice.showDetail();          // 詳細画面表示 ステージ番号が入るから星計算の後
-                }
-                gm.exportLocal();                      // タイピング後のデータ保存ローカル＆GSS
             }
             exitHouse.SetActive(true);
             exitShop.SetActive(false);
@@ -111,22 +106,31 @@ public class Player : MonoBehaviour
         // フェードイン中は操作しない
         if (!fade.IsFadeInComplete())
         {
+            // 花火処理をしっかり行うため、シーン遷移後に実施
+            if (GameManager.SceneNo == scene.House)
+            {
+                practice.calcStars();           // 表示する星を計算
+                if (GameManager.TypingTab == 2)
+                {
+                    practice.showDetail();          // 詳細画面表示 ステージ番号が入るから星計算の後
+                }
+                gm.exportLocal();                      // タイピング後のデータ保存ローカル＆GSS
+                GameManager.SceneNo = scene.World; // ワールドシーン状態へ
+            }
+
             // プレイヤーの向きを固定
             transform.rotation = transform.rotation;
             return;
         }
-        if (GameManager.SceneNo == scene.House)
-        {
-            GameManager.SceneNo = scene.World; // ワールドシーン状態へ
-        }
         if (typingWindow == 1)
         {
-            setting.hide();
             if (!fadeDoor.IsFadeOutComplete())
             {
                 return;
             }
             typingWindow = 0;
+
+            setting.hide();
             tiikawa.SetActive(true);
             typingRoom.SetActive(true);
             settingButton.SetActive(false);
@@ -149,9 +153,6 @@ public class Player : MonoBehaviour
             pAnimator.SetTrigger("hi");
 
             practice.calcStars();       // 表示する星を計算
-
-            fadeDoor.StartFadeIn();
-
         }
         else if (typingWindow == -1)
         {
@@ -160,6 +161,7 @@ public class Player : MonoBehaviour
                 return;
             }
             typingWindow = 0;
+
             typingRoom.SetActive(false);
             settingButton.SetActive(true);
             rankingButton.SetActive(true);
@@ -173,7 +175,7 @@ public class Player : MonoBehaviour
 
             talkObject.SetActive(false);
 
-            transform.position = new Vector3(287.5f, 1, 113);   // タイピングハウス前位置
+            transform.position = new Vector3(287.2f, 1, 112.8f);   // タイピングハウス前位置
             transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
 
             // カメラ切り替え
@@ -186,17 +188,19 @@ public class Player : MonoBehaviour
         }
         if (shopWindow == 1)
         {
-            setting.hide();
             if (!fadeDoor.IsFadeOutComplete())
             {
                 return;
             }
             shopWindow = 0;
+
+            setting.hide();
             itemShop.SetActive(true);
             rankingButton.SetActive(false);
             settingButton.SetActive(false);
             inventoryButton.SetActive(false);
             inventoryButton.GetComponent<OpenButton>().forceOpen();
+            fadeDoor.StartFadeIn();
             exitShop.SetActive(true);
             kinoko.SetActive(true);
 
@@ -208,8 +212,6 @@ public class Player : MonoBehaviour
 
             // "hi" トリガーアニメーションを開始
             pAnimator.SetTrigger("hi");
-
-            fadeDoor.StartFadeIn();
         }
         else if (shopWindow == -1)
         {
@@ -218,6 +220,7 @@ public class Player : MonoBehaviour
                 return;
             }
             shopWindow = 0;
+            
             itemShop.SetActive(false);
             settingButton.SetActive(true);
             rankingButton.SetActive(true);

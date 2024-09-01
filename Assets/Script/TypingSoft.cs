@@ -18,6 +18,7 @@ using System.Linq;
 public class TypingSoft : MonoBehaviour
 {
     [SerializeField] private GameManager gm;
+    [SerializeField] private TypingVoice typingVoice;
     // Assist Keyboard JIS
     private static AssistKeyboardJIS AssistKeyboardObj;
 
@@ -27,6 +28,8 @@ public class TypingSoft : MonoBehaviour
     private GameObject player;        // プレイヤーオブジェクト
     [SerializeField]
     private Coins conis;           // コイン操作
+    [SerializeField]
+    private GameObject door;
     private Animator animator;
     private Animator lAnimator;
     public GameObject targetCam;
@@ -136,6 +139,8 @@ public class TypingSoft : MonoBehaviour
     private List<Message> messages = new List<Message>();
     private int nextMessageNo;
     private Message nextMessage;
+    private bool isForceQuit = false;
+
 
     [SerializeField] private GameObject lHand;
     [SerializeField] private GameObject rHand;
@@ -197,6 +202,8 @@ public class TypingSoft : MonoBehaviour
         // 入力禁止状態にする
         isInputValid = false;
 
+        typingVoice.updateVolume();
+        
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator = lPlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator.SetTrigger("jump");
@@ -328,7 +335,7 @@ public class TypingSoft : MonoBehaviour
                 GameManager.TypingDataId = -1;
                 if (!goNextScene)
                 {
-                    GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
+                    GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ
                     SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
                     goNextScene = true;
                 }
@@ -581,6 +588,16 @@ public class TypingSoft : MonoBehaviour
 
     void Update()
     {
+        if (isForceQuit)
+        {
+            if (!goNextScene)
+            {
+                GameManager.TypingDataPath = null;
+                GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ
+                SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+                goNextScene = true;
+            }
+        }
         // タイマーが実行中の場合、時間を減少させる
         if (isTimerRunning)
         {
@@ -601,6 +618,7 @@ public class TypingSoft : MonoBehaviour
                 checkSeekerTimer();
                 dispResultTimerVer();
 
+                door.SetActive(false);
                 spaceEnd = true;
             }
             UpdateTimerText();
@@ -663,6 +681,7 @@ public class TypingSoft : MonoBehaviour
         isTimerRunning = false;
         isInputValid = false;
         Fukidashi.SetActive(false);
+        door.SetActive(false);
         spaceEnd = true;
 
         gm.setGemini();
@@ -982,6 +1001,8 @@ public class TypingSoft : MonoBehaviour
     {
         correctN++;
         comboN++;
+
+        typingVoice.nya.Play();
         if (maxCombo < comboN)
         {
             maxCombo = comboN;
@@ -1174,4 +1195,9 @@ public class TypingSoft : MonoBehaviour
             isSentenceMistyped = true;
         }
     }
+    public void onForceQuit()
+    {
+        isForceQuit = true;
+    }
+
 }

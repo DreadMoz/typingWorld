@@ -90,10 +90,14 @@ public class RoomMenu : MonoBehaviour
                 star2.SetActive(true);
                 break;
             case 5:
-                practice.setMedalTop(id, 1);       // 新規Room表示から1へ
-                magicProof.SetActive(true);
-                ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();   // 花火打ち上げ
-                particleSystem.Play();
+                practice.setMedalTop(id, 1);        // 新規Room表示から1へ
+                magicProof.SetActive(true);         // magicProofオブジェクトをアクティブにする
+                ParticleSystem particleSystem = magicProof.GetComponentInChildren<ParticleSystem>();
+                if (particleSystem != null) {       // ParticleSystemが見つかった場合、再生する
+                    particleSystem.Play();
+                } else {
+                    Debug.LogError("ParticleSystemが見つかりません。");
+                }
                 break;
             default:
                 star1.SetActive(true);

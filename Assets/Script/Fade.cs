@@ -59,7 +59,7 @@ public class Fade : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         img = GetComponent<Image>();
         if (firstFadeInComp)
@@ -68,6 +68,7 @@ public class Fade : MonoBehaviour
         }
         else
         {
+            firstFadeInComp = true;
             StartFadeIn();
         }
     }
