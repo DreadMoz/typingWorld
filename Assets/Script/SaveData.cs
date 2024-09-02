@@ -343,6 +343,9 @@ public class SaveData : ScriptableObject
             {
                 Settings[i] = exData.Settings[i];
             }
+            GameManager.Mute = Settings[se.Mute];
+            GameManager.Volume = Settings[se.Volume];
+            GameManager.MailChar = Settings[se.MailChar];
         }
         else
         {
