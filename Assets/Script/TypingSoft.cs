@@ -140,7 +140,7 @@ public class TypingSoft : MonoBehaviour
     private int nextMessageNo;
     private Message nextMessage;
     private bool isForceQuit = false;
-    private int mailReplaceNo;
+    private int mailReplaceNo = -1;
 
 
     [SerializeField] private GameObject lHand;
@@ -421,7 +421,7 @@ public class TypingSoft : MonoBehaviour
 
     private void checkSeekerMail()
     {
-        if ((currentThemeIndex > 0) && (GameManager.MailChar != ""))
+        if ((currentThemeIndex > 0) && (mailReplaceNo != -1))
         {
             if (shuffledThemes[currentThemeIndex-1].id == mailReplaceNo + 1)
             {
