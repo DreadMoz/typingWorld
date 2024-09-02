@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     static public int MaxCombo { get; set; }
     static public int Mute { get; set; }
     static public int Volume { get; set; }
-    static public int MailChar { get; set; }
+    static public string MailChar { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
 
@@ -260,8 +260,6 @@ public class GameManager : MonoBehaviour
                 rankingWindow.ScrollTo(savedata.Status[st.Rank]);
             }
             savedata.Settings[se.Mute] = Mute;
-            savedata.Settings[se.Volume] = Volume;
-            savedata.Settings[se.MailChar] = MailChar;
 
             MistypedSentences.Clear();  // リストから全ての要素を削除
         }

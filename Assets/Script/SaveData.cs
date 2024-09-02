@@ -293,6 +293,10 @@ public class SaveData : ScriptableObject
         Settings[se.Volume] = 70;
         Settings[se.Mute] = 0;
         Settings[se.MailChar] = 1;
+        Settings[se.CatNum] = 10;
+        GameManager.Volume = Settings[se.Volume];
+        GameManager.Mute = Settings[se.Mute];
+        GameManager.MailChar = Email;
     }
 
     // 拡張機能からステータスデータを取得する。
@@ -345,7 +349,14 @@ public class SaveData : ScriptableObject
             }
             GameManager.Mute = Settings[se.Mute];
             GameManager.Volume = Settings[se.Volume];
-            GameManager.MailChar = Settings[se.MailChar];
+            if (Settings[se.MailChar] == 1)
+            {
+                GameManager.MailChar = Email;
+            }
+            else
+            {
+                GameManager.MailChar = "";
+            }
         }
         else
         {

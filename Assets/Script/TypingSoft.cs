@@ -140,6 +140,7 @@ public class TypingSoft : MonoBehaviour
     private int nextMessageNo;
     private Message nextMessage;
     private bool isForceQuit = false;
+    private int mailReplaceNo;
 
 
     [SerializeField] private GameObject lHand;
@@ -327,6 +328,12 @@ public class TypingSoft : MonoBehaviour
                     Debug.Log("JSONファイルの取得に失敗しました。");
                     return false;
                 }
+                if ((fileName.StartsWith("TextC")) && (GameManager.MailChar != ""))
+                {
+                    mailReplaceNo = new System.Random().Next(0, theme.themes.Length);
+                    theme.themes[mailReplaceNo].hiragana = GameManager.MailChar;
+                    theme.themes[mailReplaceNo].kanji = "ボーナス！";
+                }
                 return true;
             }
             else
@@ -412,6 +419,17 @@ public class TypingSoft : MonoBehaviour
         }
     }
 
+    private void checkSeekerMail()
+    {
+        if ((currentThemeIndex > 0) && (GameManager.MailChar != ""))
+        {
+            if (shuffledThemes[currentThemeIndex-1].id == mailReplaceNo + 1)
+            {
+                conis.SpawnCoins(5, 0);    // コインアニメーション
+            }
+        }
+    }
+
     private void checkSeekerKey()
     {
         switch (seekerKey)
@@ -489,7 +507,7 @@ public class TypingSoft : MonoBehaviour
             kpm = correctN / (totalTime - currentTime) * 60.0f;
             UIkpm.text = string.Format("{0:0}", kpm);
         }
-
+        checkSeekerMail();
         checkSeekerKey();
 
         if (shuffledThemes.Count > 0)
