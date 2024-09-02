@@ -21,6 +21,8 @@ public class TypingVoice : MonoBehaviour
         gm.savedata.Settings[se.Mute] = 1 - gm.savedata.Settings[se.Mute];
         dispMute();
         updateVolume();
+        // EventSystemのフォーカスをクリア
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
     }
 
     private void dispMute()
@@ -46,4 +48,5 @@ public class TypingVoice : MonoBehaviour
             nya.volume = gm.savedata.Settings[se.Volume];
         }
     }
+
 }
