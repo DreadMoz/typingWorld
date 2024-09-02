@@ -86,7 +86,7 @@ public class Practice : MonoBehaviour
     {
         if (no == 5)
         {
-            return 0;
+            return 1;
         }
         return no;
     }

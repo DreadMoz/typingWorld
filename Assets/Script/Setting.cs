@@ -48,6 +48,9 @@ public class Setting : MonoBehaviour
         gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
         gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
         gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
+        GameManager.Mute = gm.savedata.Settings[se.Mute];
+        GameManager.Volume = gm.savedata.Settings[se.Volume];
+        GameManager.MailChar = gm.savedata.Settings[se.MailChar];
 
         gm.setVolume();
         

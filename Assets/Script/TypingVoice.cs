@@ -18,7 +18,7 @@ public class TypingVoice : MonoBehaviour
     public void ToggleMute()
     {
         // ミュート状態を切り替える
-        gm.savedata.Settings[se.Mute] = 1 - gm.savedata.Settings[se.Mute];
+        GameManager.Mute = 1 - GameManager.Mute;
         dispMute();
         updateVolume();
         // EventSystemのフォーカスをクリア
@@ -28,7 +28,7 @@ public class TypingVoice : MonoBehaviour
     private void dispMute()
     {
         // アイコンの更新
-        if (gm.savedata.Settings[se.Mute] == 0)
+        if (GameManager.Mute == 0)
         {
             muteIcon.sprite = voiceSprite;
         }
@@ -39,13 +39,13 @@ public class TypingVoice : MonoBehaviour
     }
     public void updateVolume()
     {
-        if (gm.savedata.Settings[se.Mute] == 1)
+        if (GameManager.Mute == 1)
         {
             nya.volume = 0;
         }
         else
         {
-            nya.volume = gm.savedata.Settings[se.Volume];
+            nya.volume = GameManager.Volume;
         }
     }
 
