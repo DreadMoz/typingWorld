@@ -33,6 +33,7 @@ public class TypingSoft : MonoBehaviour
     private Animator animator;
     private Animator lAnimator;
     public GameObject targetCam;
+    private float necoSpeed = 0.4f;
 
     private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
     
@@ -620,7 +621,7 @@ public class TypingSoft : MonoBehaviour
         if (isTimerRunning)
         {
             // 進んでいく フレームに依存しないTime.deltaTime
-            player.transform.position += new Vector3(1f * Time.deltaTime, 0, 0);
+            player.transform.position += new Vector3(necoSpeed * Time.deltaTime, 0, 0);
             player.transform.LookAt(targetCam.transform);   // カメラを向く
             player.transform.rotation *= Quaternion.Euler(0, -60, 0);
 
@@ -654,7 +655,7 @@ public class TypingSoft : MonoBehaviour
         if (spaceEnd)
         {
             // アニメーションを切り替える
-            if (Time.time % 18 > 18.9)
+            if (Time.time % 18 > 17.9)
             {
                 if (firstEnd)
                 {
@@ -797,6 +798,19 @@ public class TypingSoft : MonoBehaviour
     private string ConvertKeyCodeToStr(KeyCode key, bool isShiftkeyPushed)
     {
         Debug.Log("key: " + key);
+        // Mac特有のキーコード調整
+        if (Application.platform == RuntimePlatform.OSXPlayer ||
+            Application.platform == RuntimePlatform.OSXEditor)
+        {
+            switch (key)
+            {
+                case KeyCode.LeftBracket:
+                    return isShiftkeyPushed ? "`" : "@";
+                case KeyCode.Semicolon:
+                    return isShiftkeyPushed ? "+" : ";";
+            }
+        }
+
         switch (key)
         {
             // かな入力用に便宜的にタブ文字を Shift+0 に割り当てている
@@ -876,13 +890,13 @@ public class TypingSoft : MonoBehaviour
                 return isShiftkeyPushed ? "=" : "-";
             case KeyCode.Caret:
                 return isShiftkeyPushed ? "~" : "^";
-            case KeyCode.At:
+            case KeyCode.BackQuote:
                 return isShiftkeyPushed ? "`" : "@";
             case KeyCode.LeftBracket:
                 return isShiftkeyPushed ? "{" : "[";
             case KeyCode.RightBracket:
                 return isShiftkeyPushed ? "}" : "]";
-            case KeyCode.Semicolon:
+            case KeyCode.Equals:
                 return isShiftkeyPushed ? "+" : ";";
             case KeyCode.Colon:
                 return isShiftkeyPushed ? "*" : ":";
@@ -949,16 +963,19 @@ public class TypingSoft : MonoBehaviour
         }
         else if (comboN > 20)    // コンボ依存のアニメーション(run)
         {
+            necoSpeed = 1.2f;
             animator.SetBool("run", true);
             animator.SetBool("move", false);
             animator.SetBool("walk", false);
             if (comboN > 30)
             {
+                necoSpeed = 1.4f;
                 animator.SetFloat("runSpeed", 1 + (float)((comboN - 30) / 35));
             }
         }
         else if (comboN > 8)    // コンボ依存のアニメーション（move)
         {
+            necoSpeed = 0.6f;
             animator.SetBool("run", false);
             animator.SetBool("move", true);
             animator.SetBool("walk", false);
@@ -966,6 +983,7 @@ public class TypingSoft : MonoBehaviour
 
             if (comboN > 10)
             {
+                necoSpeed = 0.9f;
                 animator.SetFloat("moveSpeed", 1 + (float)((comboN - 10) / 6));
             }
             animator.ResetTrigger("die1");
@@ -976,10 +994,12 @@ public class TypingSoft : MonoBehaviour
             animator.ResetTrigger("damage");
             if (comboN > 3)
             {
+                necoSpeed = 0.4f;
                 animator.SetFloat("walkSpeed", 1 + (float)((comboN - 3) / 3));
             }
             else
             {
+                necoSpeed = 0.2f;
                 animator.SetFloat("walkSpeed", 1.0f);
             }
             animator.SetFloat("runSpeed", 1.0f);
