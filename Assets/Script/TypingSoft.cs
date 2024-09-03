@@ -654,7 +654,7 @@ public class TypingSoft : MonoBehaviour
         if (spaceEnd)
         {
             // アニメーションを切り替える
-            if (Time.time % 12 > 11.9)
+            if (Time.time % 18 > 18.9)
             {
                 if (firstEnd)
                 {
@@ -796,6 +796,7 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private string ConvertKeyCodeToStr(KeyCode key, bool isShiftkeyPushed)
     {
+        Debug.Log("key: " + key);
         switch (key)
         {
             // かな入力用に便宜的にタブ文字を Shift+0 に割り当てている
