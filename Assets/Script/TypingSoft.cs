@@ -798,19 +798,7 @@ public class TypingSoft : MonoBehaviour
     private string ConvertKeyCodeToStr(KeyCode key, bool isShiftkeyPushed)
     {
         Debug.Log("key: " + key);
-        // Mac特有のキーコード調整
-        if (Application.platform == RuntimePlatform.OSXPlayer ||
-            Application.platform == RuntimePlatform.OSXEditor)
-        {
-            switch (key)
-            {
-                case KeyCode.LeftBracket:
-                    return isShiftkeyPushed ? "`" : "@";
-                case KeyCode.Semicolon:
-                    return isShiftkeyPushed ? "+" : ";";
-            }
-        }
-
+        
         switch (key)
         {
             // かな入力用に便宜的にタブ文字を Shift+0 に割り当てている
@@ -893,10 +881,14 @@ public class TypingSoft : MonoBehaviour
             case KeyCode.BackQuote:
                 return isShiftkeyPushed ? "`" : "@";
             case KeyCode.LeftBracket:
-                return isShiftkeyPushed ? "{" : "[";
+                return isShiftkeyPushed ? "`" : "@";
+//            case KeyCode.LeftBracket:
+//                return isShiftkeyPushed ? "{" : "[";
             case KeyCode.RightBracket:
                 return isShiftkeyPushed ? "}" : "]";
             case KeyCode.Equals:
+                return isShiftkeyPushed ? "+" : ";";
+            case KeyCode.Semicolon:
                 return isShiftkeyPushed ? "+" : ";";
             case KeyCode.Colon:
                 return isShiftkeyPushed ? "*" : ":";
@@ -930,6 +922,7 @@ public class TypingSoft : MonoBehaviour
         }
         else
         {
+            necoSpeed = 0.0f;
             Mistype();
         }
         correctAR = (float)correctN / ((float)correctN + (float)mistakeN);
