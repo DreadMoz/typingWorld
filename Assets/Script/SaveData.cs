@@ -290,7 +290,7 @@ public class SaveData : ScriptableObject
         {
             Kpms[i] = 10;
         }
-        Settings[se.Volume] = 70;
+        Settings[se.Volume] = 50;
         Settings[se.Mute] = 0;
         Settings[se.MailChar] = 1;
         Settings[se.CatNum] = 10;

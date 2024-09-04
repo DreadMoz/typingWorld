@@ -58,7 +58,6 @@ public class Setting : MonoBehaviour
         {
             GameManager.MailChar = "";
         }
-
         gm.setVolume();
         
         // 画面サイズを都度取得しないと途中での最大化などに対応できない
@@ -67,6 +66,7 @@ public class Setting : MonoBehaviour
         Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
         transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
         isWindowShown = false; // 非表示に設定
+        gm.exportLocal();
     }
 
     public void show()
