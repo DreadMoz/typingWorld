@@ -35,6 +35,10 @@ public class ShopList : MonoBehaviour
     [SerializeField]
     private ScrollRect scrollRect;
     public int tabNo = 0;
+    int[] rankScore = { 0, 40, 80, 120, 200, 263};
+    int[] openWeapon = { 3, 6, 9, 13, 17, 99};
+    int[] openGlasses = { 3, 5, 8, 9, 10, 99};
+    int[] openHat = { 3, 6, 7, 9, 10, 99};
 
     // Start is called before the first frame update
     void Start()
@@ -84,6 +88,7 @@ public class ShopList : MonoBehaviour
         ClearList();
 
         List<int> itemIDsToShow = new List<int>();
+        int itemLimit = getItemLimit(kind);
         switch (kind)
         {
             case 0:
@@ -98,10 +103,12 @@ public class ShopList : MonoBehaviour
             default:
                 break;
         }
-
-        foreach (var itemId in itemIDsToShow)
+        for (int i=0; i<itemIDsToShow.Count; i++)
         {
-            Item item = gm.db.GetItemList()[itemId]; // 実際のアイテムをIDから取得
+            if (itemLimit < i) {
+                break;
+            }
+            Item item = gm.db.GetItemList()[itemIDsToShow[i]]; // 実際のアイテムをIDから取得
             if (item != null)
             {
                 AddItem(item);
@@ -111,6 +118,35 @@ public class ShopList : MonoBehaviour
         float contentHeight = itemIDsToShow.Count * 77
         ; // アイテムの高さ
         shopItemParentRectTransform.sizeDelta = new Vector2(shopItemParentRectTransform.sizeDelta.x, contentHeight);
+    }
+
+    public int getItemLimit(int kind)
+    {
+        int total = gm.savedata.getTotalMedal();
+        int limitNo;
+        if (rankScore[5] < total) {
+            limitNo = 5;
+        } else if (rankScore[4] < total) {
+            limitNo = 4;
+        } else if (rankScore[3] < total) {
+            limitNo = 3;
+        } else if (rankScore[2] < total) {
+            limitNo = 2;
+        } else if (rankScore[1] < total) {
+            limitNo = 1;
+        } else {
+            limitNo = 0;
+        }
+        switch (kind)
+        {
+            case 0:
+                return openWeapon[limitNo];
+            case 1:
+                return openGlasses[limitNo];
+            case 2:
+                return openHat[limitNo];
+        }
+        return 0;
     }
 
     private void ClearList()

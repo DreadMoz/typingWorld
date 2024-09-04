@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
             exitShop.SetActive(false);
             transform.position = new Vector3(286, 1, 96);
             transform.rotation = Quaternion.Euler(0, 180, 0);
+            resetTypingPanel();
         
             animator.SetTrigger("Hi");    // "Hi" トリガーアニメーションを開始
             fade.StartFadeIn();
@@ -97,7 +98,6 @@ public class Player : MonoBehaviour
 
             switchCam.SwitchCamera();           // カメラ切り替え
         }
-        resetTypingPanel();
     }
 
     // Update is called once per frame

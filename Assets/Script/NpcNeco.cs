@@ -27,50 +27,38 @@ public class NpcNeco : MonoBehaviour
         InvokeRepeating("SetRandomDestination", Random.Range(1f, interval), interval);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (moveFlg)
-        {
-            if (Vector3.Distance(transform.position, agent.destination) < 0.2f)
-            {
-                moveFlg = false;
-                animator.SetTrigger("idol");
-
-                // 目的地を解除し、エージェントの移動を停止します。
-                agent.ResetPath(); // 目的地を解除する
-                agent.velocity = Vector3.zero; // 速度を0にする
-
-                // ランダムな整数を生成
-                int randomIndex = Random.Range(0, 10);
-                if (randomIndex == 0)
-                {
-                    animator.SetTrigger("dig");
-                }
-                else if (randomIndex == 1)
-                {
-                    animator.SetTrigger("sit");
-                }
-
-            }
-        }
-    }
-
     void SetRandomDestination()
     {
         Vector3 randomDirection = Random.insideUnitSphere;
         double distance = System.Math.Sqrt(randomDirection.x * randomDirection.x + randomDirection.z * randomDirection.z);
 
-        if (distance < 0.5f)
+        if (distance < 0.45f)        // 待機
         {
+            // 目的地を解除し、エージェントの移動を停止します。
+            agent.ResetPath(); // 目的地を解除する
+            agent.velocity = Vector3.zero; // 速度を0にする
+            // ランダムな整数を生成して アクションを決める。
+            int randomIndex = Random.Range(0, 8);
+            if (randomIndex == 0)
+            {
+                animator.SetTrigger("dig");
+            }
+            else if (randomIndex <= 2)
+            {
+                animator.SetTrigger("sit");
+            }
+            else
+            {
+                animator.SetTrigger("idol");
+            }
             return;
         }
-        else if (1.0f < distance)
+        else if (0.95f < distance)   // 走る
         {
             animator.SetTrigger("run");
             agent.speed = speed;
         }
-        else
+        else                        // 歩く
         {
             animator.SetTrigger("walk");
             agent.speed = speed / 3;

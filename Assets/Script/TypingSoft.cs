@@ -33,6 +33,7 @@ public class TypingSoft : MonoBehaviour
     private Animator animator;
     private Animator lAnimator;
     public GameObject targetCam;
+    public GameObject testMode;
     private float necoSpeed = 0.4f;
 
     private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
@@ -203,6 +204,10 @@ public class TypingSoft : MonoBehaviour
         spaceEnd = false;
         // 入力禁止状態にする
         isInputValid = false;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        testMode.SetActive(false);
+#endif
 
         typingVoice.updateVolume();
         
@@ -545,6 +550,7 @@ public class TypingSoft : MonoBehaviour
         {
             UIH.text = nQH;     // ひらがな表示
             UIR.text = nQR;     // ローマ字表示
+            CurrentTypingSentence = nQR;
         }
         UIJ.text = nQJ;     // 日本語表示
         // 変数等の初期化
@@ -798,7 +804,7 @@ public class TypingSoft : MonoBehaviour
     private string ConvertKeyCodeToStr(KeyCode key, bool isShiftkeyPushed)
     {
         Debug.Log("key: " + key);
-        
+
         switch (key)
         {
             // かな入力用に便宜的にタブ文字を Shift+0 に割り当てている
@@ -1034,6 +1040,8 @@ public class TypingSoft : MonoBehaviour
         correctN++;
         comboN++;
 
+        isRecMistype = false;
+
         typingVoice.nya.Play();
         if (maxCombo < comboN)
         {
@@ -1084,7 +1092,7 @@ public class TypingSoft : MonoBehaviour
     private void CompleteTask()
     {
         // タイプした文字を緑色に
-        UII.text = $"<color=#20A01D>{UII.text}</color>";
+        UIR.text = $"<color=#20A01D>{UIR.text}</color>";
         answers++;
 
         if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))     // 時間制じゃない時の終わり
@@ -1139,7 +1147,7 @@ public class TypingSoft : MonoBehaviour
         }
         else
         {
-            UIStr = correctString + (isSentenceMistyped ? ("<color=#ff0000ff>" + nextTypingSentence + "</color>") : "");
+            UIStr = correctString + (isSentenceMistyped ? ("<color=#ff8888ff>" + nextTypingSentence + "</color>") : "");
         }
         SetUITypeText(UIStr);
         CurrentTypingSentence = nextTypingSentence;
@@ -1163,7 +1171,7 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void SetUITypeText(string sentence)
     {
-        UII.text = sentence.Replace(' ', '_');
+        UIR.text = sentence.Replace(' ', '_');
     }
 
     /// <summary>
@@ -1210,7 +1218,7 @@ public class TypingSoft : MonoBehaviour
             string UIStr = "";
             if (ConfigScript.IsBeginnerMode || ConfigScript.IsShowTypeSentence)
             {
-                UIStr = "<color=#ff0000ff>" + CurrentTypingSentence.ToString() + "</color>";
+                UIStr = "<color=#ff8888ff>" + CurrentTypingSentence.ToString() + "</color>";
             }
             else
             {

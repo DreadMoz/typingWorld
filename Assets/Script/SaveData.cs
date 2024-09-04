@@ -703,4 +703,20 @@ public class SaveData : ScriptableObject
 
         Status[st.Kpm] = (int)Math.Round(average); // 四捨五入してintにキャスト;
     }
+    public int getTotalMedal()
+    {
+        int total = 0; // 合計値を保持する変数
+        foreach (int medalCount in Medals) // Medals配列の各要素に対してループ
+        {
+            if (medalCount == 5)
+            {
+                total += 1;
+            }
+            else
+            {
+                total += medalCount; // 合計に加算
+            }
+        }
+        return total; // 計算された合計値を返す
+    }
 }
