@@ -38,7 +38,7 @@ public class ShopList : MonoBehaviour
     int[] rankScore = { 0, 40, 80, 120, 200, 263};
     int[] openWeapon = { 3, 6, 9, 13, 17, 99};
     int[] openGlasses = { 3, 5, 8, 9, 10, 99};
-    int[] openHat = { 3, 6, 7, 9, 10, 99};
+    int[] openHat = { 3, 5, 6, 8, 9, 99};
 
     // Start is called before the first frame update
     void Start()
@@ -105,7 +105,7 @@ public class ShopList : MonoBehaviour
         }
         for (int i=0; i<itemIDsToShow.Count; i++)
         {
-            if (itemLimit < i) {
+            if (itemLimit <= i) {
                 break;
             }
             Item item = gm.db.GetItemList()[itemIDsToShow[i]]; // 実際のアイテムをIDから取得
@@ -115,7 +115,7 @@ public class ShopList : MonoBehaviour
             }
         }
         // コンテンツエリアの高さをアイテム数に基づいて設定
-        float contentHeight = itemIDsToShow.Count * 77
+        float contentHeight = itemLimit * 77
         ; // アイテムの高さ
         shopItemParentRectTransform.sizeDelta = new Vector2(shopItemParentRectTransform.sizeDelta.x, contentHeight);
     }
