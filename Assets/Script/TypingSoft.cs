@@ -372,7 +372,7 @@ public class TypingSoft : MonoBehaviour
                     Debug.Log("JSONファイルの取得に失敗しました。");
                     return false;
                 }
-                if ((fileName.StartsWith("TextC")) && (gm.savedata.Email != ""))
+                if ((fileName.StartsWith("TextC")) && (gm.savedata.Settings[se.MailChar] != 0))
                 {
                     mailReplaceNo = new System.Random().Next(0, theme.themes.Length);
                     theme.themes[mailReplaceNo].hiragana = gm.savedata.Email;
@@ -849,7 +849,7 @@ public class TypingSoft : MonoBehaviour
     IEnumerator throwDise(int rank)
     {
         dice.SetActive(true);
-        dice.transform.position += new Vector3(4.5f * (rank), 0, 0);
+        dice.transform.position += new Vector3(4.5f * rank, 0, 0);
 
         int rand = new System.Random().Next(1, 101);
 

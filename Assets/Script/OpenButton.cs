@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class OpenButton : MonoBehaviour
 {
     private bool doOpen = false;
+    private bool forceShop = false;
     
     public void OnButton()
     {
@@ -16,6 +17,16 @@ public class OpenButton : MonoBehaviour
     {
         return doOpen;
     }
+    public bool isForce()
+    {
+        if (forceShop)
+        {
+            forceShop = false;
+            return true;
+        }
+        return false;
+    }
+    
     public void resetOpen()
     {
         doOpen = false;
@@ -23,6 +34,7 @@ public class OpenButton : MonoBehaviour
     public void forceOpen()
     {
         doOpen = true;
+        forceShop = true;
     }
 
 }

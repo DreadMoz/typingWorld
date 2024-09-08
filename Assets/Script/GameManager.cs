@@ -156,7 +156,7 @@ public class GameManager : MonoBehaviour
             rankingShowPos = new Vector2(-rankingRectTransform.sizeDelta.x / 2 - 10, -statusRectTransform.sizeDelta.y - rankingRectTransform.sizeDelta.y / 2 - 20);
             rankingHidePos = new Vector2(rankingRectTransform.sizeDelta.x / 2, -statusRectTransform.sizeDelta.y - rankingRectTransform.sizeDelta.y / 2 - 20);
             equipmentShowPos = new Vector2(0, equipRectTransform.sizeDelta.y / 2 + 30);
-            equipmentHidePos = new Vector2(0, -equipRectTransform.sizeDelta.y / 2);
+            equipmentHidePos = new Vector2(0, -equipRectTransform.sizeDelta.y / 2 - 50);
             inventoryFilterPos = new Vector2(-inventoryRectTransform.sizeDelta.x / 2 - 40, -statusRectTransform.sizeDelta.y - inventoryRectTransform.sizeDelta.y / 2 - 20);
             inventoryFilterRectTransform.anchoredPosition = inventoryFilterPos;
 
@@ -381,7 +381,11 @@ public class GameManager : MonoBehaviour
                         // オブジェクトの位置を確定させる
                         statusRectTransform.anchoredPosition = statusShowPos;
                         inventoryRectTransform.anchoredPosition = inventoryShowPos;
-                        equipRectTransform.anchoredPosition = equipmentShowPos;
+                        if (!shopRoom.activeSelf) {
+                            equipRectTransform.anchoredPosition = equipmentShowPos;
+                        } else {
+                            equipRectTransform.anchoredPosition = equipmentHidePos;
+                        }
                     }
                     if (rankingOpen == 1)
                     {
@@ -401,14 +405,13 @@ public class GameManager : MonoBehaviour
                     {
                         status.SetActive(true);
                         inventory.SetActive(true);
-                        if (!shopRoom.activeSelf)
-                        {
-                            equip.SetActive(true);
-                        }
+                        equip.SetActive(true);
                         // オブジェクトの位置を更新する
                         statusRectTransform.anchoredPosition = Vector2.MoveTowards(statusRectTransform.anchoredPosition, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
                         inventoryRectTransform.anchoredPosition = Vector2.MoveTowards(inventoryRectTransform.anchoredPosition, inventoryShowPos, Time.deltaTime * 70000 / windowOpenCount);
-                        equipRectTransform.anchoredPosition = Vector2.MoveTowards(equipRectTransform.anchoredPosition, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
+                        if (!shopRoom.activeSelf) {
+                            equipRectTransform.anchoredPosition = Vector2.MoveTowards(equipRectTransform.anchoredPosition, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
+                        }
                     }
                     if (rankingOpen == 1)
                     {

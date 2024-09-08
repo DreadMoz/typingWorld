@@ -371,13 +371,13 @@ public class SaveData : ScriptableObject
             Status[st.Server] = Convert.ToInt32(list[4]);
             Status[st.Rank] = Convert.ToInt32(list[5]);
             UserName = list[6].ToString();
-            Equipment[eq.RightHand] = Convert.ToInt32(list[7]);
-            Equipment[eq.Glasses] = Convert.ToInt32(list[8]);
-            Equipment[eq.Head] = Convert.ToInt32(list[9]);
-            Equipment[eq.LeftHand] = Convert.ToInt32(list[10]);
+            Equipment[eq.RightHand] = 0;
+            Equipment[eq.Glasses] = 0;
+            Equipment[eq.Head] = 0;
+            Equipment[eq.LeftHand] = 0;
             Equipment[eq.CatBody] = Convert.ToInt32(list[11]);
-            Equipment[eq.CatFace] = Convert.ToInt32(list[12]);
-            Equipment[eq.NickName] = Convert.ToInt32(list[13]);
+            Equipment[eq.CatFace] = 0;
+            Equipment[eq.NickName] = 0;
             Status[st.Kpm] = Convert.ToInt32(list[14]);
 
             // ここは配列8<-文字列
