@@ -48,16 +48,6 @@ public class Setting : MonoBehaviour
         gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
         gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
         gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
-        GameManager.Mute = gm.savedata.Settings[se.Mute];
-        GameManager.Volume = gm.savedata.Settings[se.Volume];
-        if (gm.savedata.Settings[se.MailChar] == 1)
-        {
-            GameManager.MailChar = gm.savedata.Email;
-        }
-        else
-        {
-            GameManager.MailChar = "";
-        }
         gm.setVolume();
         
         // 画面サイズを都度取得しないと途中での最大化などに対応できない

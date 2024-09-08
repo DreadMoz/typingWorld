@@ -19,6 +19,12 @@ public class TypingSoft : MonoBehaviour
 {
     [SerializeField] private GameManager gm;
     [SerializeField] private TypingVoice typingVoice;
+    [SerializeField] private GameObject dia1;
+    [SerializeField] private GameObject dia2;
+    [SerializeField] private GameObject dia3;
+    [SerializeField] private GameObject dia4;
+    [SerializeField] private GameObject dia5;
+    [SerializeField] private GameObject dice;
     // Assist Keyboard JIS
     private static AssistKeyboardJIS AssistKeyboardObj;
 
@@ -27,11 +33,25 @@ public class TypingSoft : MonoBehaviour
     [SerializeField]
     private GameObject player;        // プレイヤーオブジェクト
     [SerializeField]
-    private Coins conis;           // コイン操作
+    private Coins coins;           // コイン操作
     [SerializeField]
     private GameObject door;
+
+    int[,] diceProbabilities = new int[5, 6] {
+        {20, 50, 75, 95, 99,100}, 
+        {10, 35, 60, 85, 95,100}, 
+        { 5, 20, 45, 75, 95,100}, 
+        { 0,  5, 15, 45, 75,100}, 
+        { 0,  0,  5, 15, 50,100}
+    };
     private Animator animator;
     private Animator lAnimator;
+    private Animator diaAnim1;
+    private Animator diaAnim2;
+    private Animator diaAnim3;
+    private Animator diaAnim4;
+    private Animator diaAnim5;
+    private Animator diceAnim;
     public GameObject targetCam;
     public GameObject testMode;
     private float necoSpeed = 0.4f;
@@ -43,6 +63,7 @@ public class TypingSoft : MonoBehaviour
     private int seekerCombo;
     private int seekerKey;
     private int seekerTime;
+    private int seekerBonus;
     private int totalSeeker;
     private int maxCombo = 0;
 
@@ -52,6 +73,14 @@ public class TypingSoft : MonoBehaviour
 
     private static bool spaceStart;
     private static bool spaceEnd;
+    private static bool spaceThrow;
+    private int diceNo;
+    private int diceSeeker;
+    private int diaRank;
+
+    public Animator[] animators; // 各オブジェクトのアニメーターへの参照を格納する配列
+    public string[] states; // 各オブジェクトのアニメーションの名前の配列
+    public string[] diceStates; // 各オブジェクトのアニメーションの名前の配列
     // 入力受け付け
     private static bool isInputValid;
     // タイピングの正誤判定器
@@ -202,6 +231,8 @@ public class TypingSoft : MonoBehaviour
         spaceStart = true;
         // スペースでエンド状態を解除する
         spaceEnd = false;
+
+        spaceThrow = false;
         // 入力禁止状態にする
         isInputValid = false;
 
@@ -213,6 +244,12 @@ public class TypingSoft : MonoBehaviour
         
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator = lPlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
+        diaAnim1 = dia1.GetComponent<Animator>();
+        diaAnim2 = dia2.GetComponent<Animator>();
+        diaAnim3 = dia3.GetComponent<Animator>();
+        diaAnim4 = dia4.GetComponent<Animator>();
+        diaAnim5 = dia5.GetComponent<Animator>();
+        diceAnim = dice.GetComponent<Animator>();
         lAnimator.SetTrigger("jump");
         player.transform.LookAt(targetCam.transform);   // カメラを向く
         
@@ -237,7 +274,8 @@ public class TypingSoft : MonoBehaviour
         UITimer = transform.Find("DataPanel/Timer").GetComponent<Text>();
         AssistKeyboardObj = GameObject.Find("AssistKeyboard").GetComponent<AssistKeyboardJIS>();
 
-
+        setDiaDisp(gm.savedata.Settings[se.GachaCnt]);
+        
         //　データ初期化処理
         correctN = 0;
         comboN = 0;
@@ -249,7 +287,7 @@ public class TypingSoft : MonoBehaviour
         seekerKey = 0;
         seekerTime = 0;
 
-        seekerStart = GameManager.Seeker;
+        seekerStart = gm.savedata.Status[st.Gold];
         updateSeeker();
 
         AssistKeyboardObj.SetNextHighlight(" ");
@@ -334,10 +372,10 @@ public class TypingSoft : MonoBehaviour
                     Debug.Log("JSONファイルの取得に失敗しました。");
                     return false;
                 }
-                if ((fileName.StartsWith("TextC")) && (GameManager.MailChar != ""))
+                if ((fileName.StartsWith("TextC")) && (gm.savedata.Email != ""))
                 {
                     mailReplaceNo = new System.Random().Next(0, theme.themes.Length);
-                    theme.themes[mailReplaceNo].hiragana = GameManager.MailChar;
+                    theme.themes[mailReplaceNo].hiragana = gm.savedata.Email;
                     theme.themes[mailReplaceNo].kanji = "ボーナス！";
                 }
                 return true;
@@ -401,7 +439,7 @@ public class TypingSoft : MonoBehaviour
 
     private void updateSeeker()
     {
-        totalSeeker = seekerStart + seekerCombo + seekerKey + seekerTime;
+        totalSeeker = seekerStart + seekerCombo + seekerKey + seekerTime + seekerBonus;
         UIseeker.text = totalSeeker.ToString();
     }
 
@@ -414,7 +452,7 @@ public class TypingSoft : MonoBehaviour
         if (comboN % 50 == 0)
         {
             seekerCombo++;
-            conis.SpawnCoins(1, 1);    // コインアニメーション
+            coins.SpawnCoins(1, 1);    // コインアニメーション
             updateSeeker();
             float comboScale = ((float)comboN / 50.0f + 4) / 5;
             UIcombo.rectTransform.localScale = new Vector3(comboScale, comboScale, comboScale);
@@ -431,7 +469,9 @@ public class TypingSoft : MonoBehaviour
         {
             if (shuffledThemes[currentThemeIndex-1].id == mailReplaceNo + 1)
             {
-                conis.SpawnCoins(5, 0);    // コインアニメーション
+                seekerBonus += 5;
+                coins.SpawnCoins(5, 0);    // コインアニメーション
+                updateSeeker();
             }
         }
     }
@@ -444,7 +484,7 @@ public class TypingSoft : MonoBehaviour
                 if (correctN >= 10)
                 {
                     seekerKey = 1;
-                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
                     updateSeeker();
                 }
                 break;
@@ -452,7 +492,7 @@ public class TypingSoft : MonoBehaviour
                 if (correctN >= 20)
                 {
                     seekerKey = 2;
-                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
                     updateSeeker();
                 }
                 break;
@@ -460,7 +500,7 @@ public class TypingSoft : MonoBehaviour
                 if (correctN >= 40)
                 {
                     seekerKey = 3;
-                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
                     updateSeeker();
                 }
                 break;
@@ -468,7 +508,7 @@ public class TypingSoft : MonoBehaviour
                 if (correctN >= 80)
                 {
                     seekerKey = 4;
-                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
                     updateSeeker();
                 }
                 break;
@@ -476,7 +516,7 @@ public class TypingSoft : MonoBehaviour
                 if (correctN >= 160)
                 {
                     seekerKey = 5;
-                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
                     updateSeeker();
                 }
                 break;
@@ -484,7 +524,7 @@ public class TypingSoft : MonoBehaviour
                 if (correctN >= 320)
                 {
                     seekerKey = 6;
-                    conis.SpawnCoins(1, 2);    // コインアニメーション
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
                     updateSeeker();
                 }
                 break;
@@ -501,7 +541,7 @@ public class TypingSoft : MonoBehaviour
         {
             seekerTime = 2;
         }
-        conis.SpawnCoins(seekerTime, 0);    // コインアニメーション
+        coins.SpawnCoins(seekerTime, 0);    // コインアニメーション
         updateSeeker();
     }
 
@@ -550,8 +590,8 @@ public class TypingSoft : MonoBehaviour
         {
             UIH.text = nQH;     // ひらがな表示
             UIR.text = nQR;     // ローマ字表示
-            CurrentTypingSentence = nQR;
         }
+        CurrentTypingSentence = nQR;
         UIJ.text = nQJ;     // 日本語表示
         // 変数等の初期化
         isRecMistype = false;
@@ -644,7 +684,6 @@ public class TypingSoft : MonoBehaviour
                 dispResultTimerVer();
 
                 door.SetActive(false);
-                spaceEnd = true;
             }
             UpdateTimerText();
         }
@@ -657,6 +696,11 @@ public class TypingSoft : MonoBehaviour
                 animator.SetTrigger("reset");
                 System.Threading.Thread.Sleep(100);     // 連続実行防止
             }
+        }
+        if (spaceThrow)
+        {
+            END.text = "";
+            UIH.text = "スペースキーでボーナスゲット！";
         }
         if (spaceEnd)
         {
@@ -690,9 +734,9 @@ public class TypingSoft : MonoBehaviour
         GameManager.NewKpm = 0;                 // 今回のKPM
         GameManager.KeyParSecond = 2;           // 今回の１秒あたりのキー入力。常にOKとするため１より大を設定
         GameManager.AnswerRate = correctAR;     // 今回の正答率
-        GameManager.Seeker = totalSeeker;       // 所持シーカー
         GameManager.TypingTitle = theme.title;  // 実施したテーマ
         GameManager.MaxCombo = maxCombo;        // 今回の最大コンボ数
+        gm.savedata.Status[st.Gold] = totalSeeker;       // 所持シーカー
 
         // キーカラークリア
         AssistKeyboardObj.SetAllKeyColorWhite();
@@ -723,9 +767,9 @@ public class TypingSoft : MonoBehaviour
         GameManager.NewKpm = (theme.timer > 0) ? (int)kpm : 0;  // 今回のKPM
         GameManager.KeyParSecond = correctN / totalTime;        // 今回の１秒あたりのキー入力
         GameManager.AnswerRate = correctAR;     // 今回の正答率
-        GameManager.Seeker = totalSeeker;       // 所持シーカー
         GameManager.TypingTitle = theme.title;  // 実施したテーマ
         GameManager.MaxCombo = maxCombo;        // 今回の最大コンボ数
+        gm.savedata.Status[st.Gold] = totalSeeker;       // 所持シーカー
 
         // キーカラークリア
         AssistKeyboardObj.SetAllKeyColorWhite();
@@ -745,6 +789,125 @@ public class TypingSoft : MonoBehaviour
         rHand.SetActive(false);
 
         gm.setGemini();
+
+        gm.savedata.Settings[se.GachaCnt] ++;
+        hopDiamond(gm.savedata.Settings[se.GachaCnt]);
+    }
+
+    private void setDiaDisp(int no)
+    {
+        dia1.SetActive(false);
+        dia2.SetActive(false);
+        dia3.SetActive(false);
+        dia4.SetActive(false);
+        dia5.SetActive(false);
+        if (no >= 1) {
+            dia1.SetActive(true);
+        }
+        if (no >= 2) {
+            dia2.SetActive(true);
+        }
+        if (no >= 3) {
+            dia3.SetActive(true);
+        }
+        if (no >= 4) {
+            dia4.SetActive(true);
+        }
+    }
+    private void hopDiamond(int no)
+    {
+        switch(no)
+        {
+            case 1:
+                dia1.SetActive(true);
+                diaAnim1.SetTrigger("Jump");
+                spaceEnd = true;
+                break;
+            case 2:
+                dia2.SetActive(true);
+                diaAnim2.SetTrigger("Jump");
+                spaceEnd = true;
+                break;
+            case 3:
+                dia3.SetActive(true);
+                diaAnim3.SetTrigger("Jump");
+                spaceEnd = true;
+                break;
+            case 4:
+                dia4.SetActive(true);
+                diaAnim4.SetTrigger("Jump");
+                spaceEnd = true;
+                break;
+            case 5:
+                dia5.SetActive(true);
+                diaAnim5.SetTrigger("Jump");
+                spaceThrow = true;
+                break;
+        }
+    }
+
+    IEnumerator throwDise(int rank)
+    {
+        dice.SetActive(true);
+        dice.transform.position += new Vector3(4.5f * (rank), 0, 0);
+
+        int rand = new System.Random().Next(1, 101);
+
+        int diceNo = getDiceNo(rank, rand);
+        
+        switch(diceNo)
+        {
+            case 1:
+                diceAnim.SetTrigger("dice1");
+                break;
+            case 2:
+                diceAnim.SetTrigger("dice2");
+                break;
+            case 3:
+                diceAnim.SetTrigger("dice3");
+                break;
+            case 4:
+                diceAnim.SetTrigger("dice4");
+                break;
+            case 5:
+                diceAnim.SetTrigger("dice5");
+                break;
+            case 6:
+                diceAnim.SetTrigger("dice6");
+                break;
+        }
+
+        yield return new WaitUntil(() => diceAnim.GetCurrentAnimatorStateInfo(0).IsName(diceStates[diceNo-1]) &&
+                                            diceAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+
+        seekerBonus += diceNo * 2;
+        coins.SpawnCoins(diceNo * 2, 0);
+        updateSeeker();
+        gm.savedata.Settings[se.GachaCnt] = 0;
+        spaceEnd = true;
+    }
+
+    private int getDiceNo(int rank, int rand)
+    {
+        if (rand <= diceProbabilities[rank, 0]) {
+            return 1;
+        }
+        else if (rand <= diceProbabilities[rank, 1]) {
+            return 2;
+        }
+        else if (rand <= diceProbabilities[rank, 2]) {
+            return 3;
+        }
+        else if (rand <= diceProbabilities[rank, 3]) {
+            return 4;
+        }
+        else if (rand <= diceProbabilities[rank, 4]) {
+            return 5;
+        }
+        else if (rand <= diceProbabilities[rank, 5]) {
+            return 6;
+        }
+        return 3;
     }
     
     private void OnGUI()
@@ -752,10 +915,10 @@ public class TypingSoft : MonoBehaviour
         Event e = Event.current;
         var isPushedShiftKey = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        if (spaceStart)     // スペースでスタート状態のとき
+        var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
+        if (e.type == EventType.KeyDown && inputStr.Equals(" "))
         {
-            var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
-            if (e.type == EventType.KeyDown && inputStr.Equals(" "))
+            if (spaceStart)     // スペースでスタート状態のとき
             {
                 AssistKeyboardObj.pushKeyAction(inputStr);
                 // スペースでスタート状態を解除する
@@ -764,11 +927,14 @@ public class TypingSoft : MonoBehaviour
                 StartCoroutine(CountDown());    // カウントダウンからのスタート
                 return;
             }
-        }
-        else if (spaceEnd)    // スペースで終了状態のとき
-        {
-            var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
-            if (inputStr.Equals(" "))
+            else if (spaceThrow)
+            {
+                spaceThrow = false;
+                diaRank = new System.Random().Next(0, 5);
+
+                StartCoroutine(PlayAnimationsInSequence());
+            }
+            else if (spaceEnd)    // スペースで終了状態のとき
             {
                 AssistKeyboardObj.pushKeyAction(inputStr);
                 if (!goNextScene)
@@ -783,18 +949,59 @@ public class TypingSoft : MonoBehaviour
         if (isInputValid && e.type == EventType.KeyDown && e.keyCode != KeyCode.None
         && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
-            var inputStr = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
-            AssistKeyboardObj.pushKeyAction(inputStr);
+            var inputMouse = ConvertKeyCodeToStr(e.keyCode, isPushedShiftKey);
+            AssistKeyboardObj.pushKeyAction(inputMouse);
 
             double currentTime = Time.realtimeSinceStartup;
             // タイピングで使用する文字以外は受け付けない
             // Esc など画面遷移などで使うキーと競合を避ける
-            if (!inputStr.Equals(""))
+            if (!inputMouse.Equals(""))
             {
                 // 正誤チェック
-                StartCoroutine(TypingCheck(inputStr));
+                StartCoroutine(TypingCheck(inputMouse));
             }
         }
+    }
+    // アニメーション完了を待つコルーチン
+    IEnumerator PlayAnimationsInSequence()
+    {
+        for (int i = 0; i < animators.Length; i++)
+        {
+            Animator animator = animators[i];
+
+            // アニメーションステートを設定
+            animator.SetTrigger("Next");
+
+            // アニメーションの完了を待つ
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Jump") &&
+                                             animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+        }
+
+        for (int i = 0; i <= diaRank; i++)
+        {
+            Animator animator = animators[i];
+            string state = states[i];
+
+            // アニメーションステートを設定
+            animator.SetTrigger("Jump");
+
+            // アニメーションの完了を待つ
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(state) &&
+                                             animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+        }
+        
+        StartCoroutine(throwDise(diaRank));
+    }
+
+    public void testThrow()
+    {
+        dia1.SetActive(true);
+        dia2.SetActive(true);
+        dia3.SetActive(true);
+        dia4.SetActive(true);
+        dia5.SetActive(true);
+        diaRank = new System.Random().Next(0, 5);
+        StartCoroutine(PlayAnimationsInSequence());
     }
     /// <summary>
     /// キーコードから string
@@ -803,7 +1010,7 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private string ConvertKeyCodeToStr(KeyCode key, bool isShiftkeyPushed)
     {
-        Debug.Log("key: " + key);
+//        Debug.Log("key: " + key);
 
         switch (key)
         {
@@ -1206,10 +1413,13 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void Mistype()
     {
+        if (0 < comboN)
+        {
+            mistakeN++;
+        }
         // コンボ数リセット、表示更新
         comboN = 0;
         UIcombo.text = string.Format("{0:0}", comboN);
-        mistakeN++;
         UImistake.text = string.Format("{0:0}", mistakeN);
 
         // 打つべき文字を赤く表示

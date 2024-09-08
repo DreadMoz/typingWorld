@@ -62,7 +62,6 @@ public class Challenge : MonoBehaviour
     public void bootTyping(string title)
     {
         GameManager.TypingDataPath = odaiDataPath + title;
-        GameManager.Seeker = gm.savedata.Status[st.Gold];
 
         GameManager.SceneNo = (int)scene.Typing;
         if (!goNextScene)

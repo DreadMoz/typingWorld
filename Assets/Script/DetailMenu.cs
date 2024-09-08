@@ -94,7 +94,6 @@ public class DetailMenu : MonoBehaviour
     public void chooseTypingLevel()
     {
         GameManager.SetTypingDataLevel(level);
-        GameManager.Seeker = gm.savedata.Status[st.Gold];
 
         if (!goNextScene)
         {

@@ -31,14 +31,10 @@ public class GameManager : MonoBehaviour
     static public int NewKpm { get; set; }
     static public float KeyParSecond { get; set; }
     static public float AnswerRate { get; set; }
-    static public int Seeker { get; set; }
     static public int TypingDataId { get; set; }
     static public string TypingDataPath { get; set; }
     static public string TypingTitle { get; set; }
     static public int MaxCombo { get; set; }
-    static public int Mute { get; set; }
-    static public int Volume { get; set; }
-    static public string MailChar { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
 
@@ -174,6 +170,7 @@ public class GameManager : MonoBehaviour
                 ranking.SetActive(false);
                 typingRoom.SetActive(false);
                 shopRoom.SetActive(false);
+                savedata.Settings[se.GachaCnt] = 1;
             }
             // アニメーションステートが3タイピング後の場合
             else if (SceneNo == (int)scene.House)
@@ -259,7 +256,6 @@ public class GameManager : MonoBehaviour
                 rankingWindow.SetTo(savedata.Status[st.Rank]);
                 rankingWindow.ScrollTo(savedata.Status[st.Rank]);
             }
-            savedata.Settings[se.Mute] = Mute;
 
             MistypedSentences.Clear();  // リストから全ての要素を削除
         }
@@ -625,7 +621,6 @@ public class GameManager : MonoBehaviour
     {
         recalculateKpm();
         getRanking();
-        savedata.Status[st.Gold] = Seeker;
         string promptData = savedata.CompileGeminiData(savedata, db.GetServerList()[savedata.Status[st.Server]]);
         #if UNITY_WEBGL && !UNITY_EDITOR
             connection.throughGemini(promptData);

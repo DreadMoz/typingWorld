@@ -11,7 +11,6 @@ public class NpcNeco : MonoBehaviour
     public float radius = 16f; // ランダムな目的地を探す範囲
     private float speed = 5f;
     public float interval = 8f;
-    private bool moveFlg = false;
 
     // Start is called before the first frame update
     void Awake()
@@ -63,7 +62,6 @@ public class NpcNeco : MonoBehaviour
             animator.SetTrigger("walk");
             agent.speed = speed / 3;
         }
-        moveFlg = true;
         randomDirection *= radius;
 
         randomDirection += transform.position; // 現在位置からの相対位置を計算

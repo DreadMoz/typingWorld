@@ -44,12 +44,12 @@ public class eq
 // Gold,Server,Rank,userName
 public class se
 {
-    public const int dummy = 0;
+    public const int GachaCnt = 0;
     public const int Volume = 1;
     public const int CatNum = 2;
     public const int MailChar = 3;
     public const int Mute = 4;
-    public const int dummy5 = 5;
+    public const int LastLogin = 5;
     public const int dummy6 = 6;
     public const int dummy7 = 7;
     public const int dummy8 = 8;
@@ -290,13 +290,14 @@ public class SaveData : ScriptableObject
         {
             Kpms[i] = 10;
         }
-        Settings[se.Volume] = 50;
+        Settings[se.GachaCnt] = 5;
+        Settings[se.Volume] = 20;
         Settings[se.Mute] = 0;
         Settings[se.MailChar] = 1;
         Settings[se.CatNum] = 10;
-        GameManager.Volume = Settings[se.Volume];
-        GameManager.Mute = Settings[se.Mute];
-        GameManager.MailChar = Email;
+
+        DateTime today = DateTime.Now;
+        Settings[se.LastLogin] = today.Year * 10000 + today.Month * 100 + today.Day;
     }
 
     // 拡張機能からステータスデータを取得する。
@@ -346,16 +347,6 @@ public class SaveData : ScriptableObject
             for (int i = 0; i < Settings.Length; i++)
             {
                 Settings[i] = exData.Settings[i];
-            }
-            GameManager.Mute = Settings[se.Mute];
-            GameManager.Volume = Settings[se.Volume];
-            if (Settings[se.MailChar] == 1)
-            {
-                GameManager.MailChar = Email;
-            }
-            else
-            {
-                GameManager.MailChar = "";
             }
         }
         else

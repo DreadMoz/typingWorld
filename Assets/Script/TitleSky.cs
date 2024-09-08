@@ -105,6 +105,7 @@ public class TitleSky : MonoBehaviour
         message.SetActive(false);
         ashiato.SetActive(false);
         gm.savedata.Equipment[eq.CatBody] = 0;
+        gm.savedata.Settings[se.GachaCnt] = 0;      // ボーナスダイヤは０に
 
 //        startButton.SetActive(false);   // ログイン完了まで一旦消す
 //        StartButton();
@@ -185,6 +186,7 @@ public class TitleSky : MonoBehaviour
             {
                 gm.savedata.setStatusFromLocal(statusDataJson);
                 ouText.text = gm.savedata.Ou;
+                CheckDailyReset();
                 Debug.Log("ステータスデータをロードしました。");
                 ashiato.SetActive(true);
                 checkLocalData();
@@ -201,6 +203,19 @@ public class TitleSky : MonoBehaviour
         }
     }
 
+    private void CheckDailyReset()
+    {
+        DateTime today = DateTime.Now;
+        int todayDate = today.Year * 10000 + today.Month * 100 + today.Day;
+        
+        if (gm.savedata.Settings[se.LastLogin] != todayDate)
+        {
+            gm.savedata.Settings[se.GachaCnt] = 4;      // ボーナスダイヤを４に
+
+            // 日付の更新
+            gm.savedata.Settings[se.LastLogin] = todayDate;
+        }
+    }
 
     private void checkLocalData()
     {

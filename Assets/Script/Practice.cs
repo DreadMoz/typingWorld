@@ -67,7 +67,7 @@ public class Practice : MonoBehaviour
                     if (medalTop[i + 1] == 0) // 次が錠状態なら
                     {
                         medalTop[i + 1] = 5; // Room花火打ち上げセット
-                        Debug.Log("Opend MedalTop id:" + (i + 1));
+//                        Debug.Log("Opend MedalTop id:" + (i + 1));
                     }
                 }
             }
