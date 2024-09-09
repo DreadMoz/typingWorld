@@ -880,11 +880,15 @@ public class TypingSoft : MonoBehaviour
         yield return new WaitUntil(() => diceAnim.GetCurrentAnimatorStateInfo(0).IsName(diceStates[diceNo-1]) &&
                                             diceAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
 
-        seekerBonus += diceNo * 2;
-        if (diceNo < 6) {
-            coins.SpawnCoins(diceNo * 2, 0);
+        
+        if (diceNo == 6) {
+            seekerBonus += 20;
+            coins.SpawnCoins(10, 0);
+            coins.SpawnCoins(5, 1);
+            coins.SpawnCoins(5, 2);
         } else {
-            coins.SpawnCoins(20, 0);
+            seekerBonus += diceNo * 2;
+            coins.SpawnCoins(diceNo * 2, 0);
         }
         updateSeeker();
         gm.savedata.Settings[se.GachaCnt] = 1;
