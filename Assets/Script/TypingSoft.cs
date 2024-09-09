@@ -883,7 +883,7 @@ public class TypingSoft : MonoBehaviour
         seekerBonus += diceNo * 2;
         coins.SpawnCoins(diceNo * 2, 0);
         updateSeeker();
-        gm.savedata.Settings[se.GachaCnt] = 0;
+        gm.savedata.Settings[se.GachaCnt] = 1;
         spaceEnd = true;
     }
 

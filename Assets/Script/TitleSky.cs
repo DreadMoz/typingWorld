@@ -105,7 +105,7 @@ public class TitleSky : MonoBehaviour
         message.SetActive(false);
         ashiato.SetActive(false);
         gm.savedata.Equipment[eq.CatBody] = 0;
-        gm.savedata.Settings[se.GachaCnt] = 0;      // ボーナスダイヤは０に
+        gm.savedata.Settings[se.GachaCnt] = 1;      // ボーナスダイヤは０に
 
 //        startButton.SetActive(false);   // ログイン完了まで一旦消す
 //        StartButton();
