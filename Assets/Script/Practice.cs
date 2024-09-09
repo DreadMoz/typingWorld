@@ -21,6 +21,10 @@ public class Practice : MonoBehaviour
 
     public void calcStars()     // ３ステージの合計を算出するところ
     {
+        if (medalTopNum == 0)
+        {
+            Awake();
+        }
         int[] medals = gm.savedata.Medals;
         for (int i=0; i < medals.Length; i++)
         {
