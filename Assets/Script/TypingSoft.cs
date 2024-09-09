@@ -881,7 +881,11 @@ public class TypingSoft : MonoBehaviour
                                             diceAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
 
         seekerBonus += diceNo * 2;
-        coins.SpawnCoins(diceNo * 2, 0);
+        if (diceNo < 6) {
+            coins.SpawnCoins(diceNo * 2, 0);
+        } else {
+            coins.SpawnCoins(20, 0);
+        }
         updateSeeker();
         gm.savedata.Settings[se.GachaCnt] = 1;
         spaceEnd = true;

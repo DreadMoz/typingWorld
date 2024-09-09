@@ -384,6 +384,7 @@ public class GameManager : MonoBehaviour
                         if (!shopRoom.activeSelf) {
                             equipRectTransform.anchoredPosition = equipmentShowPos;
                         } else {
+                            equip.SetActive(true);
                             equipRectTransform.anchoredPosition = equipmentHidePos;
                         }
                     }
@@ -405,11 +406,11 @@ public class GameManager : MonoBehaviour
                     {
                         status.SetActive(true);
                         inventory.SetActive(true);
-                        equip.SetActive(true);
                         // オブジェクトの位置を更新する
                         statusRectTransform.anchoredPosition = Vector2.MoveTowards(statusRectTransform.anchoredPosition, statusShowPos, Time.deltaTime * 20000 / windowOpenCount);
                         inventoryRectTransform.anchoredPosition = Vector2.MoveTowards(inventoryRectTransform.anchoredPosition, inventoryShowPos, Time.deltaTime * 70000 / windowOpenCount);
-                        if (!shopRoom.activeSelf) {
+                            if (!shopRoom.activeSelf) {
+                            equip.SetActive(true);
                             equipRectTransform.anchoredPosition = Vector2.MoveTowards(equipRectTransform.anchoredPosition, equipmentShowPos, Time.deltaTime * 30000 / windowOpenCount);
                         }
                     }

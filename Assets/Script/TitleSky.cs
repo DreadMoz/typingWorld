@@ -188,7 +188,10 @@ public class TitleSky : MonoBehaviour
                 ouText.text = gm.savedata.Ou;
                 CheckDailyReset();
                 Debug.Log("ステータスデータをロードしました。");
-                ashiato.SetActive(true);
+                if (gm.savedata.getTotalMedal() >= 264)     // 0~65 * 4
+                {
+                    ashiato.SetActive(true);
+                }
                 checkLocalData();
             }
             else
