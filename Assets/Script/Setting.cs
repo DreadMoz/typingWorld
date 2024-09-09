@@ -15,6 +15,7 @@ public class Setting : MonoBehaviour
     public Slider mailCharSlider;
     public Slider necoNumSlider;
     public GameObject toGas;
+    private bool showFlg = false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,25 +43,30 @@ public class Setting : MonoBehaviour
 
     public void hide()
     {
-        gm.npcManager.UpdateNPCCount((int)necoNumSlider.value);
+        if (showFlg)
+        {
+            showFlg = false;
+            gm.npcManager.UpdateNPCCount((int)necoNumSlider.value);
 
-        gm.savedata.Settings[se.Volume] = (int)volumeSlider.value;
-        gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
-        gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
-        gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
-        gm.setVolume();
-        
-        // 画面サイズを都度取得しないと途中での最大化などに対応できない
-        float screenWidth = Screen.width;
-        float screenHeight = Screen.height;
-        Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
-        transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
-        isWindowShown = false; // 非表示に設定
-        gm.exportLocal();
+            gm.savedata.Settings[se.Volume] = (int)volumeSlider.value;
+            gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
+            gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
+            gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
+            gm.setVolume();
+            
+            // 画面サイズを都度取得しないと途中での最大化などに対応できない
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
+            transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
+            isWindowShown = false; // 非表示に設定
+            gm.exportLocal();
+        }
     }
 
     public void show()
     {
+        showFlg = true;
         volumeSlider.value = gm.savedata.Settings[se.Volume];
         muteSlider.value = gm.savedata.Settings[se.Mute];
         necoNumSlider.value = gm.savedata.Settings[se.CatNum];
