@@ -6,7 +6,7 @@ public class kinoko : MonoBehaviour
 {
     private Animator kAnimator;
     public Camera mainCamera;
-    public int offsetX = 44; // 左端からのオフセット（ピクセル単位）
+    public int offsetX = 64; // 左端からのオフセット（ピクセル単位）
 
     void Start()
     {
