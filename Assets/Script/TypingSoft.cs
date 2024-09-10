@@ -849,12 +849,28 @@ public class TypingSoft : MonoBehaviour
     IEnumerator throwDise(int rank)
     {
         dice.SetActive(true);
-        dice.transform.position += new Vector3(4.5f * rank, 0, 0);
 
         int rand = new System.Random().Next(1, 101);
-
         int diceNo = getDiceNo(rank, rand);
         
+        switch(rank)
+        {
+            case 0:
+                diceAnim.SetTrigger("rank1");
+                break;
+            case 1:
+                diceAnim.SetTrigger("rank2");
+                break;
+            case 2:
+                diceAnim.SetTrigger("rank3");
+                break;
+            case 3:
+                diceAnim.SetTrigger("rank4");
+                break;
+            case 4:
+                diceAnim.SetTrigger("rank5");
+                break;
+        }
         switch(diceNo)
         {
             case 1:
