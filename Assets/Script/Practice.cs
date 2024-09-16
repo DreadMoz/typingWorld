@@ -79,7 +79,10 @@ public class Practice : MonoBehaviour
             {
                 if (medalSum[i - 1] < 10)    // １つ前が 4 + 4 + 2 未満なら
                 {
-                    medalTop[i] = 0;    // 錠
+                    if (i != 1)     // あいうえおは閉じない
+                    {
+                        medalTop[i] = 0;    // 錠
+                    }
                 }
             }
         }

@@ -239,8 +239,6 @@ public class TypingSoft : MonoBehaviour
 #if UNITY_WEBGL && !UNITY_EDITOR
         testMode.SetActive(false);
 #endif
-
-        typingVoice.updateVolume();
         
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator = lPlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
@@ -589,7 +587,14 @@ public class TypingSoft : MonoBehaviour
         if (theme.hide < 1)
         {
             UIH.text = nQH;     // ひらがな表示
-            UIR.text = nQR;     // ローマ字表示
+            if (gm.savedata.Settings[se.Capital] == 1)
+            {
+                UIR.text = nQR.ToUpper();     // ローマ字表示（大文字）
+            }
+            else
+            {
+                UIR.text = nQR;     // ローマ字表示（小文字）
+            }
         }
         CurrentTypingSentence = nQR;
         UIJ.text = nQJ;     // 日本語表示
@@ -1163,7 +1168,10 @@ public class TypingSoft : MonoBehaviour
             Mistype();
         }
         correctAR = (float)correctN / ((float)correctN + (float)mistakeN);
-        UIcorrectAR.text = string.Format("{0:0.0} %", correctAR*100);
+        if (((float)correctN + (float)mistakeN) != 0)
+        {
+            UIcorrectAR.text = string.Format("{0:0.0} %", correctAR*100);
+        }
 
         if (comboN == 0)   // コンボ依存のアニメーション
         {
@@ -1402,7 +1410,14 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void SetUITypeText(string sentence)
     {
-        UIR.text = sentence.Replace(' ', '_');
+        if (gm.savedata.Settings[se.Capital] == 1)
+        {
+            UIR.text = sentence.ToUpper().Replace(' ', '_');
+        }
+        else
+        {
+            UIR.text = sentence.Replace(' ', '_');
+        }
     }
 
     /// <summary>

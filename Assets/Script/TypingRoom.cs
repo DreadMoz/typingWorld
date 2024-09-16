@@ -78,7 +78,7 @@ public class TypingRoom : MonoBehaviour
         customList.SetActive(false);
         trainingList.SetActive(false);
         pAnimator.SetTrigger("fuda");
-        lAnimator.SetTrigger("jump");
+        lAnimator.SetTrigger("eat");
         talk.text = "ここでいろんなタイピングにちょうせんしてみてね。";
         ShowMenuList(0);
     }
@@ -90,7 +90,7 @@ public class TypingRoom : MonoBehaviour
         customList.SetActive(true);
         trainingList.SetActive(false);
         pAnimator.SetTrigger("fuda");
-        lAnimator.SetTrigger("jump");
+        lAnimator.SetTrigger("eat");
         talk.text = "みんなが作ってくれたメニューだよ。\nたのしんでいってね。";
         ShowMenuList(1);
     }
@@ -102,7 +102,7 @@ public class TypingRoom : MonoBehaviour
         customList.SetActive(false);
         trainingList.SetActive(true);
         pAnimator.SetTrigger("fuda");
-        lAnimator.SetTrigger("jump");
+        lAnimator.SetTrigger("eat");
         talk.text = "タイピングがうまくなりたい人はここでれんしゅうをしよう。";
         ShowMenuList(2);
     }

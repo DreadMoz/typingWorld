@@ -90,12 +90,6 @@ public class TitleSky : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
-        buttonText.text = "ログイン";
-        skyboxMaterial = RenderSettings.skybox;
-        skyboxMaterial.SetFloat("_Rotation", 330f);
-        animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
-
         reLogin.SetActive(false);
         standupButton.SetActive(false);
         nextButton.SetActive(false);
@@ -104,6 +98,27 @@ public class TitleSky : MonoBehaviour
         userData.SetActive(false);
         message.SetActive(false);
         ashiato.SetActive(false);
+        skyboxMaterial = RenderSettings.skybox;
+        skyboxMaterial.SetFloat("_Rotation", 330f);
+        animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
+
+        
+#if !UNITY_EDITOR
+
+        if (GameManager.SceneNo == scene.Night)
+        {
+            startButton.SetActive(false);
+
+            message.SetActive(true);
+            Text messageText = message.GetComponentInChildren<Text>();
+            messageText.text = "ねこは寝ています。";
+            cat.setEmo(27);                 // 寝顔
+            return;
+        }
+#endif
+
+        TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
+        buttonText.text = "ログイン";
         gm.savedata.Equipment[eq.CatBody] = 0;
         gm.savedata.Settings[se.GachaCnt] = 1;      // ボーナスダイヤは０に
 
@@ -335,7 +350,6 @@ public class TitleSky : MonoBehaviour
 
     public void googleLogout()
     {
-        confirmButton.SetActive(false);
         standupButton.SetActive(false);
         nextButton.SetActive(false);
         prevButton.SetActive(false);

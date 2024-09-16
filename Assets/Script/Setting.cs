@@ -14,6 +14,7 @@ public class Setting : MonoBehaviour
     public Slider muteSlider;
     public Slider mailCharSlider;
     public Slider necoNumSlider;
+    public Slider capitalSlider;
     public GameObject toGas;
     private bool showFlg = false;
 
@@ -52,6 +53,7 @@ public class Setting : MonoBehaviour
             gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
             gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
             gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
+            gm.savedata.Settings[se.Capital] = (int)capitalSlider.value;
             gm.setVolume();
             
             // 画面サイズを都度取得しないと途中での最大化などに対応できない
@@ -71,6 +73,7 @@ public class Setting : MonoBehaviour
         muteSlider.value = gm.savedata.Settings[se.Mute];
         necoNumSlider.value = gm.savedata.Settings[se.CatNum];
         mailCharSlider.value = gm.savedata.Settings[se.MailChar];
+        capitalSlider.value = gm.savedata.Settings[se.Capital];
 
         // 画面サイズを都度取得しないと途中での最大化などに対応できない
         float screenWidth = Screen.width;

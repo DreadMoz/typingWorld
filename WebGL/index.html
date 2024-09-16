@@ -4,9 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | typingWorld</title>
-    <link rel="shortcut icon" href="favicon.ico">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="shortcut icon" href="https://dreadmoz.github.io/typingWorldMirror/WebGL/favicon.ico">
+    <link rel="stylesheet" href="https://dreadmoz.github.io/typingWorldMirror/WebGL/style.css">
 </head>
 <body>
     <div id="unity-container" class="unity-desktop">
@@ -21,56 +20,21 @@
         <div id="unity-footer">
             <div id="unity-webgl-logo"></div>
             <div id="unity-fullscreen-button"></div>
-            <div id="unity-build-title">necotapu</div>
+            <div id="unity-build-title">全画面</div>
         </div>
     </div>
 
     <script type="module">// Import the functions you need from the SDKs you need
-        /**
-         * Callback after api.js is loaded.
-         */
-        // モジュールスクリプト内で関数をグローバルスコープに公開
-        window.gapiLoaded = function() {
-            gapi.load('client', initializeGapiClient);
-        };
-  
-        /**
-         * Initializes the API client library and sets up sign-in state listeners.
-         */
-        async function initializeGapiClient() {
-            try {
-                await gapi.client.init({
-                    apiKey: API_KEY,
-                    discoveryDocs: [
-                        "https://www.googleapis.com/discovery/v1/apis/people/v1/rest",  // Google People API
-                        "https://www.googleapis.com/discovery/v1/apis/script/v1/rest"   // Google Apps Script API
-                    ],
-                });
-                console.log('GAPI client initialized.');
-                gapiInited = true;
-            } catch (error) {
-                console.error('Error initializing GAPI client:', error);
-            }
+        var userInfo = null;
+        let myGameInstance = null; // グローバルスコープで定義
+
+        function getUserInfo() {
+            google.script.run.withSuccessHandler(setUserInfo).getUserInformation();
         }
-  
-        /**
-         * Callback after Google Identity Services are loaded.
-         */
-        window.gisLoaded = function() {
-            try {
-                tokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: CLIENT_ID,
-                    scope: SCOPES,
-                prompt: 'consent', // ユーザーにすべての権限に対して同意を求める
-                    callback: '', // Make sure to define later or handle appropriately
-            });
-            console.log('Google Identity Services initialized.');
-            gisInited = true;
-            } catch (error) {
-                console.error('Error initializing Google Identity Services:', error);
-            }
+        function setUserInfo(info)
+        {
+          userInfo = info;
         }
-        
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
         var loadingBar = document.querySelector("#unity-loading-bar");
@@ -78,89 +42,102 @@
         var fullscreenButton = document.querySelector("#unity-fullscreen-button");
         var warningBanner = document.querySelector("#unity-warning");
 
-        // Shows a temporary message banner/ribbon for a few seconds, or
-        // a permanent error message on top of the canvas if type=='error'.
-        // If type=='warning', a yellow highlight color is used.
-        // Modify or remove this function to customize the visually presented
-        // way that non-critical warnings and error messages are presented to the
-        // user.
         function unityShowBanner(msg, type) {
-            function updateBannerVisibility() {
-                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-            }
-            var div = document.createElement('div');
-            div.innerHTML = msg;
-            warningBanner.appendChild(div);
-            if (type == 'error') div.style = 'background: red; padding: 10px;';
-            else {
-                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-                setTimeout(function () {
-                    warningBanner.removeChild(div);
-                    updateBannerVisibility();
-                }, 5000);
-            }
-            updateBannerVisibility();
+          function updateBannerVisibility() {
+              warningBanner.style.display = warningBanner.children.length ? "block" : "none";
+          }
+          var div = document.createElement("div");
+          div.innerHTML = msg;
+          warningBanner.appendChild(div);
+          if (type == "error") div.style = "background: red; padding: 10px;";
+          else {
+              if (type == "warning") div.style = "background: yellow; padding: 10px;";
+              setTimeout(function () {
+                  warningBanner.removeChild(div);
+                  updateBannerVisibility();
+              }, 5000);
+          }
+          updateBannerVisibility();
         }
 
-        var buildUrl = "Build";
+        //ウインドウサイズに合わせキャンバスサイズを変更
+        function fitWindowCanvasSize(){
+          
+          var winHeight = window.innerHeight;
+          const isViewUnderBar = true;  //falseにすると下部のバーが画面外に表示
+          if (isViewUnderBar){
+            const barHeight = 18*2;            //下部のバーサイズ
+            const barHeightMargin = 10*2;      //下部の追加余白サイズ
+            winHeight = winHeight - barHeight - barHeightMargin;
+          }
+          const winWidth = window.innerWidth;
+          const appWidth = "1366";
+          const appHeight = "768";
+          const scale = Math.min((winWidth / appWidth), (winHeight / appHeight));
+          const fixWidth = (appWidth * scale);
+          const fixHeight = (appHeight * scale);
+
+          canvas.style.width = fixWidth + 'px';
+          canvas.style.height = fixHeight + 'px';
+        }
+        //ウインドウのリサイズ時の処理
+        function windowResizeEvent(){
+          var timeoutId = 0;
+          const resizeDelay = 300;  //リサイズが完了したと判断する時間
+          window.onresize = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(()=>{
+              //リサイズ終了時の処理
+              fitWindowCanvasSize();
+            }, resizeDelay);
+          };
+        }
+
+        var buildUrl = "https://dreadmoz.github.io/typingWorldMirror/WebGL/Build";
         var loaderUrl = buildUrl + "/WebGL.loader.js";
         var config = {
-            dataUrl: buildUrl + "/WebGL.data",
-            frameworkUrl: buildUrl + "/WebGL.framework.js",
-            codeUrl: buildUrl + "/WebGL.wasm",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "typingWorld",
-            productVersion: "0.1",
-            showBanner: unityShowBanner,
+          dataUrl: buildUrl + "/WebGL.data",
+          frameworkUrl: buildUrl + "/WebGL.framework.js",
+          codeUrl: buildUrl + "/WebGL.wasm",
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "DefaultCompany",
+          productName: "TestingGAS",
+          productVersion: "1.0.0",
+          showBanner: unityShowBanner,
         };
 
-        // By default Unity keeps WebGL canvas render target size matched with
-        // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-        // Set this to false if you want to decouple this synchronization from
-        // happening inside the engine, and you would instead like to size up
-        // the canvas DOM size and WebGL render target sizes yourself.
-        // config.matchWebGLToCanvasSize = false;
-
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            // Mobile device style: fill the whole browser client area with the game canvas:
+          // Mobile device style: fill the whole browser client area with the game canvas:
 
-            var meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-            document.getElementsByTagName('head')[0].appendChild(meta);
-            container.className = "unity-mobile";
-            canvas.className = "unity-mobile";
+          var meta = document.createElement("meta");
+          meta.name = "viewport";
+          meta.content = "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+          document.getElementsByTagName("head")[0].appendChild(meta);
+          container.className = "unity-mobile";
+          canvas.className = "unity-mobile";
 
-            // To lower canvas resolution on mobile devices to gain some
-            // performance, uncomment the following line:
-            // config.devicePixelRatio = 1;
-
-            unityShowBanner('WebGL builds are not supported on mobile devices.');
+          unityShowBanner("WebGL builds are not supported on mobile devices.");
         } else {
-            // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
-            canvas.style.width = "1366px";
-            canvas.style.height = "768px";
+          // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+          fitWindowCanvasSize();
         }
-
         loadingBar.style.display = "block";
 
-        var myGameInstance = null;
         var script = document.createElement("script");
         script.src = loaderUrl;
         script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                myGameInstance = unityInstance;
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                    unityInstance.SetFullscreen(1);
-                };
-            }).catch((message) => {
-                alert(message);
-            });
+          createUnityInstance(canvas, config, (progress) => {
+              progressBarFull.style.width = 100 * progress + "%";
+          }).then((unityInstance) => {
+              myGameInstance = unityInstance;
+              loadingBar.style.display = "none";
+              fullscreenButton.onclick = () => {
+                  unityInstance.SetFullscreen(1);
+              };
+          }).catch((message) => {
+              alert(message);
+          });
+          windowResizeEvent();
         };
         document.body.appendChild(script);
 
@@ -168,59 +145,31 @@
         // ゲームデータ
         //######################################################
 
-        // Client ID and API key from the Developer Console
-        const CLIENT_ID = '901463776832-egpvuk7jiek55nq7krcqqtgo4dhu8hsb.apps.googleusercontent.com';
-        const API_KEY = 'AIzaSyBWYOzjmZyt1adNcPo62LFsGzARXZ_7GS0';
-        const SCRIPT_ID = 'AKfycbwbvgs_Qf86vLelNhmC_XhUquK1JGUZqY2ocok4WxdSZs9Cgt488hmbN-4NZsUunTLx';
-        const SCOPES = 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/spreadsheets';
-        let tokenClient;
-        let gapiInited = false;
-        let gisInited = false;
+        let checkTime = 1000 * 60 * 60 * 2; // ms * 秒 *　分 * 時間
 
-        var email;
         /// <summary>
         /// Googleアカウントにログインします。
         /// </summary>
         /// <remarks>
         /// OAuth認証。メール、ユーザ名、プロフィール画像のURL取得
         async function getOAuth() {
-            tokenClient.callback = async (resp) => {
-                if (resp.error !== undefined) {
-                    console.error('Authentication error:', resp);
-                    throw (resp);
-                }
-                console.log('User authenticated.');
-                await fetchUserProfile();
-            };
-            tokenClient.requestAccessToken({prompt: ''});
-            console.log('Requesting access token without consent.');
+            google.script.run.withSuccessHandler(finishOAuth).getUserInformation();
+        }
+
+        function finishOAuth(response) {
+            userInfo = JSON.parse(response); // JSON文字列をオブジェクトに変換
+
+            console.log("Logged in as:", userInfo.email);
+            console.log('User firstName:', userInfo.firstName);
+            console.log('User lastName:', userInfo.lastName);
+            console.log('User photo URL:', userInfo.picture);
+            console.log('User Message:', userInfo.Message);
+            console.log('User access:', userInfo.access);
+            
+            myGameInstance.SendMessage('TitleScene', 'finishOAuth', JSON.stringify(userInfo));
         }
         window.getOAuth = getOAuth;
 
-        async function fetchUserProfile() {
-            try {
-                // ユーザープロファイル情報の取得リクエスト
-                let response = await gapi.client.people.people.get({
-                    'resourceName': 'people/me',
-                    'personFields': 'names,emailAddresses,photos'
-                });
-                console.log('User profile retrieved:', response.result);
-
-                // 取得したユーザー情報の表示
-                console.log("Logged in as:", response.result.emailAddresses[0].value);
-                console.log('User display name:', response.result.names[0].displayName);
-                console.log('User photo URL:', response.result.photos[0].url);
-                var userInfo = response.result.emailAddresses[0].value + "," + response.result.names[0].displayName + "," + response.result.photos[0].url;
-                email = response.result.emailAddresses[0].value;
-                myGameInstance.SendMessage('TitleScene', 'finishOAuth', userInfo);
-
-            } catch (err) {
-                console.error('Error retrieving user profile:', err);
-                // err.messageがundefinedの場合、代替テキストを表示
-                document.getElementById('content').innerText = 'Failed to retrieve user profile: ' + (err.message || "No error message available.");
-            }
-        }
-        
         /// <summary>
         /// Googleアカウントからログアウトします。
         /// </summary>
@@ -228,55 +177,43 @@
         /// OAuth認証セッションを終了します。
         /// </remarks>
         async function oAuthLogout() {
-            const token = gapi.client.getToken();
-            if (token !== null) {
-                google.accounts.oauth2.revoke(token.access_token, () => {
-                    console.log('Token revoked and user signed out.');
-                    gapi.client.setToken(null);  // トークンをnullで正しくクリア
-                    myGameInstance.SendMessage('TitleScene', 'finishLogout');
-                });
-            }
+            myGameInstance.SendMessage("TitleScene", "finishLogout");
         }
         window.oAuthLogout = oAuthLogout;
 
         /// <summary>
-        /// GAS (Google Apps Script) から受け取ったデータを処理し、ゲームの状態を更新します。
+        /// GAS (Google Apps Script) から個人のステータスデータを受け取ります。
         /// </summary>
         /// <remarks>
-        /// GASから受け取るJSON形式は {}
+        /// GASから受け取るJSON形式はカンマ区切りの文字列。これをJSONにしてC＃に渡す
         /// </remarks>
         async function loadFromGss() {
-            try {
-                const ACCESS_TOKEN = gapi.auth.getToken().access_token;  // OAuth2.0のアクセストークンを取得
-                const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
-                const sendData = JSON.stringify({
-                    function: 'loadData',
-                    parameters: [email]
-                });
-                const options = {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${ACCESS_TOKEN}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: sendData
-                };
+            google.script.run.withSuccessHandler(finishLoadFromGss).getUserStatus(userInfo.email);
+        }
+        window.loadFromGss = loadFromGss;
 
-                const response = await fetch(url, options);
-                console.log("fetchきました", response);
-                const responseData = await response.json();
-                console.log("jsonきました", email);
-                if (responseData.error) {
-                    console.error("Error from GAS:", responseData.error);
+        function finishLoadFromGss(response) {
+            try {
+                if (!response) {
+                    console.error("Response is null or undefined.");
+                    myGameInstance.SendMessage("TitleScene", "finishDataLoadGas", "");
+                    return;
+                }
+
+                const userData = JSON.parse(response); // JSON形式の文字列をオブジェクトに変換
+
+                if (userData.error) {
+                    console.log("from GAS:", userData.error);
+                    myGameInstance.SendMessage("TitleScene", "finishDataLoadGas", "");
                 } else {
-                    console.log("Data received successfully:", responseData);
-                    myGameInstance.SendMessage('TitleScene', 'finishDataLoadGas', JSON.stringify(responseData));
+                    console.log("Data received successfully:", userData);
+                    myGameInstance.SendMessage("TitleScene", "finishDataLoadGas", JSON.stringify(userData));
                 }
             } catch (error) {
                 console.error("Error receiving data:", error);
+                myGameInstance.SendMessage("TitleScene", "finishDataLoadGas", "");
             }
         }
-        window.loadFromGss = loadFromGss;
 
         /// <summary>
         /// GASに保存データを送信します。
@@ -287,63 +224,50 @@
         /// </remarks>
         async function saveToGss(data) {
             console.log("saveToGss:", data);
-            const lastSavedTime = localStorage.getItem('lastSavedTime');
+            const lastSavedTime = localStorage.getItem("lastSavedTime");
             const currentTime = new Date();
             const timestamp = new Date(lastSavedTime);
 
-            // 前回の保存から24時間が経過しているか確認
-            if (lastSavedTime && (currentTime - timestamp) < 86400000) { // 86400000 milliseconds = 24 hours
-                console.log("Skip saving, since last save was less than 24 hours ago.");
+            // 前回の保存から時間が経過しているか確認
+            if (lastSavedTime && (currentTime - timestamp) < checkTime) {
+                console.log(`前回の保存から${checkTime / 3600000}時間が経ってないのでスキップ。更新は${Math.floor((checkTime-(currentTime - timestamp)) / 60000)}分後`);
                 return; // 24時間以内なら保存処理をスキップ
             }
-
-            try {
-                const ACCESS_TOKEN = gapi.auth.getToken().access_token;  // OAuth2.0のアクセストークンを取得
-                const url = `https://script.googleapis.com/v1/scripts/${SCRIPT_ID}:run`;
-                const sendData = JSON.stringify({
-                    function: 'saveData',
-                    parameters: [data]
-                });
-                const options = {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${ACCESS_TOKEN}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: sendData
-                };
-
-                const response = await fetch(url, options);
-                const responseData = await response.json();
-                console.log('Received data:', responseData); // デバッグ用に受け取ったデータをログ出力
-
-                // response.result を JSON として解析
-                if (responseData && responseData.response && responseData.response.result) {
-                    const resultData = JSON.parse(responseData.response.result);
-                    if (resultData.result === "success") {
-                        const timestamp = new Date().toISOString();
-                        localStorage.setItem('lastSavedTime', timestamp);
-                        console.log("Data saved successfully at:", timestamp);
-                    } else {
-                        console.error("Failed to save data:", resultData);
-                    }
-                } else {
-                    console.error("Failed to save data: Invalid response structure.");
-                }
-            } catch (error) {
-                console.error("Error:", error);
-            }
+            google.script.run.withSuccessHandler(finishSaveToGss).saveData(data);
         }
         window.saveToGss = saveToGss;
+
+        async function finishSaveToGss(response) {
+            try {
+                console.log("Received data:", response); // デバッグ用に受け取ったデータをログ出力
+                let parsedResponse = JSON.parse(response); // JSON文字列をオブジェクトに変換
+                console.log("Parsed response data:", parsedResponse);
+
+                if (parsedResponse && parsedResponse.result === "success") {
+                    const timestamp = new Date().toISOString();
+                    localStorage.setItem("lastSavedTime", timestamp);
+                    console.log("Data saved successfully at:", timestamp);
+                } else if (parsedResponse && parsedResponse.result === "neednot") {
+                    console.log("Data need not to save:", timestamp);
+                }
+                else
+                {
+                    console.error("Failed to save data or invalid response structure:", response);
+                }
+            } catch (error) {
+                console.error("Error handling response:", error);
+            }
+        }
 
         /// <summary>
         /// ランキングデータを取得します。
         /// </summary>
-        /// <param name="data">GASに送るJSON形式のメッセージ文字列。データの内容はカンマ区切りで構成されています。</param>
+        /// <param name="data"></param>
         /// <remarks>
-        /// GASでスプレッドシートの同じメールアドレスの行が更新される
+        /// 
         /// </remarks>
         async function getNecoRank() {
+            // LocalStorageからstatusDataを取得
             const storedData = localStorage.getItem("statusData");
             if (!storedData) {
                 console.log("LocalStorageからstatusDataが見つかりません。");
@@ -351,19 +275,20 @@
             }
 
             const parsedData = JSON.parse(storedData);
-            const statusData = parsedData.statusData;
-            console.log("Complete statusData:", statusData);
+            const statusData = parsedData.statusData; // ここでネストされたstatusDataにアクセス
+            console.log("Complete statusData:", statusData); // 全データをログ出力して確認
 
             const Stage = statusData.Stage;
-            console.log("Extracted Stage:", Stage);
+            console.log("Extracted Stage:", Stage); // ステージ値のログ出力
 
+            // 前回のランキング取得から24時間が経過しているか確認
             const lastLoadedTime = localStorage.getItem("lastLoadedTime");
             const currentTime = new Date();
             const timestamp = new Date(lastLoadedTime);
 
-            if (lastLoadedTime && (currentTime - timestamp) < 86400000) {
-                console.log("前回のランキング取得から２４時間以内なのでスキップ");
-                return;
+            if (lastLoadedTime && (currentTime - timestamp) < checkTime) {
+                console.log(`前回のランキング取得から${checkTime / 3600000}時間が経ってないのでスキップ。更新は${Math.floor((checkTime-(currentTime - timestamp)) / 60000)}分後`);
+                return; // 24時間以内ならロード処理をスキップ
             }
 
             if (Stage !== undefined) {
@@ -372,32 +297,41 @@
                 console.log("StageがstatusData内に存在しません。");
             }
         }
+        window.getNecoRank = getNecoRank;
 
         function finishGetRanking(response) {
             try {
                 console.log("Data received successfully:", response);
+                let parsedResponse = JSON.parse(response); // JSON文字列をオブジェクトに変換
 
-                if (response.values) {
-                    localStorage.setItem("rankingData", JSON.stringify({rankingData: response.values}));
+                if (parsedResponse && parsedResponse.values) {
+                    localStorage.setItem("rankingData", JSON.stringify({ rankingData: parsedResponse.values }));
                     console.log("ランキングデータをLocalStorageに保存しました");
 
                     const timestamp = new Date().toISOString();
                     localStorage.setItem("lastLoadedTime", timestamp);
                     console.log("Data loaded successfully at:", timestamp);
 
-                    myGameInstance.SendMessage("GameManager", "finishDataLoadExtRanking", JSON.stringify({rankingData: response.values}));
+                    myGameInstance.SendMessage("GameManager", "finishDataLoadExtRanking", JSON.stringify({ rankingData: parsedResponse.values }));
                 } else {
                     console.error("Failed to parse ranking data from response.");
                 }
             } catch (error) {
-                console.error("Failed to send data:", error);
+                console.error("Error parsing response:", error);
             }
         }
-        window.getNecoRank = getNecoRank;
-        window.getNecoRank = getNecoRank;
 
+        window.onload = getUserInfo;
+        /// <summary>
+        /// Geminiにデータプロンプトを送信します。　使用しない。
+        /// </summary>
+        /// <param name="data">Geminiに送るJSON形式のメッセージ文字列。データの内容はカンマ区切りで構成されています。</param>
+        /// <remarks>
+        /// Geminiに送るデータの羅列。プロンプトにはなっていない。
+        /// </remarks>
+        async function throughGemini(data) {
+        }
+        window.throughGemini = throughGemini;
     </script>
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
 </html>

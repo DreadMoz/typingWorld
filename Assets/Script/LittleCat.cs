@@ -12,7 +12,7 @@ public class LittleCat : MonoBehaviour
     {
         cAnimator = GetComponent<Animator>(); // LittleCatのアニメーターを取得
     }
-
+/*
     void Update()
     {
         // スクリーン座標での位置を計算（YとZは現在のオブジェクトの座標を使用）
@@ -25,7 +25,7 @@ public class LittleCat : MonoBehaviour
         transform.position = new Vector3(worldPosition.x, transform.position.y, transform.position.z);
 
     }
-
+*/
     void OnMouseDown()
     {
         cAnimator.SetTrigger("jump");

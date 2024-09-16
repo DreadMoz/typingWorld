@@ -71,11 +71,15 @@ public class RoomMenu : MonoBehaviour
         {
             thisButton = GetComponent<Button>();
         }
-        resetStars();
 
         switch (stars)
         {
             case 0:
+                resetStars();
+                if (id < 2)     // 閉じない
+                {
+                    break;
+                }
                 memo.SetActive(false);
                 star0.SetActive(false);
                 thisButton.interactable = false;
