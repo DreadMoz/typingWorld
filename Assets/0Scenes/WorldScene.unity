@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 0.406
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.04233028, g: 0.06375612, b: 0.11266755, a: 0.406}
+  m_IndirectSpecularColor: {r: 0.053020768, g: 0.08189855, b: 0.1466627, a: 0.406}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -171,7 +171,7 @@ MonoBehaviour:
   db: {fileID: 11400000, guid: f6a63b7d1998548f6babf3974cb219e7, type: 2}
   savedata: {fileID: 11400000, guid: 53736ca5c0e474c06821507c23ae53df, type: 2}
   connection: {fileID: 239772581}
-  kpmRatio: 0.8
+  kpmRatio: 0.05
   player: {fileID: 11456791}
   chibiCat: {fileID: 302195080}
   chibiCat2D: {fileID: 1795677375}
@@ -195,7 +195,6 @@ MonoBehaviour:
   statusui: {fileID: 1979795457}
   windowOpenCount: 20
   talk: {fileID: 1732579529}
-  startTime: 6
 --- !u!114 &1403481
 MonoBehaviour:
   m_ObjectHideFlags: 0

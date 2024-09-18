@@ -619,7 +619,7 @@ public class SaveData : ScriptableObject
         for (int i = kpms.Length - 1; i >= 0; i--)
         {
             // 最初の要素以外は3桁になるように0でパディング
-            if (i == kpms.Length - 1 && kpms[i] <= 999)
+            if (i == 0 && kpms[i] <= 999)
             {
                 sb.Insert(0, kpms[i].ToString());
             }
