@@ -101,6 +101,7 @@ public class TitleSky : MonoBehaviour
         skyboxMaterial = RenderSettings.skybox;
         skyboxMaterial.SetFloat("_Rotation", 330f);
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
+        animator.SetFloat("goroSpeed", 1.0f);
 
         
 #if !UNITY_EDITOR
@@ -113,6 +114,7 @@ public class TitleSky : MonoBehaviour
             Text messageText = message.GetComponentInChildren<Text>();
             messageText.text = "ねこは寝ています。";
             cat.setEmo(27);                 // 寝顔
+            animator.SetFloat("goroSpeed", 0.2f);
             return;
         }
 #endif
