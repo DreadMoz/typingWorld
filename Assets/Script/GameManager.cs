@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     static public int MaxCombo { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
-    public static int openHour = 6;            // 開店時間
+    public static int openHour = 1;            // 開店時間
     public static int closeHour = 21;          // 閉店時間
 
     [SerializeField] private float kpmRatio = 0.05f;
