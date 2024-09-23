@@ -91,7 +91,6 @@ public class NpcManager : MonoBehaviour
     }
 
     // デバッグやUIから呼び出すためのメソッド
-    // スライダーなどを使用してNPCの数を変更したい場合に使用します
     public void UpdateNPCCount(int newCount)
     {
         if ((newCount < 0) || (10 < newCount))

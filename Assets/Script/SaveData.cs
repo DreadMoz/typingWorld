@@ -291,7 +291,7 @@ public class SaveData : ScriptableObject
         {
             Kpms[i] = 10;
         }
-        Settings[se.GachaCnt] = 5;
+        Settings[se.GachaCnt] = 4;
         Settings[se.Volume] = 20;
         Settings[se.Mute] = 0;
         Settings[se.MailChar] = 1;

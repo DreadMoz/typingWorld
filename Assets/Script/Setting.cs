@@ -22,6 +22,7 @@ public class Setting : MonoBehaviour
     void Start()
     {
         toGas.SetActive(false);
+        gm.npcManager.UpdateNPCCount(gm.savedata.Settings[se.CatNum]);
     }
 
     // Update is called once per frame

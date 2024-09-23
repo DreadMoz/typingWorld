@@ -68,7 +68,7 @@ public class TypingRoom : MonoBehaviour
         challengeList.SetActive(panelNo==0);
         customList.SetActive(panelNo==1);
         trainingList.SetActive(panelNo==2);
-        ShowMenuList(panelNo);
+        ShowMenuList();
     }
 
     public void openChallenge()
@@ -80,7 +80,6 @@ public class TypingRoom : MonoBehaviour
         pAnimator.SetTrigger("fuda");
         lAnimator.SetTrigger("eat");
         talk.text = "ここでいろんなタイピングにちょうせんしてみてね。";
-        ShowMenuList(0);
     }
 
     public void openCustom()
@@ -91,8 +90,7 @@ public class TypingRoom : MonoBehaviour
         trainingList.SetActive(false);
         pAnimator.SetTrigger("fuda");
         lAnimator.SetTrigger("eat");
-        talk.text = "みんなが作ってくれたメニューだよ。\nたのしんでいってね。";
-        ShowMenuList(1);
+        talk.text = "ちょっとかしこくなるメニューだよ。\nたのしんでいってね。";
     }
 
     public void openTraining()
@@ -104,35 +102,12 @@ public class TypingRoom : MonoBehaviour
         pAnimator.SetTrigger("fuda");
         lAnimator.SetTrigger("eat");
         talk.text = "タイピングがうまくなりたい人はここでれんしゅうをしよう。";
-        ShowMenuList(2);
     }
 
-    private void ShowMenuList(int menuNo)
+    private void ShowMenuList()
     {
-        float contentHeight;
-        double childLines;
-        switch (menuNo)
-        {
-            case 0:
-                // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
-                childLines = Math.Ceiling((double)listParent.transform.childCount / 3);
-                // コンテンツエリアの高さをアイテム数に基づいて設定
-                contentHeight = (int)childLines * 200; // アイテムの高さ
-                break;
-            case 1:
-                childLines = Math.Ceiling((double)listParent.transform.childCount / 3);
-                contentHeight = (int)childLines * 200; // アイテムの高さ
-                break;
-            case 2:
-                childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
-                contentHeight = (int)childLines * 200; // アイテムの高さ
-                break;
-            default:
-                childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
-                contentHeight = (int)childLines * 200; // アイテムの高さ
-                break;
-        }
-
+        double childLines = Math.Ceiling((double)listParent.transform.childCount / 4);
+        float contentHeight = (int)childLines * 205; // アイテムの高さ
         listParent.sizeDelta = new Vector2(listParent.sizeDelta.x, contentHeight);
     }
 }

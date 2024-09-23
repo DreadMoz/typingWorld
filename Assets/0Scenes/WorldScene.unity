@@ -298,6 +298,10 @@ MonoBehaviour:
   setting: {fileID: 575468857}
   rankingWindow: {fileID: 0}
   playerCamera: {fileID: 0}
+  knockSound: {fileID: 1599432901}
+  houseDoorSound: {fileID: 0}
+  shopDoorSound: {fileID: 0}
+  window: {fileID: 0}
 --- !u!195 &11456803
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1041,7 +1045,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1024956598970767786, guid: bec90c07eadeb4b3dbeb946670b6fec0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 216.38
+      value: 217.3
       objectReference: {fileID: 0}
     - target: {fileID: 1024956598970767786, guid: bec90c07eadeb4b3dbeb946670b6fec0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2951,7 +2955,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4243724423293762, guid: c07f24e35f07ce74ba43afa35d48adf7, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4243724423293762, guid: c07f24e35f07ce74ba43afa35d48adf7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12734,6 +12738,7 @@ GameObject:
   - component: {fileID: 1599432900}
   - component: {fileID: 1599432899}
   - component: {fileID: 1599432898}
+  - component: {fileID: 1599432901}
   m_Layer: 0
   m_Name: TypingDoor
   m_TagString: Untagged
@@ -12819,6 +12824,102 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1599432896}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!82 &1599432901
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599432896}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 1c88e2f1fcdfe4b7c8a603497dfa2e6b, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1599845170
 GameObject:
   m_ObjectHideFlags: 0
@@ -12933,7 +13034,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7700812938084356392, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 254.6
+      value: 255.59
       objectReference: {fileID: 0}
     - target: {fileID: 7700812938084356392, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13665,7 +13766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 644289660}
-  offsetX: 50
+  offsetX: 54
 --- !u!136 &1682444397
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -21448,6 +21549,10 @@ PrefabInstance:
       propertyPath: m_Constraints
       value: 32
       objectReference: {fileID: 0}
+    - target: {fileID: 3001577747562269275, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4565979561441694012, guid: 93f91d3dd290c9d4e8d30dfa31201048, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -22769,7 +22874,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4243724423293762, guid: c07f24e35f07ce74ba43afa35d48adf7, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4243724423293762, guid: c07f24e35f07ce74ba43afa35d48adf7, type: 3}
       propertyPath: m_LocalScale.x

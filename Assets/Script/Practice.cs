@@ -85,6 +85,9 @@ public class Practice : MonoBehaviour
                     }
                 }
             }
+            Debug.Log("medalTop[" + i + "]:" + medalTop[i]);
+            Debug.Log("medalSum[" + i + "]:" + medalSum[i]);
+            Debug.Log("medalTopNum:" + medalTopNum);
         }
         showRoomMenu();
     }
@@ -124,6 +127,7 @@ public class Practice : MonoBehaviour
 
     public void showRoomMenu()       // ルームメニュー表示
     {
+        Debug.Log("medalTopNum:" + medalTopNum);
         for (int no = 0; no < medalTopNum; no++)
         {
             Transform childTransform = gameObject.transform.GetChild(no);

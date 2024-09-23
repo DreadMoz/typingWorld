@@ -122,7 +122,7 @@ public class TitleSky : MonoBehaviour
         TMP_Text buttonText = startButton.GetComponentInChildren<TMP_Text>();
         buttonText.text = "ログイン";
         gm.savedata.Equipment[eq.CatBody] = 0;
-        gm.savedata.Settings[se.GachaCnt] = 1;      // ボーナスダイヤは０に
+        gm.savedata.Settings[se.GachaCnt] = 1;      // ボーナスダイヤの初期値
 
 //        startButton.SetActive(false);   // ログイン完了まで一旦消す
 //        StartButton();

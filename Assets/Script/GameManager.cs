@@ -108,7 +108,6 @@ public class GameManager : MonoBehaviour
     private int[] oldEquip;
     private int[] newEquip;
     private bool rankScroll = true;
-
     private void Awake()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -189,7 +188,7 @@ public class GameManager : MonoBehaviour
                 ranking.SetActive(false);
                 typingRoom.SetActive(false);
                 shopRoom.SetActive(false);
-                savedata.Settings[se.GachaCnt] = 1;
+//                savedata.Settings[se.GachaCnt] = 1;
             }
             // アニメーションステートが3タイピング後の場合
             else if (SceneNo == (int)scene.House)

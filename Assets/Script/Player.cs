@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
     private int shopWindow = 0;
     private int keepOutCount = 0;
 
+
     void Start()
     {
         if (!gm || !typingRoom || !inventoryButton || !rankingButton || !itemShop || !status || !fade || !fadeDoor)

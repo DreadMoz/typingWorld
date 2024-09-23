@@ -44,6 +44,11 @@ public class Challenge : MonoBehaviour
             ChallengeData data = JsonUtility.FromJson<ChallengeData>(jsonText.text);
             CreateChallengeButton(fileName, data);
         }
+        // parentObjectは、子オブジェクトの数を数えたいゲームオブジェクトの参照。
+        double childLines = Math.Ceiling((double)menuParent.transform.childCount / 3);
+        // コンテンツエリアの高さをアイテム数に基づいて設定
+        float contentHeight = (int)childLines * 352; // アイテムの高さ
+        menuParent.sizeDelta = new Vector2(menuParent.sizeDelta.x, contentHeight);
     }
     
     void CreateChallengeButton(string fileName, ChallengeData data)

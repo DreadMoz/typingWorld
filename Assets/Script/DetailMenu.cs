@@ -50,6 +50,10 @@ public class DetailMenu : MonoBehaviour
         switch (medal)
         {
             case 0:
+                if (id * 3 + level == 3)     // 閉じない
+                {
+                    break;
+                }
                 memo.SetActive(false);
                 star0.SetActive(false);
                 thisButton.interactable = false;

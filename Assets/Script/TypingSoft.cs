@@ -357,8 +357,7 @@ public class TypingSoft : MonoBehaviour
 
     private bool LoadThemes(string fileName)
     {
-        string typingDataName = fileName;
-        TextAsset textAsset = Resources.Load<TextAsset>(typingDataName);
+        TextAsset textAsset = Resources.Load<TextAsset>(fileName);
 
         try
         {
@@ -372,6 +371,7 @@ public class TypingSoft : MonoBehaviour
                 }
                 if ((fileName.StartsWith("TextC")) && (gm.savedata.Settings[se.MailChar] != 0))
                 {
+                    combineCentence();
                     mailReplaceNo = new System.Random().Next(0, theme.themes.Length);
                     theme.themes[mailReplaceNo].hiragana = gm.savedata.Email;
                     theme.themes[mailReplaceNo].kanji = "ボーナス！";
@@ -397,6 +397,39 @@ public class TypingSoft : MonoBehaviour
             Debug.Log("Exception occurred: " + ex.Message);
             return false;
         }
+    }
+
+    private void combineCentence()
+    {
+        if (theme.hide < 10)
+        {
+            return;
+        }
+        int finalLength = theme.themes.Length - theme.hide;
+
+        List<int> numbers = new List<int>();
+        for (int i = 0; i < finalLength; i++)
+        {
+            numbers.Add(i);
+        }
+        // リストの要素をシャッフル
+        for (int i = numbers.Count - 1; i > 0; i--)
+        {
+            int j = new System.Random().Next(0, i + 1);
+            int temp = numbers[i];
+            numbers[i] = numbers[j];
+            numbers[j] = temp;
+        }
+        for (int i = 0; i < theme.hide; i++)
+        {
+            if (theme.themes[theme.hide + numbers[i]] != null)
+            {
+                theme.themes[i].hiragana += theme.themes[theme.hide + numbers[i]].hiragana;
+                theme.themes[i].kanji += theme.themes[theme.hide + numbers[i]].kanji;
+            }
+        }
+        Array.Resize(ref theme.themes, theme.hide);
+        theme.hide = 0;
     }
 
     private void ShuffleThemes(int shuffle)
@@ -451,6 +484,7 @@ public class TypingSoft : MonoBehaviour
         {
             seekerCombo++;
             coins.SpawnCoins(1, 1);    // コインアニメーション
+            typingVoice.sayCoin();
             updateSeeker();
             float comboScale = ((float)comboN / 50.0f + 4) / 5;
             UIcombo.rectTransform.localScale = new Vector3(comboScale, comboScale, comboScale);
@@ -469,6 +503,7 @@ public class TypingSoft : MonoBehaviour
             {
                 seekerBonus += 5;
                 coins.SpawnCoins(5, 0);    // コインアニメーション
+                typingVoice.sayCoin3();
                 updateSeeker();
             }
         }
@@ -483,6 +518,7 @@ public class TypingSoft : MonoBehaviour
                 {
                     seekerKey = 1;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
                     updateSeeker();
                 }
                 break;
@@ -491,6 +527,7 @@ public class TypingSoft : MonoBehaviour
                 {
                     seekerKey = 2;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
                     updateSeeker();
                 }
                 break;
@@ -499,6 +536,7 @@ public class TypingSoft : MonoBehaviour
                 {
                     seekerKey = 3;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
                     updateSeeker();
                 }
                 break;
@@ -507,6 +545,7 @@ public class TypingSoft : MonoBehaviour
                 {
                     seekerKey = 4;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
                     updateSeeker();
                 }
                 break;
@@ -515,6 +554,7 @@ public class TypingSoft : MonoBehaviour
                 {
                     seekerKey = 5;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
                     updateSeeker();
                 }
                 break;
@@ -523,6 +563,7 @@ public class TypingSoft : MonoBehaviour
                 {
                     seekerKey = 6;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
                     updateSeeker();
                 }
                 break;
@@ -540,6 +581,7 @@ public class TypingSoft : MonoBehaviour
             seekerTime = 2;
         }
         coins.SpawnCoins(seekerTime, 0);    // コインアニメーション
+        typingVoice.sayCoin();
         updateSeeker();
     }
 
@@ -898,12 +940,14 @@ public class TypingSoft : MonoBehaviour
                 break;
         }
 
+        typingVoice.sayDice();
         yield return new WaitUntil(() => diceAnim.GetCurrentAnimatorStateInfo(0).IsName(diceStates[diceNo-1]) &&
                                             diceAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
 
         
         if (diceNo == 6) {
             seekerBonus += 20;
+            typingVoice.sayCoin3();
             coins.SpawnCoins(10, 0);
             coins.SpawnCoins(5, 1);
             coins.SpawnCoins(5, 2);
@@ -911,6 +955,7 @@ public class TypingSoft : MonoBehaviour
             seekerBonus += diceNo * 2;
             coins.SpawnCoins(diceNo * 2, 0);
         }
+        typingVoice.sayCoin3();
         updateSeeker();
         gm.savedata.Settings[se.GachaCnt] = 1;
         spaceEnd = true;
@@ -1001,6 +1046,8 @@ public class TypingSoft : MonoBehaviour
             // アニメーションステートを設定
             animator.SetTrigger("Next");
 
+            typingVoice.sayDia(i);
+
             // アニメーションの完了を待つ
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Jump") &&
                                              animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
@@ -1010,6 +1057,8 @@ public class TypingSoft : MonoBehaviour
         {
             Animator animator = animators[i];
             string state = states[i];
+
+            typingVoice.sayDia(i+5);
 
             // アニメーションステートを設定
             animator.SetTrigger("Jump");
@@ -1031,6 +1080,10 @@ public class TypingSoft : MonoBehaviour
         dia5.SetActive(true);
         diaRank = new System.Random().Next(0, 5);
         StartCoroutine(PlayAnimationsInSequence());
+    }
+    public void testThrowOnly()
+    {
+        StartCoroutine(throwDise(3));
     }
     /// <summary>
     /// キーコードから string
@@ -1281,7 +1334,7 @@ public class TypingSoft : MonoBehaviour
 
         isRecMistype = false;
 
-        typingVoice.nya.Play();
+        typingVoice.sayNya();
         if (maxCombo < comboN)
         {
             maxCombo = comboN;
@@ -1331,7 +1384,7 @@ public class TypingSoft : MonoBehaviour
     private void CompleteTask()
     {
         // タイプした文字を緑色に
-        UIR.text = $"<color=#20A01D>{UIR.text}</color>";
+//        UIR.text = $"<color=#20A01D>{UIR.text}</color>";
         answers++;
 
         if ((currentThemeIndex >= shuffledThemes.Count) && (theme.random == 0))     // 時間制じゃない時の終わり
@@ -1410,13 +1463,16 @@ public class TypingSoft : MonoBehaviour
     /// </summary>
     private void SetUITypeText(string sentence)
     {
-        if (gm.savedata.Settings[se.Capital] == 1)
+        if (theme.hide < 1)
         {
-            UIR.text = sentence.ToUpper().Replace(' ', '_');
-        }
-        else
-        {
-            UIR.text = sentence.Replace(' ', '_');
+            if (gm.savedata.Settings[se.Capital] == 1)
+            {
+                UIR.text = sentence.ToUpper().Replace(' ', '_');
+            }
+            else
+            {
+                UIR.text = sentence.Replace(' ', '_');
+            }
         }
     }
 

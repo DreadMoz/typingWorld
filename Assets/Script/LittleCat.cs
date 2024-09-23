@@ -6,7 +6,7 @@ public class LittleCat : MonoBehaviour
 {
     private Animator cAnimator;
     public Camera mainCamera;
-    public int offsetX = 50; // 左端からのオフセット（ピクセル単位）
+    public int offsetX = 54; // 左端からのオフセット（ピクセル単位）
 
     void Start()
     {
