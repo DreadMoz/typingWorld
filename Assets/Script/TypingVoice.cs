@@ -1,20 +1,24 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;  // UIコンポーネントを扱うために必要
+using UnityEngine.EventSystems; // EventTriggerを使用するために必要
 
-public class TypingVoice : MonoBehaviour
+public class TypingVoice : MonoBehaviour, IPointerUpHandler
 {
     public GameManager gm;
     public Image muteIcon; // インスペクターからアサイン
     public Sprite voiceSprite; // 音声ありの画像
     public Sprite muteSprite; // ミュートの画像
     public Slider slider;
+    public bool changeFlg;
     public AudioSource typingAudio;  // AudioSource コンポーネントへの参照
-    [SerializeField] private AudioClip nya;//AudioClip型の変数b1を宣言 使用するAudioClipをアタッチ必要
-    [SerializeField] private AudioClip[] dia;//AudioClip型の変数b2を宣言 使用するAudioClipをアタッチ必要 
-    [SerializeField] private AudioClip dice;//AudioClip型の変数b3を宣言 使用するAudioClipをアタッチ必要 
-    [SerializeField] private AudioClip coin;//AudioClip型の変数b3を宣言 使用するAudioClipをアタッチ必要 
-    [SerializeField] private AudioClip coin3;//AudioClip型の変数b3を宣言 使用するAudioClipをアタッチ必要 
+    [SerializeField] private AudioClip nya;
+    [SerializeField] private AudioClip[] dia;
+    [SerializeField] private AudioClip dice;
+    [SerializeField] private AudioClip coin;
+    [SerializeField] private AudioClip coin3;
+    [SerializeField] private AudioClip countDown;
+    [SerializeField] private AudioClip coltu;
 
     // Start is called before the first frame update
 
@@ -56,6 +60,16 @@ public class TypingVoice : MonoBehaviour
         gm.savedata.Settings[se.Volume] = (int)slider.value;    // スライダー値をセーブデータに代入
         typingAudio.volume = slider.value * 0.01f;    // スライダー値をボリュームに
         typingAudio.mute = false;             // ミュート解除
+        
+        changeFlg = true;
+        dispMute();
+    }
+    // ポインタが離れたときに呼ばれる関数（IPointerUpHandlerインターフェースの実装）
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        sayColtu();
+        // ミュート状態を切り替える
+        gm.savedata.Settings[se.Mute] = 1 - gm.savedata.Settings[se.Mute];
         dispMute();
     }
     public void initVolume()
@@ -82,5 +96,13 @@ public class TypingVoice : MonoBehaviour
     public void sayCoin3()
     {
         typingAudio.PlayOneShot(coin3);
+    }
+    public void sayCountDown()
+    {
+        typingAudio.PlayOneShot(countDown);
+    }
+    public void sayColtu()
+    {
+        typingAudio.PlayOneShot(coltu);
     }
 }

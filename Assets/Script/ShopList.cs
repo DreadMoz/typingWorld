@@ -34,6 +34,9 @@ public class ShopList : MonoBehaviour
 
     [SerializeField]
     private ScrollRect scrollRect;
+
+    [SerializeField]
+    private Setting setting;
     public int tabNo = 0;
     int[] rankScore = { 0, 40, 80, 120, 200, 263};
     int[] openWeapon = { 3, 6, 9, 13, 17, 20};
@@ -60,6 +63,7 @@ public class ShopList : MonoBehaviour
 
     public void ShowItemListWeapons()
     {
+        setting.sayColtu();
         tabNo = 0;
         kAnimator.SetTrigger("tab");
         talk.text = "手にもつどうぐですよ。";
@@ -68,6 +72,7 @@ public class ShopList : MonoBehaviour
     }
     public void ShowItemListGlasses()
     {
+        setting.sayColtu();
         tabNo = 1;
         kAnimator.SetTrigger("tab");
         talk.text = "すてきなめがねですよ。";
@@ -76,6 +81,7 @@ public class ShopList : MonoBehaviour
     }
     public void ShowItemListHats()
     {
+        setting.sayColtu();
         tabNo = 2;
         kAnimator.SetTrigger("tab");
         talk.text = "かわいいぼうしですよ。";

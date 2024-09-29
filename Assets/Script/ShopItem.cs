@@ -17,12 +17,14 @@ public class ShopItem : MonoBehaviour
     private TextMeshProUGUI itemPrice;
     private Image itemIcon;
     private GameObject soldOut;
+    public Setting setting;
 
     public Confirmation conf;
 
     // Start is called before the first frame update
     void Start()
     {
+        setting = FindObjectOfType<Setting>();
         conf = FindObjectOfType<Confirmation>();
         confirmation = GameObject.Find("Confirmation");
         itemName = confirmation.transform.Find("ItemName").GetComponentInChildren<TextMeshProUGUI>();
@@ -80,6 +82,7 @@ public class ShopItem : MonoBehaviour
             // クリックされたアイテムのメモをtalkテキストに表示
             talk.text = memoText + "\nかっていきますか？。";
         }
+        setting.sayWindowSetting();
 
         conf.show();
         // このShopItemにあるテキストを取得

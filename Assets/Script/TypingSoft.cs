@@ -670,6 +670,7 @@ public class TypingSoft : MonoBehaviour
         var count = 3;
         while (count > 0)
         {
+            typingVoice.sayCountDown();
             UICountDown.text = count.ToString();
             yield return new WaitForSeconds(1f);
             count--;
@@ -783,7 +784,6 @@ public class TypingSoft : MonoBehaviour
         GameManager.AnswerRate = correctAR;     // 今回の正答率
         GameManager.TypingTitle = theme.title;  // 実施したテーマ
         GameManager.MaxCombo = maxCombo;        // 今回の最大コンボ数
-        gm.savedata.Status[st.Gold] = totalSeeker;       // 所持シーカー
 
         // キーカラークリア
         AssistKeyboardObj.SetAllKeyColorWhite();
@@ -811,12 +811,14 @@ public class TypingSoft : MonoBehaviour
         UIR.text = "";
         UII.text = "";
 
+        kpm = correctN / totalTime * 60.0f;
+        UIkpm.text = string.Format("{0:0}", kpm);
+
         GameManager.NewKpm = (theme.timer > 0) ? (int)kpm : 0;  // 今回のKPM
         GameManager.KeyParSecond = correctN / totalTime;        // 今回の１秒あたりのキー入力
         GameManager.AnswerRate = correctAR;     // 今回の正答率
         GameManager.TypingTitle = theme.title;  // 実施したテーマ
         GameManager.MaxCombo = maxCombo;        // 今回の最大コンボ数
-        gm.savedata.Status[st.Gold] = totalSeeker;       // 所持シーカー
 
         // キーカラークリア
         AssistKeyboardObj.SetAllKeyColorWhite();
@@ -1013,8 +1015,9 @@ public class TypingSoft : MonoBehaviour
                 AssistKeyboardObj.pushKeyAction(inputStr);
                 if (!goNextScene)
                 {
-                    GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ前
-                    SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
+                    gm.savedata.Status[st.Gold] = totalSeeker;      // 所持シーカー
+                    GameManager.SceneNo = (int)scene.House;         // ワールドシーンショップ前
+                    SceneManager.LoadScene("WorldScene");           // ワールドシーンに遷移
                     goNextScene = true;
                 }
             }

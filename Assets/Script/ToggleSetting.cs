@@ -10,6 +10,8 @@ public class ToggleSetting : MonoBehaviour
 
     [SerializeField]
     private Slider slider;
+    [SerializeField]
+    private Setting setting;
 
     void Start()
     {
@@ -18,6 +20,7 @@ public class ToggleSetting : MonoBehaviour
 
     public void ChangeValue()
     {
+        setting.sayColtu();
         if (slider.value == 0)
         {
             dispText.text = "OFF";

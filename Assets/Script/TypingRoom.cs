@@ -32,6 +32,8 @@ public class TypingRoom : MonoBehaviour
     // ここで、ShopItemParentのRectTransformを参照する
     [SerializeField]
     private RectTransform listParent;
+    [SerializeField]
+    private Setting setting;
 
     private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
     
@@ -73,6 +75,7 @@ public class TypingRoom : MonoBehaviour
 
     public void openChallenge()
     {
+        setting.sayColtu();
         GameManager.TypingTab = 0;
         challengeList.SetActive(true);
         customList.SetActive(false);
@@ -84,6 +87,7 @@ public class TypingRoom : MonoBehaviour
 
     public void openCustom()
     {
+        setting.sayColtu();
         GameManager.TypingTab = 1;
         challengeList.SetActive(false);
         customList.SetActive(true);
@@ -95,6 +99,7 @@ public class TypingRoom : MonoBehaviour
 
     public void openTraining()
     {
+        setting.sayColtu();
         GameManager.TypingTab = 2;
         challengeList.SetActive(false);
         customList.SetActive(false);

@@ -17,12 +17,23 @@ public class Setting : MonoBehaviour
     public Slider capitalSlider;
     public GameObject toGas;
     private bool showFlg = false;
+    public AudioSource worldAudio;  // AudioSource コンポーネントへの参照
+    [SerializeField] private AudioClip outDoor;
+    [SerializeField] private AudioClip knock;
+    [SerializeField] private AudioClip windowSetting;
+    [SerializeField] private AudioClip windowOpen;
+    [SerializeField] private AudioClip itemGet;
+    [SerializeField] private AudioClip lessMoney;
+    [SerializeField] private AudioClip kyanseru;
+    [SerializeField] private AudioClip windowClose;
+    [SerializeField] private AudioClip coltu;
 
     // Start is called before the first frame update
     void Start()
     {
         toGas.SetActive(false);
         gm.npcManager.UpdateNPCCount(gm.savedata.Settings[se.CatNum]);
+        initVolume();
     }
 
     // Update is called once per frame
@@ -35,35 +46,13 @@ public class Setting : MonoBehaviour
     {
         if (isWindowShown)
         {
+            sayWindowClose();
             hide();
         }
         else
         {
+            sayWindowSetting();
             show();
-        }
-    }
-
-    public void hide()
-    {
-        if (showFlg)
-        {
-            showFlg = false;
-            gm.npcManager.UpdateNPCCount((int)necoNumSlider.value);
-
-            gm.savedata.Settings[se.Volume] = (int)volumeSlider.value;
-            gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
-            gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
-            gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
-            gm.savedata.Settings[se.Capital] = (int)capitalSlider.value;
-            gm.setVolume();
-            
-            // 画面サイズを都度取得しないと途中での最大化などに対応できない
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
-            Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
-            transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
-            isWindowShown = false; // 非表示に設定
-            gm.exportLocal();
         }
     }
 
@@ -82,5 +71,114 @@ public class Setting : MonoBehaviour
         Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
         transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 0.5f);
         isWindowShown = true; // 表示に設定
+    }
+    
+    public void hide()
+    {
+        if (showFlg)
+        {
+            showFlg = false;
+            gm.npcManager.UpdateNPCCount((int)necoNumSlider.value);
+
+            gm.savedata.Settings[se.Volume] = (int)volumeSlider.value;
+            gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
+            gm.savedata.Settings[se.CatNum] = (int)necoNumSlider.value;
+            gm.savedata.Settings[se.MailChar] = (int)mailCharSlider.value;
+            gm.savedata.Settings[se.Capital] = (int)capitalSlider.value;
+            
+            // 画面サイズを都度取得しないと途中での最大化などに対応できない
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            Debug.Log("Width:" + screenWidth + "  Height:" + screenHeight);
+            transform.position = new Vector2(screenWidth * 0.5f, screenHeight * 2);
+            isWindowShown = false; // 非表示に設定
+            gm.exportLocal();
+
+            worldAudio.volume = volumeSlider.value * 0.01f;    // スライダー値をボリュームに
+            if (muteSlider.value == 1)
+            {
+                worldAudio.mute = true;
+            }
+            else
+            {
+                worldAudio.mute = false;
+            }
+        }
+    }
+
+    public void updateVolume()
+    {
+        if (showFlg)
+        {
+            gm.savedata.Settings[se.Volume] = (int)volumeSlider.value;
+            gm.savedata.Settings[se.Mute] = (int)muteSlider.value;
+            worldAudio.volume = gm.savedata.Settings[se.Volume] * 0.01f;
+            if (gm.savedata.Settings[se.Mute] == 1)
+            {
+                worldAudio.mute = true;
+            }
+            else
+            {
+                worldAudio.mute = false;
+            }
+        }
+    }
+    public void initVolume()
+    {
+        volumeSlider.value = gm.savedata.Settings[se.Volume];
+        muteSlider.value = gm.savedata.Settings[se.Mute];
+        necoNumSlider.value = gm.savedata.Settings[se.CatNum];
+        mailCharSlider.value = gm.savedata.Settings[se.MailChar];
+        capitalSlider.value = gm.savedata.Settings[se.Capital];
+        
+        worldAudio.volume = gm.savedata.Settings[se.Volume] * 0.01f;
+        if (gm.savedata.Settings[se.Mute] == 1)
+        {
+            worldAudio.mute = true;
+        }
+        else
+        {
+            worldAudio.mute = false;
+        }
+    }
+
+    public void sayOutDoor()
+    {
+        worldAudio.PlayOneShot(outDoor);
+    }
+    public void sayKnock()
+    {
+        worldAudio.PlayOneShot(knock);
+    }
+    public void sayWindowSetting()
+    {
+        worldAudio.PlayOneShot(windowSetting);
+    }
+    public void sayWindowOpen()
+    {
+        worldAudio.PlayOneShot(windowOpen);
+    }
+    public void sayItemGet()
+    {
+        worldAudio.PlayOneShot(itemGet);
+    }
+    public void sayLessMoney()
+    {
+        worldAudio.PlayOneShot(lessMoney);
+    }
+    public void sayCancel()
+    {
+        worldAudio.PlayOneShot(kyanseru);
+    }
+    public void sayWindowClose()
+    {
+        worldAudio.PlayOneShot(windowClose);
+    }
+    public void sayColtu()
+    {
+        if (showFlg)
+        {
+            worldAudio.PlayOneShot(coltu);
+        }
     }
 }

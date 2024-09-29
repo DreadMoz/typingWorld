@@ -669,7 +669,7 @@ public class SaveData : ScriptableObject
 
     public void updateKpm(int newKpm)
     {
-        // 要素1から6までを0からxに移動
+        // 要素1からlengthまでを0からxに移動
         for (int i = 0; i < Kpms.Length-1; i++)
         {
             if (Kpms[i + 1] < 0)
@@ -691,7 +691,14 @@ public class SaveData : ScriptableObject
                 kpmCount++;
             }
         }
-        average /= kpmCount;
+        if (kpmCount == 0)
+        {
+            average = 0;
+        }
+        else
+        {
+            average /= kpmCount;
+        }
 
         Status[st.Kpm] = (int)Math.Round(average); // 四捨五入してintにキャスト;
     }

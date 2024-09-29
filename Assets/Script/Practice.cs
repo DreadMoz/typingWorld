@@ -87,8 +87,8 @@ public class Practice : MonoBehaviour
             }
             Debug.Log("medalTop[" + i + "]:" + medalTop[i]);
             Debug.Log("medalSum[" + i + "]:" + medalSum[i]);
-            Debug.Log("medalTopNum:" + medalTopNum);
         }
+        Debug.Log("medalTopNum:" + medalTopNum);
         showRoomMenu();
     }
 

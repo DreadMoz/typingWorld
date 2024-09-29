@@ -13,6 +13,8 @@ public class Capital : MonoBehaviour
     GameObject capitalA;
     [SerializeField]
     Slider slider;
+    [SerializeField]
+    TypingVoice voice;
     
     [SerializeField] private TMP_Text keyq;
     [SerializeField] private TMP_Text keyw;
@@ -49,6 +51,7 @@ public class Capital : MonoBehaviour
 
     public void changeToggle()
     {
+        voice.sayColtu();
         if (slider.value == 1)
         {
             capitala.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);

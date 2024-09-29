@@ -37,7 +37,7 @@ public class NpcNeco : MonoBehaviour
             agent.ResetPath(); // 目的地を解除する
             agent.velocity = Vector3.zero; // 速度を0にする
             // ランダムな整数を生成して アクションを決める。
-            int randomIndex = Random.Range(0, 8);
+            int randomIndex = Random.Range(0, 12);
             if (randomIndex == 0)
             {
                 animator.SetTrigger("dig");
@@ -45,6 +45,14 @@ public class NpcNeco : MonoBehaviour
             else if (randomIndex <= 2)
             {
                 animator.SetTrigger("sit");
+            }
+            else if (randomIndex <= 5)
+            {
+                animator.SetTrigger("idol3");
+            }
+            else if (randomIndex <= 6)
+            {
+                animator.SetTrigger("idolB");
             }
             else
             {

@@ -176,7 +176,7 @@ public class Player : MonoBehaviour
 
             talkObject.SetActive(false);
 
-            transform.position = new Vector3(287.2f, 1, 112.8f);   // タイピングハウス前位置
+            transform.position = new Vector3(287.6f, 1, 112.5f);   // タイピングハウス前位置
             transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
 
             // カメラ切り替え
@@ -348,6 +348,7 @@ public class Player : MonoBehaviour
         {
             if (!gm.getWindowOpen())
             {
+                setting.sayKnock();
                 skyTalk.text = "タイピング練習場へようこそ！";
                 // "Hi" トリガーアニメーションを開始
                 animator.SetTrigger("Hi");
@@ -361,6 +362,7 @@ public class Player : MonoBehaviour
         {
             if (!gm.getWindowOpen())
             {
+                setting.sayKnock();
                 inventoryFilter.SetActive(true);
                 talk.text = "いらっしゃいませ！\nアイテムやさんだよ";
                 // "Hi" トリガーアニメーションを開始
@@ -409,12 +411,14 @@ public class Player : MonoBehaviour
 
     public void CloseTypingDoor()
     {
+        setting.sayOutDoor();
         typingDetail.hide();
         fadeDoor.StartFadeOut();
         typingWindow = -1;
     }
     public void CloseShopDoor()
     {
+        setting.sayOutDoor();
         gm.changeEquip(0);
         inventoryFilter.SetActive(false);
         fadeDoor.StartFadeOut();

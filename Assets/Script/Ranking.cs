@@ -61,11 +61,12 @@ public class Ranking : MonoBehaviour
         int kpm;
         int myBordSet = 0;
         int rankingNo = 0;
+        int count = 0;
         // 新しいランキングデータをUIに表示する
         foreach (ExRank rank in gm.savedata.ExRankings)
         {
             kpm = rank.Kpm;
-            if (kpm <= gm.savedata.Status[st.Kpm] && myBordSet == 0)
+            if (kpm <= gm.savedata.Status[st.Kpm] && myBordSet == 0)   // 自分の場合（1回だけ）
             {
                 GameObject myRankBoard = Instantiate(rankBoardMePrefab, rankBoardParent);
 
@@ -76,6 +77,7 @@ public class Ranking : MonoBehaviour
                 myRankBoard.transform.Find("Kpm").GetComponent<TextMeshProUGUI>().text = gm.savedata.Status[st.Kpm].ToString();
                 myBordSet = 1;
                 statusBord.dispStatus();
+                count++;
             }
             // RankBoardのプレファブをインスタンス化
             GameObject newRankBoard = Instantiate(rankBoardPrefab, rankBoardParent);
@@ -85,6 +87,18 @@ public class Ranking : MonoBehaviour
             newRankBoard.transform.Find("Rank").GetComponent<TextMeshProUGUI>().text = rankingNo.ToString();
             newRankBoard.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = rank.Name + gm.getNickname(rank.NickName);
             newRankBoard.transform.Find("Kpm").GetComponent<TextMeshProUGUI>().text = rank.Kpm.ToString();
+            count++;
+        }
+        if ((count == 199) && myBordSet == 0)   // 自分が最下位の場合
+        {
+                GameObject myRankBoard = Instantiate(rankBoardMePrefab, rankBoardParent);
+
+                // RankBoardのUIコンポーネントにデータを設定
+                gm.savedata.Status[st.Rank] = rankingNo + 1;
+                myRankBoard.transform.Find("Rank").GetComponent<TextMeshProUGUI>().text = gm.savedata.Status[st.Rank].ToString();
+                myRankBoard.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = gm.savedata.UserName + gm.getNickname(gm.savedata.Equipment[eq.NickName]);
+                myRankBoard.transform.Find("Kpm").GetComponent<TextMeshProUGUI>().text = gm.savedata.Status[st.Kpm].ToString();
+                statusBord.dispStatus();
         }
 //        ScrollTo(gm.savedata.Status[st.Rank]);
     }

@@ -74,7 +74,7 @@ public class RoomMenu : MonoBehaviour
 
         switch (stars)
         {
-            case 0:
+            case 0:         // 閉じた状態
                 resetStars();
                 if (id < 2)     // 閉じない
                 {
@@ -84,17 +84,17 @@ public class RoomMenu : MonoBehaviour
                 star0.SetActive(false);
                 thisButton.interactable = false;
                 break;
-            case 1:
+            case 1:         // 星ゼロ
                 break;
-            case 2:
+            case 2:         // 星１
                 star1.SetActive(true);
                 break;
-            case 3:
+            case 3:         // 星２
                 star1.SetActive(true);
                 star2.SetActive(true);
                 break;
-            case 5:
-                practice.setMedalTop(id, 1);        // 新規Room表示から1へ
+            case 5:         // 花火
+                practice.setMedalTop(id, 1);        // 新規Room表示から星1へ
                 magicProof.SetActive(true);         // magicProofオブジェクトをアクティブにする
                 ParticleSystem particleSystem = magicProof.GetComponentInChildren<ParticleSystem>();
                 if (particleSystem != null) {       // ParticleSystemが見つかった場合、再生する
@@ -103,7 +103,7 @@ public class RoomMenu : MonoBehaviour
                     Debug.LogError("ParticleSystemが見つかりません。");
                 }
                 break;
-            default:
+            default:         // 星３
                 star1.SetActive(true);
                 star2.SetActive(true);
                 star3.SetActive(true);

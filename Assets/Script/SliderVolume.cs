@@ -11,16 +11,16 @@ public class SliderVolume : MonoBehaviour
     void Start()
     {
         // スライダーの初期状態に基づいて設定
-        UpdateVolume(muteSlider.value);
+        UpdateMute(muteSlider.value);
 
         // スライダーの値が変更された時に呼ばれるリスナーを設定
         muteSlider.onValueChanged.AddListener(delegate {
-            UpdateVolume(muteSlider.value);
+            UpdateMute(muteSlider.value);
         });
     }
 
     // スライダーの状態を更新するメソッド
-    void UpdateVolume(float muteValue)
+    public void UpdateMute(float muteValue)
     {
         bool isMuted = muteValue == 1; // muteValueが1ならミュート、それ以外なら非ミュート
         volumeSlider.interactable = !isMuted; // ミュート状態に応じてインタラクションを制御

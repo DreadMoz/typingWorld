@@ -38,10 +38,11 @@ public class GameManager : MonoBehaviour
     static public int MaxCombo { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
-    public static int openHour = 6;            // 開店時間
+    public static int openHour = 0;            // 開店時間
     public static int closeHour = 21;          // 閉店時間
 
     [SerializeField] private float kpmRatio = 0.05f;
+    [SerializeField] private Setting setting;
 
     public GameObject player;        // プレイヤーオブジェクト
     public ChibiCat chibiCat;        // 猫ボディ
@@ -250,12 +251,12 @@ public class GameManager : MonoBehaviour
             chibiCat2D.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
             chibiCat2D.changeEquipHead(savedata.Equipment[eq.Head]);
             chibiCat2D.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
-
-            setVolume();
         }
         // シーンが3タイピング後の場合
         else if (SceneNo == (int)scene.House)
         {
+            setting.initVolume();
+            setting.sayOutDoor();
             rankingWindow.DisplayRankings();    // ランキング更新してから・・・プレイヤーのタイピング更新してから・・・保存したい
             npcManager.SpawnNPCs();
             if (savedata.Equipment[(int)eq.CatBody] != 0)
@@ -274,7 +275,6 @@ public class GameManager : MonoBehaviour
                 rankingWindow.SetTo(savedata.Status[st.Rank]);
                 rankingWindow.ScrollTo(savedata.Status[st.Rank]);
             }
-
             MistypedSentences.Clear();  // リストから全ての要素を削除
         }
         // シーンが2タイピングの場合
@@ -306,6 +306,7 @@ public class GameManager : MonoBehaviour
 
                 if (inventory.activeSelf)   // インベントリ表示中なら
                 {
+                    setting.sayWindowClose();
                     inventoryOpen = -1;         // インベントリ引っ込める
                     checkInventory();
                     rankingOpen = 0;            // ランキングなんもなし
@@ -313,6 +314,7 @@ public class GameManager : MonoBehaviour
                 }
                 else if (ranking.activeSelf)  // ランキング表示中なら
                 {
+                    setting.sayWindowOpen();
                     rankingOpen = -1;           // ランキング引っ込める
                     inventoryOpen = 1;          // インベントリでてくる
                     keepInventory();
@@ -320,6 +322,7 @@ public class GameManager : MonoBehaviour
                 }
                 else                        // ワールド通常表示中なら
                 {
+                    setting.sayWindowOpen();
                     inventoryOpen = 1;          // インベントリでてくる
                     keepInventory();
                     rankingOpen = 0;            // ランキングなんもなし
@@ -335,12 +338,14 @@ public class GameManager : MonoBehaviour
 
                 if (ranking.activeSelf)         // ランキング表示中なら
                 {
+                    setting.sayWindowClose();
                     inventoryOpen = 0;              // インベントリなんもなし
                     rankingOpen = -1;               // ランキング引っ込める
                     cameraMove = 2;                 // カメラは引き
                 }
                 else if (inventory.activeSelf)   // インベントリ表示中なら
                 {
+                    setting.sayWindowOpen();
                     inventoryOpen = -1;             // インベントリ引っ込める
                     checkInventory();
                     rankingOpen = 1;                // ランキングでてくる
@@ -348,6 +353,7 @@ public class GameManager : MonoBehaviour
                 }
                 else                            // ワールド通常表示中なら
                 {
+                    setting.sayWindowOpen();
                     inventoryOpen = 0;              // インベントリなんもなし
                     rankingOpen = 1;                // ランキングでてくる
                     cameraMove = 3;                 // カメラは寄り
@@ -698,23 +704,6 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("データの読み込み中に例外発生: " + ex);
         }
-    }
-
-    public void setVolume()
-    {
-        /* これが大元のボリュームか。タイピング以外は今はせってなしに
-        float systemVolume;
-
-        if (savedata.Settings[se.Mute] == 0)
-        {
-            systemVolume = savedata.Settings[se.Volume];
-        }
-        else
-        {
-            systemVolume = 0;
-        }
-        AudioListener.volume = systemVolume / 100f;
-        */
     }
 
     public void returnGemini(string response)
