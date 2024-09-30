@@ -63,7 +63,7 @@ public class ShopList : MonoBehaviour
 
     public void ShowItemListWeapons()
     {
-        setting.sayColtu();
+        setting.sayColtu(1);
         tabNo = 0;
         kAnimator.SetTrigger("tab");
         talk.text = "手にもつどうぐですよ。";
@@ -72,7 +72,7 @@ public class ShopList : MonoBehaviour
     }
     public void ShowItemListGlasses()
     {
-        setting.sayColtu();
+        setting.sayColtu(1);
         tabNo = 1;
         kAnimator.SetTrigger("tab");
         talk.text = "すてきなめがねですよ。";
@@ -81,7 +81,7 @@ public class ShopList : MonoBehaviour
     }
     public void ShowItemListHats()
     {
-        setting.sayColtu();
+        setting.sayColtu(1);
         tabNo = 2;
         kAnimator.SetTrigger("tab");
         talk.text = "かわいいぼうしですよ。";

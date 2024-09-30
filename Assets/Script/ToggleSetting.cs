@@ -20,7 +20,7 @@ public class ToggleSetting : MonoBehaviour
 
     public void ChangeValue()
     {
-        setting.sayColtu();
+        setting.sayColtu(0);
         if (slider.value == 0)
         {
             dispText.text = "OFF";

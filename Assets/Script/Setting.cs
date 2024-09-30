@@ -174,9 +174,9 @@ public class Setting : MonoBehaviour
     {
         worldAudio.PlayOneShot(windowClose);
     }
-    public void sayColtu()
+    public void sayColtu(int flg)
     {
-        if (showFlg)
+        if (showFlg || flg == 1)
         {
             worldAudio.PlayOneShot(coltu);
         }

@@ -31,7 +31,7 @@ public class SliderSetting : MonoBehaviour, IPointerUpHandler
         if (changeFlg)
         {
             changeFlg = false;
-            setting.sayColtu();
+            setting.sayColtu(0);
         }
     }
 }

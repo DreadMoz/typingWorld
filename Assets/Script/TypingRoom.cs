@@ -75,7 +75,7 @@ public class TypingRoom : MonoBehaviour
 
     public void openChallenge()
     {
-        setting.sayColtu();
+        setting.sayColtu(1);
         GameManager.TypingTab = 0;
         challengeList.SetActive(true);
         customList.SetActive(false);
@@ -87,7 +87,7 @@ public class TypingRoom : MonoBehaviour
 
     public void openCustom()
     {
-        setting.sayColtu();
+        setting.sayColtu(1);
         GameManager.TypingTab = 1;
         challengeList.SetActive(false);
         customList.SetActive(true);
@@ -99,7 +99,7 @@ public class TypingRoom : MonoBehaviour
 
     public void openTraining()
     {
-        setting.sayColtu();
+        setting.sayColtu(1);
         GameManager.TypingTab = 2;
         challengeList.SetActive(false);
         customList.SetActive(false);
