@@ -21,6 +21,11 @@ public class Practice : MonoBehaviour
 
     public void calcStars()     // ３ステージの合計を算出するところ
     {
+        setTopStars();
+        showRoomMenu();
+    }
+    public int[] setTopStars()
+    {
         medalTopNum = transform.childCount;
         medalTop = new int[medalTopNum];
         medalSum = new int[medalTopNum];
@@ -85,11 +90,8 @@ public class Practice : MonoBehaviour
                     }
                 }
             }
-            Debug.Log("medalTop[" + i + "]:" + medalTop[i]);
-            Debug.Log("medalSum[" + i + "]:" + medalSum[i]);
         }
-        Debug.Log("medalTopNum:" + medalTopNum);
-        showRoomMenu();
+        return medalTop;
     }
 
     private int remove5(int no)

@@ -480,8 +480,12 @@ public class TypingSoft : MonoBehaviour
         {
             return;
         }
-        if (comboN % 50 == 0)
+        if (comboN % 25 == 0)
         {
+            if (comboN == 25)
+            {
+                return;     // 最初は50スタート
+            }
             seekerCombo++;
             coins.SpawnCoins(1, 1);    // コインアニメーション
             typingVoice.sayCoin();
@@ -541,7 +545,7 @@ public class TypingSoft : MonoBehaviour
                 }
                 break;
             case 3:
-                if (correctN >= 80)
+                if (correctN >= 65)
                 {
                     seekerKey = 4;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
@@ -550,7 +554,7 @@ public class TypingSoft : MonoBehaviour
                 }
                 break;
             case 4:
-                if (correctN >= 160)
+                if (correctN >= 110)
                 {
                     seekerKey = 5;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
@@ -559,9 +563,27 @@ public class TypingSoft : MonoBehaviour
                 }
                 break;
             case 5:
-                if (correctN >= 320)
+                if (correctN >= 170)
                 {
                     seekerKey = 6;
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
+                    updateSeeker();
+                }
+                break;
+            case 6:
+                if (correctN >= 240)
+                {
+                    seekerKey = 7;
+                    coins.SpawnCoins(1, 2);    // コインアニメーション
+                    typingVoice.sayCoin();
+                    updateSeeker();
+                }
+                break;
+            case 7:
+                if (correctN >= 330)
+                {
+                    seekerKey = 8;
                     coins.SpawnCoins(1, 2);    // コインアニメーション
                     typingVoice.sayCoin();
                     updateSeeker();
@@ -948,14 +970,20 @@ public class TypingSoft : MonoBehaviour
 
         
         if (diceNo == 6) {
+            seekerBonus += 36;
+            typingVoice.sayCoin3();
+            coins.SpawnCoins(20, 0);
+            coins.SpawnCoins(8, 1);
+            coins.SpawnCoins(8, 2);
+        } else if (diceNo == 5) {
             seekerBonus += 20;
             typingVoice.sayCoin3();
-            coins.SpawnCoins(10, 0);
-            coins.SpawnCoins(5, 1);
-            coins.SpawnCoins(5, 2);
+            coins.SpawnCoins(14, 0);
+            coins.SpawnCoins(3, 1);
+            coins.SpawnCoins(3, 2);
         } else {
-            seekerBonus += diceNo * 2;
-            coins.SpawnCoins(diceNo * 2, 0);
+            seekerBonus += (int)(diceNo * 2)+6;
+            coins.SpawnCoins((int)(diceNo * 2)+6, 0);
         }
         typingVoice.sayCoin3();
         updateSeeker();

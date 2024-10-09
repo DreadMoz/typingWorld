@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     public DataBase db;
     public SaveData savedata;
     public Connection connection;
+    public static int openHour = 6;            // 開店時間
+    public static int closeHour = 21;          // 閉店時間
 
 
     static public int SceneNo { get; set; }
@@ -38,10 +40,8 @@ public class GameManager : MonoBehaviour
     static public int MaxCombo { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
-    public static int openHour = 6;            // 開店時間
-    public static int closeHour = 21;          // 閉店時間
 
-    [SerializeField] private float kpmRatio = 0.05f;
+    [SerializeField] private float kpmRatio = 0.8f;
     [SerializeField] private Setting setting;
 
     public GameObject player;        // プレイヤーオブジェクト
@@ -62,6 +62,8 @@ public class GameManager : MonoBehaviour
     public GameObject inventoryButton;  // インベントリボタン
     public GameObject rankingButton;    // ランキングボタン
     public GameObject settingButton;    // セッティングボタン
+    public GameObject collectionMedalButton;
+    public GameObject collectionItemButton;
 
     public Toggle exToggle;
     public Toggle gssToggle;
@@ -199,6 +201,8 @@ public class GameManager : MonoBehaviour
                 settingButton.SetActive(false);
                 rankingButton.SetActive(false);
                 inventoryButton.SetActive(false);
+                collectionMedalButton.SetActive(false);
+                collectionItemButton.SetActive(false);
                 status.SetActive(true);
                 ranking.SetActive(true);
 

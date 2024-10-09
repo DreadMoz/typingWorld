@@ -6,7 +6,7 @@ public class Coins : MonoBehaviour
 {
     public GameObject coinPrefab; // NPCのプレハブ
     // Start is called before the first frame update
-    public Transform[] spawnPoints = new Transform[10]; // NPCを生成する位置を保持する配列
+    public Transform[] spawnPoints = new Transform[20]; // NPCを生成する位置を保持する配列
 
     public Vector3[] spawnAreaCenters; // スポーンエリアの中心
     public Vector3 spawnAreaSize = new Vector3(6, 2, 0); // スポーンエリアのサイズ

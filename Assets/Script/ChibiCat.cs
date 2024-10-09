@@ -23,6 +23,9 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject cowboyHat;
     [SerializeField] private GameObject magicianHat;
     [SerializeField] private GameObject pajamaHat;
+    [SerializeField] private GameObject pajamaHatG;
+    [SerializeField] private GameObject pajamaHatP;
+    [SerializeField] private GameObject pajamaHatY;
     [SerializeField] private GameObject showerHat;
     [SerializeField] private GameObject vikingHelm;
     [SerializeField] private GameObject mexicoHat;
@@ -35,6 +38,8 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject grassABlack;
     [SerializeField] private GameObject sunglasMaruB;
     [SerializeField] private GameObject sunglasMaruG;
+    [SerializeField] private GameObject sunglasMaruC;
+    [SerializeField] private GameObject sunglasMaruR;
     [SerializeField] private GameObject sunglasB;
     [SerializeField] private GameObject sunglasR;
     [SerializeField] private GameObject sunglasY;
@@ -332,6 +337,12 @@ public class ChibiCat : MonoBehaviour
             case 131:
                 vrGoggle.SetActive(true);
                 break;
+            case 132:
+                sunglasMaruC.SetActive(true);
+                break;
+            case 133:
+                sunglasMaruR.SetActive(true);
+                break;
         }
     }
     public void changeEquipHead(int itemIdHead)
@@ -371,6 +382,15 @@ public class ChibiCat : MonoBehaviour
                 break;
             case 161:
                 pingpong.SetActive(true);
+                break;
+            case 162:
+                pajamaHatG.SetActive(true);
+                break;
+            case 163:
+                pajamaHatP.SetActive(true);
+                break;
+            case 164:
+                pajamaHatY.SetActive(true);
                 break;
         }
     }
@@ -441,6 +461,8 @@ public class ChibiCat : MonoBehaviour
         grassABlack.SetActive(false);
         sunglasMaruB.SetActive(false);
         sunglasMaruG.SetActive(false);
+        sunglasMaruC.SetActive(false);
+        sunglasMaruR.SetActive(false);
         sunglasB.SetActive(false);
         sunglasR.SetActive(false);
         sunglasY.SetActive(false);
@@ -462,5 +484,8 @@ public class ChibiCat : MonoBehaviour
         cakeS.SetActive(false);
         pingpong.SetActive(false);
         ducks.SetActive(false);
+        pajamaHatG.SetActive(false);
+        pajamaHatP.SetActive(false);
+        pajamaHatY.SetActive(false);
     }
 }

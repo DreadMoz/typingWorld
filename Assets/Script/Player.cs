@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject inventoryButton;
     [SerializeField] private GameObject rankingButton;
     [SerializeField] private GameObject settingButton;
+    [SerializeField] private GameObject collectionMedalButton;
+    [SerializeField] private GameObject collectionItemButton;
     [SerializeField] private GameObject itemShop;
     [SerializeField] private ShopList shopList;
     [SerializeField] private TypingRoom typingList;
@@ -35,6 +37,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float hitBackForce = 0.3f;
     [SerializeField] private GameObject keepOut;
     [SerializeField] private Setting setting;
+    [SerializeField] private CollectionMedal collection;
     public Ranking rankingWindow;
 
     private Animator pAnimator;
@@ -132,11 +135,14 @@ public class Player : MonoBehaviour
             typingWindow = 0;
 
             setting.hide();
+            collection.hide();
             tiikawa.SetActive(true);
             typingRoom.SetActive(true);
             settingButton.SetActive(false);
             rankingButton.SetActive(false);
             inventoryButton.SetActive(false);
+            collectionMedalButton.SetActive(false);
+            collectionItemButton.SetActive(false);
             rankingButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);
@@ -167,6 +173,8 @@ public class Player : MonoBehaviour
             settingButton.SetActive(true);
             rankingButton.SetActive(true);
             inventoryButton.SetActive(true);
+            collectionMedalButton.SetActive(true);
+            collectionItemButton.SetActive(true);
             rankingButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);
@@ -196,10 +204,13 @@ public class Player : MonoBehaviour
             shopWindow = 0;
 
             setting.hide();
+            collection.hide();
             itemShop.SetActive(true);
             rankingButton.SetActive(false);
             settingButton.SetActive(false);
             inventoryButton.SetActive(false);
+            collectionMedalButton.SetActive(false);
+            collectionItemButton.SetActive(false);
             inventoryButton.GetComponent<OpenButton>().forceOpen();
             fadeDoor.StartFadeIn();
             exitShop.SetActive(true);
@@ -226,6 +237,8 @@ public class Player : MonoBehaviour
             settingButton.SetActive(true);
             rankingButton.SetActive(true);
             inventoryButton.SetActive(true);
+            collectionMedalButton.SetActive(true);
+            collectionItemButton.SetActive(true);
             inventoryButton.GetComponent<OpenButton>().OnButton();
             fadeDoor.StartFadeIn();
             exitShop.SetActive(false);

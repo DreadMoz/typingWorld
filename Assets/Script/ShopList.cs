@@ -40,8 +40,8 @@ public class ShopList : MonoBehaviour
     public int tabNo = 0;
     int[] rankScore = { 0, 40, 80, 120, 200, 263};
     int[] openWeapon = { 3, 6, 9, 13, 17, 20};
-    int[] openGlasses = { 3, 5, 8, 9, 10, 11};
-    int[] openHat = { 3, 5, 6, 8, 9, 10};
+    int[] openGlasses = { 3, 5, 8, 10, 12, 13};
+    int[] openHat = { 3, 5, 6, 8, 12, 14};
 
     // Start is called before the first frame update
     void Start()
@@ -58,6 +58,7 @@ public class ShopList : MonoBehaviour
     {
         kAnimator.SetTrigger("tab");
         scrollRect.verticalNormalizedPosition = 1.0f;
+        tabNo = 0;
         ShowItemList(0);
     }
 
