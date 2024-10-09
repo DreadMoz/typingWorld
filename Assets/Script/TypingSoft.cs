@@ -793,6 +793,14 @@ public class TypingSoft : MonoBehaviour
         }
     }
 
+    private void getKeyComboBonus()
+    {
+        seekerBonus += seekerCombo/2 + seekerKey/2;
+        coins.SpawnCoins(seekerCombo/2 + seekerKey/2, 0);    // コインアニメーション
+        typingVoice.sayCoin3();
+        updateSeeker();
+    }
+
     private void dispResultNonTimerVer()
     {
         END.text = "よくできました！";
@@ -800,6 +808,8 @@ public class TypingSoft : MonoBehaviour
         UIH.text = "";
         UIR.text = "";
         UII.text = "";
+
+        getKeyComboBonus();
 
         GameManager.NewKpm = 0;                 // 今回のKPM
         GameManager.KeyParSecond = 2;           // 今回の１秒あたりのキー入力。常にOKとするため１より大を設定
@@ -832,6 +842,8 @@ public class TypingSoft : MonoBehaviour
         UIH.text = "";
         UIR.text = "";
         UII.text = "";
+
+        getKeyComboBonus();
 
         kpm = correctN / totalTime * 60.0f;
         UIkpm.text = string.Format("{0:0}", kpm);
