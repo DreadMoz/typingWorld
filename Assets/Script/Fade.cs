@@ -136,6 +136,12 @@ public class Fade : MonoBehaviour
         timer = 0.0f;
         fadeOut = false;
         compFadeOut = true;
+
+        if (Input.GetKey(KeyCode.P))
+        {
+            // キーが押されている間はシーン遷移をしない
+            return;
+        }
         
 #if !UNITY_EDITOR
         // 現在の時刻を取得
