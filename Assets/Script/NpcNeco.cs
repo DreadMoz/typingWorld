@@ -22,81 +22,84 @@ public class NpcNeco : MonoBehaviour
         {
             agent = GetComponent<NavMeshAgent>();
         }
+        agent.stoppingDistance = 0.4f; // 停止と判定する距離
+
         // ◯秒後に最初の移動を開始し、その後◯秒ごとに繰り返し実行
         InvokeRepeating("SetRandomDestination", Random.Range(1f, interval), interval);
     }
 
     void SetRandomDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere;
-        double distance = System.Math.Sqrt(randomDirection.x * randomDirection.x + randomDirection.z * randomDirection.z);
-
-        if (distance < 0.45f)        // 待機
-        {
-            // 目的地を解除し、エージェントの移動を停止します。
-            agent.ResetPath(); // 目的地を解除する
-            agent.velocity = Vector3.zero; // 速度を0にする
-            // ランダムな整数を生成して アクションを決める。
-            int randomIndex = Random.Range(0, 12);
-            if (randomIndex == 0)
-            {
-                animator.SetTrigger("dig");
-            }
-            else if (randomIndex <= 2)
-            {
-                animator.SetTrigger("sit");
-            }
-            else if (randomIndex <= 5)
-            {
-                animator.SetTrigger("idol3");
-            }
-            else if (randomIndex <= 6)
-            {
-                animator.SetTrigger("idolB");
-            }
-            else
-            {
-                animator.SetTrigger("idol");
-            }
-            return;
-        }
-        else if (0.95f < distance)   // 走る
-        {
-            animator.SetTrigger("run");
-            agent.speed = speed;
-        }
-        else                        // 歩く
-        {
-            animator.SetTrigger("walk");
-            agent.speed = speed / 3;
-        }
-        randomDirection *= radius;
-
+        Vector3 randomDirection = Random.insideUnitSphere * radius;
         randomDirection += transform.position; // 現在位置からの相対位置を計算
+
         NavMeshHit hit;
         Vector3 finalPosition = Vector3.zero;
-
-        // ランダムな方向にあるナビゲーションメッシュ上の位置を探す
-        if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+        if (NavMesh.SamplePosition(randomDirection, out hit, radius, NavMesh.AllAreas))
         {
             finalPosition = hit.position;
-        }
+            agent.SetDestination(finalPosition);
 
-        // 計算された位置に移動する
-        agent.SetDestination(finalPosition);
-        // 目的地に到着したら速度をリセット
-        if (agent.remainingDistance <= agent.stoppingDistance)
+            // 距離に基づいてアニメーションを設定
+            float distance = Vector3.Distance(transform.position, finalPosition);
+            if (distance < 0.5f * radius)        // 待機
+            {
+                // 目的地を解除し、エージェントの移動を停止します。
+                agent.ResetPath(); // 目的地を解除する
+                agent.velocity = Vector3.zero; // 速度を0にする
+                // ランダムな整数を生成して アクションを決める。
+                int randomIndex = Random.Range(0, 12);
+                if (randomIndex == 0)
+                {
+                    animator.SetTrigger("dig");
+                }
+                else if (randomIndex <= 2)
+                {
+                    animator.SetTrigger("sit");
+                }
+                else if (randomIndex <= 5)
+                {
+                    animator.SetTrigger("idol3");
+                }
+                else if (randomIndex <= 6)
+                {
+                    animator.SetTrigger("idolB");
+                }
+                else
+                {
+                    animator.SetBool("idol", true);
+                }
+                return;
+            }
+            else if (0.95f * radius < distance)   // 走る
+            {
+                animator.SetBool("idol", false);
+                animator.SetTrigger("run");
+                agent.speed = speed;
+            }
+            else                        // 歩く
+            {
+                animator.SetBool("idol", false);
+                animator.SetTrigger("walk");
+                agent.speed = speed / 3;
+            }
+        }
+    }
+    void Update()
+    {
+        // 目的地に到着したかどうかを確認
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
+            animator.SetBool("idol", true);
             agent.velocity = Vector3.zero;
         }
     }
-
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.name != "Terrain")
         {
-            animator.SetTrigger("run");
-            animator.SetTrigger("walk");
+//            animator.SetTrigger("run");
+//            animator.SetTrigger("walk");
             agent.ResetPath(); // 目的地を解除する
             if (col.gameObject.name == "Player")
             {

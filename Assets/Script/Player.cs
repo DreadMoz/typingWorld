@@ -184,8 +184,8 @@ public class Player : MonoBehaviour
 
             talkObject.SetActive(false);
 
-            transform.position = new Vector3(287.6f, 1, 112.5f);   // タイピングハウス前位置
-            transform.rotation = Quaternion.Euler(0, 20, 0); // タイピングハウス前角度
+            transform.position = new Vector3(287f, 1.4f, 112.3f);   // タイピングハウス前位置
+            transform.rotation = Quaternion.Euler(0, 40, 0); // タイピングハウス前角度
 
             // カメラ切り替え
             switchCam.SwitchCamera();

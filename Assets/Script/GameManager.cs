@@ -116,11 +116,6 @@ public class GameManager : MonoBehaviour
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
 
-        if (Input.GetKey(KeyCode.P))
-        {
-            // キーが押されている間はシーン遷移をしない
-            return;
-        }
 #if !UNITY_EDITOR
         // 現在の時刻を取得
         int currentHour = System.DateTime.Now.Hour;
