@@ -216,6 +216,7 @@ public class SaveData : ScriptableObject
                     }
                     if (item[0].ToString() == Email)    // 自分自身は登録しない。スキップ
                     {
+                        Status[st.Server] = Convert.ToInt32(item[1]);   // 使っていない順位にはステージが入っている。
                         continue;
                     }
                     var rank = new ExRank
