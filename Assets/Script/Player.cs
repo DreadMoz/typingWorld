@@ -361,6 +361,8 @@ public class Player : MonoBehaviour
         {
             if (!gm.getWindowOpen())
             {
+                rb.velocity = Vector3.zero; // 速度を0にする
+                rb.angularVelocity = Vector3.zero; // 角速度を0にする
                 setting.sayKnock();
                 skyTalk.text = "タイピング練習場へようこそ！";
                 // "Hi" トリガーアニメーションを開始
@@ -375,6 +377,8 @@ public class Player : MonoBehaviour
         {
             if (!gm.getWindowOpen())
             {
+                rb.velocity = Vector3.zero; // 速度を0にする
+                rb.angularVelocity = Vector3.zero; // 角速度を0にする
                 setting.sayKnock();
                 inventoryFilter.SetActive(true);
                 talk.text = "いらっしゃいませ！\nアイテムやさんだよ";
@@ -389,6 +393,8 @@ public class Player : MonoBehaviour
         // 接触している間中行いたい処理
         else if (col.gameObject.CompareTag("InvisibleFence"))
         {
+            rb.velocity = Vector3.zero; // 速度を0にする
+            rb.angularVelocity = Vector3.zero; // 角速度を0にする
             agent.destination = this.transform.position;
             keepOut.SetActive(true);
             keepOutCount = (int)(hitBackForce * 80);
