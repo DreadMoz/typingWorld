@@ -7,9 +7,9 @@ mergeInto(LibraryManager.library, {
         oAuthLogout();
     },
     LoadDataFromLocal: function() {
-        // LocalStorageからステータスデータを取得
-        var storedStatusData = localStorage.getItem('statusData');
         try {
+            // LocalStorageからステータスデータを取得
+            var storedStatusData = localStorage.getItem('statusData');
             if (!storedStatusData) {
                 console.log("LocalStorageにステータスデータが見つかりません。");
                 SendMessage('TitleScene', 'handleInitialData');
@@ -17,20 +17,20 @@ mergeInto(LibraryManager.library, {
             else{
                 var statusData = JSON.parse(storedStatusData);
                 console.log("LocalStorageからステータスデータを読み込みました:", statusData);
-
-                // LocalStorageからランキングデータを取得
-                var storedRankingData = localStorage.getItem('rankingData'); // ランキングデータも取得
-                if (!storedRankingData) {
-                    console.log("LocalStorageにランキングデータが見つかりません。");
-                }
-                else
-                {
-                    var rankingData = JSON.parse(storedRankingData); // ランキングデータを解析
-                    console.log("LocalStorageからランキングデータを読み込みました:", rankingData);
-                    SendMessage('GameManager', 'finishDataLoadExtRanking', JSON.stringify(rankingData));
-                }
-                
                 SendMessage('TitleScene', 'finishDataLoadExtStatus', JSON.stringify(statusData));
+            }
+            getNecoRank();
+            
+            // LocalStorageからランキングデータを取得
+            var storedRankingData = localStorage.getItem('rankingData'); // ランキングデータも取得
+            if (!storedRankingData) {
+                console.log("LocalStorageにランキングデータが見つかりません。");
+            }
+            else
+            {
+                var rankingData = JSON.parse(storedRankingData); // ランキングデータを解析
+                console.log("LocalStorageからランキングデータを読み込みました:", rankingData);
+                SendMessage('GameManager', 'finishDataLoadExtRanking', JSON.stringify(rankingData));
             }
         } catch (e) {
             console.error("データの解析中にエラーが発生しました:", e);
