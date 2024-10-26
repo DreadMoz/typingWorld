@@ -44,6 +44,10 @@ public class Setting : MonoBehaviour
 
     public void switchWindow()
     {
+        if (gm.dragging)
+        {
+            return;
+        }
         if (isWindowShown)
         {
             sayWindowClose();
