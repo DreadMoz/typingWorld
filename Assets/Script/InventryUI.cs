@@ -38,11 +38,21 @@ public class InventryUI : MonoBehaviour
                 {
                     if (saveItem[i] < gm.db.GetItemList().Count)
                     {
-                        slots[i].SetItem(gm.db.GetItemList()[saveItem[i]]);
+                        if (CheckItemExists(saveItem[i]))   // 同じアイテム番号のアイテムがすでに存在するかチェック
+                        {
+                            slots[i].SetItem(null);         // 同じアイテム番号が来たら0にする
+                            gm.savedata.Inventory[i] = 0;
+                        }
+                        else
+                        {
+                            slots[i].SetItem(gm.db.GetItemList()[saveItem[i]]);   // 初めてのアイテムの場合、アイテムを設定
+                        }
                     }
                     else
                     {
-                        Debug.LogError("不正なインデックス: " + saveItem[i]);
+                        Debug.LogError("不正なアイテム番号: " + saveItem[i]);
+                        slots[i].SetItem(null);
+                        gm.savedata.Inventory[i] = 0;
                     }
                 }
                 else
@@ -55,6 +65,26 @@ public class InventryUI : MonoBehaviour
         {
             Debug.LogError("setAllItemsでエラーが発生しました: " + ex.Message);
         }
+    }
+
+    // 同じアイテム番号のアイテムが存在するかチェックする関数
+    private bool CheckItemExists(int itemNo)
+    {
+        foreach (InventrySlot slot in slots)        // インベントリは複数あるかチェックする
+        {
+            if (slot.MyItem != null && slot.MyItem.MyItemNo == itemNo)
+            {
+                return true;
+            }
+        }
+        foreach (int equip in gm.savedata.Equipment)    // 装備側はシンプルにあるかないか見る
+        {
+            if (equip == itemNo)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void turnImage(int no)

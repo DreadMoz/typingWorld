@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
     public Toggle gmailToggle;
 
     public StatusUI statusui;
+    public bool dragging = false;
 
     [SerializeField]
     private int windowOpenCount = 20;    // ウィンドウが開くフレーム数

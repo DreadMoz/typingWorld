@@ -36,6 +36,10 @@ public class CollectionMedal : MonoBehaviour
 
     public void show(int windowNo)
     {
+        if (gm.dragging)
+        {
+            return;
+        }
         setting.sayWindowSetting();
         if (windowNo == 1)
         {

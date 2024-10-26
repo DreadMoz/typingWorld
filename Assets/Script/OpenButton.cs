@@ -5,11 +5,21 @@ using UnityEngine.AI;
 
 public class OpenButton : MonoBehaviour
 {
+    private GameObject gameManager;
+    private GameManager gm;
     private bool doOpen = false;
     private bool forceShop = false;
-    
+        void Awake()
+    {
+        gameManager = GameObject.Find("GameManager");
+        gm = gameManager.GetComponent<GameManager>();
+    }
     public void OnButton()
     {
+        if (gm.dragging)
+        {
+            return;
+        }
         doOpen = !doOpen;
     }
 

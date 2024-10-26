@@ -159,6 +159,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        gm.dragging = true;
         if (MyItem == null) return;
 
         // アイテムのイメージを複製
@@ -180,6 +181,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
     public void OnDrag(PointerEventData eventData)
     {
+        gm.dragging = true;
         if (MyItem == null) return;
 
         draggingObj.transform.position = hand.transform.position + new Vector3(10, 10, 0);
@@ -188,6 +190,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
     // ドラッグが終わって特定の枠上でドロップをした
     public void OnDrop(PointerEventData eventData)
     {
+        gm.dragging = false;
         // Handにアイテムがなければ何もせずにreturn
         if (!hand.IsHavingItem()) return;
 
@@ -268,6 +271,7 @@ public class InventrySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDro
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        gm.dragging = false;
         Destroy(draggingObj);
 
         // OnDropで行われた
