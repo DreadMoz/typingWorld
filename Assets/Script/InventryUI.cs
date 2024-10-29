@@ -17,6 +17,7 @@ public class InventryUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        setInventoryFromItems();    // インベントリにないアイテムがあったら補正
         setAllItems();
     }
     
@@ -25,11 +26,51 @@ public class InventryUI : MonoBehaviour
     {
     }
 
+    private void setInventoryFromItems()
+    {
+        for (int i = 0; i < gm.savedata.Items.Length; i++)
+        {
+            if (gm.savedata.Items[i] == true)
+            {
+                setItemBlank(i);
+            }
+        }
+    }
+    private void setItemBlank(int no)
+    {
+        for (int i = 0; i < gm.savedata.Inventory.Length; i++)
+        {
+            if (gm.savedata.Inventory[i] == no) // 同じアイテム番号のアイテムがインベントリに存在するかチェック
+            {
+                return;
+            }
+        }
+        for (int i = 0; i < gm.savedata.Equipment.Length; i++)
+        {
+            if (gm.savedata.Equipment[i] == no) // 同じアイテム番号のアイテムが装備に存在するかチェック
+            {
+                return;
+            }
+        }
+        for (int i = 0; i < gm.savedata.Inventory.Length; i++)
+        {
+            if (gm.savedata.Inventory[i] == 0)  // インベントリの空きがあれば
+            {
+                gm.savedata.Inventory[i] = no;  //　アイテム番号を代入
+                return;
+            }
+        }
+    }
+
     public void setAllItems()
     {
         try
         {
             slots = slotsParent.GetComponentsInChildren<InventrySlot>();
+            foreach (InventrySlot slot in slots)
+            {
+                slot.SetItem(null);
+            }
             int[] saveItem = gm.savedata.Inventory;
 
             for (int i = 0; i < saveItem.Length; i++)
