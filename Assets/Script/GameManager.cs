@@ -18,6 +18,7 @@ public class scene
     public const int Typing = 2;
     public const int House = 3;
     public const int Night = 4;
+    public const int Heijo = 5;
 }
 
 public class GameManager : MonoBehaviour
@@ -40,6 +41,8 @@ public class GameManager : MonoBehaviour
     static public int MaxCombo { get; set; }
     public static List<string> MistypedSentences { get; set; } = new List<string>();
     public static string geminiResponce { get; set; }
+    public static bool eventHeijo { get; set; }
+    public static bool guestMode { get; set; }
 
     [SerializeField] private float kpmRatio = 0.8f;
     [SerializeField] private Setting setting;
@@ -139,7 +142,7 @@ public class GameManager : MonoBehaviour
         }
         else if (sceneName == "WorldScene")
         {
-            if (GameManager.SceneNo != (int)scene.House)
+            if ((GameManager.SceneNo != (int)scene.House) && (GameManager.SceneNo != (int)scene.Heijo))
             {
                 GameManager.SceneNo = (int)scene.World;
             }
@@ -293,6 +296,31 @@ public class GameManager : MonoBehaviour
             chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
             chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
             chibiCat.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+        }
+        // シーンが5平城後の場合
+        else if (SceneNo == (int)scene.Heijo)
+        {
+            setting.initVolume();
+            setting.sayOutDoor();
+            rankingWindow.DisplayRankings();    // ランキング更新してから・・・プレイヤーのタイピング更新してから・・・保存したい
+            npcManager.SpawnNPCs();
+            if (savedata.Equipment[(int)eq.CatBody] != 0)
+            {
+                chibiCat.setChara(savedata.Equipment[eq.CatBody]);
+                chibiCat2D.setChara(savedata.Equipment[eq.CatBody]);
+            }
+            chibiCat.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+            chibiCat.changeEquipHead(savedata.Equipment[eq.Head]);
+            chibiCat.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+            chibiCat2D.changeEquipHands(savedata.Equipment[eq.RightHand], savedata.Equipment[eq.LeftHand], checkBagItem());
+            chibiCat2D.changeEquipHead(savedata.Equipment[eq.Head]);
+            chibiCat2D.changeEquipGlasses(savedata.Equipment[eq.Glasses]);
+            if (NewKpm != 0)
+            {
+                rankingWindow.SetTo(savedata.Status[st.Rank]);
+                rankingWindow.ScrollTo(savedata.Status[st.Rank]);
+            }
+            MistypedSentences.Clear();  // リストから全ての要素を削除
         }
     }
 

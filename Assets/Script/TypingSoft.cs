@@ -36,6 +36,8 @@ public class TypingSoft : MonoBehaviour
     private Coins coins;           // コイン操作
     [SerializeField]
     private GameObject door;
+    [SerializeField]
+    private GameObject suzakuBack;
 
     int[,] diceProbabilities = new int[5, 6] {
         {20, 50, 75, 95, 99,100}, 
@@ -188,12 +190,14 @@ public class TypingSoft : MonoBehaviour
 
     // 結果画面
     [SerializeField] private GameObject resultWindow;
+    [SerializeField] private GameObject exitTyping;
     // 結果お題
     [SerializeField] private Text resultTitle;
     // 結果MaxCombo
     [SerializeField] private Text resultCombo;
     // 結果Kpm
     [SerializeField] private Text resultKpm;
+    private GameObject panelMessage;
 
     [Serializable]
     public class Theme
@@ -239,6 +243,27 @@ public class TypingSoft : MonoBehaviour
 #if UNITY_WEBGL && !UNITY_EDITOR
         testMode.SetActive(false);
 #endif
+
+        if (GameManager.guestMode)
+        {
+            suzakuBack.SetActive(true);
+            exitTyping.SetActive(false);
+
+            resultWindow = transform.Find("EventPanel").gameObject;
+            resultTitle = transform.Find("ResultPanel/TitleText").GetComponent<Text>();
+            resultCombo = transform.Find("ResultPanel/maxComboText").GetComponent<Text>();
+            resultKpm = transform.Find("EventPanel/totalKpmText").GetComponent<Text>();
+            panelMessage = transform.Find("EventPanel/Message").gameObject;
+        }
+        else
+        {
+            suzakuBack.SetActive(false);
+
+            resultWindow = transform.Find("ResultPanel").gameObject;
+            resultTitle = transform.Find("ResultPanel/TitleText").GetComponent<Text>();
+            resultCombo = transform.Find("ResultPanel/maxComboText").GetComponent<Text>();
+            resultKpm = transform.Find("ResultPanel/totalKpmText").GetComponent<Text>();
+        }
         
         animator = player.GetComponent<Animator>(); // Playerのアニメーターを取得
         lAnimator = lPlayer.GetComponent<Animator>(); // Playerのアニメーターを取得
@@ -369,7 +394,7 @@ public class TypingSoft : MonoBehaviour
                     Debug.Log("JSONファイルの取得に失敗しました。");
                     return false;
                 }
-                if ((fileName.StartsWith("TextC")) && (gm.savedata.Settings[se.MailChar] != 0))
+                if ((fileName.StartsWith("TextC")) && (gm.savedata.Settings[se.MailChar] != 0) && !GameManager.guestMode)
                 {
                     combineCentence();
                     mailReplaceNo = new System.Random().Next(0, theme.themes.Length);
@@ -385,6 +410,11 @@ public class TypingSoft : MonoBehaviour
                 if (!goNextScene)
                 {
                     GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ
+                    if (GameManager.eventHeijo)
+                    {
+                        GameManager.SceneNo = (int)scene.Heijo;   // ワールドシーン平城京
+                        GameManager.eventHeijo = false;
+                    }
                     SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
                     goNextScene = true;
                 }
@@ -729,6 +759,11 @@ public class TypingSoft : MonoBehaviour
             {
                 GameManager.TypingDataPath = null;
                 GameManager.SceneNo = (int)scene.House;   // ワールドシーンショップ
+                if (GameManager.eventHeijo)
+                {
+                    GameManager.SceneNo = (int)scene.Heijo;   // ワールドシーン平城京
+                    GameManager.eventHeijo = false;
+                }
                 SceneManager.LoadScene("WorldScene"); // ワールドシーンに遷移
                 goNextScene = true;
             }
@@ -872,6 +907,24 @@ public class TypingSoft : MonoBehaviour
         rHand.SetActive(false);
 
         gm.setGemini();
+
+        if (GameManager.guestMode)
+        {
+            int itemId = 241;
+            int blankIndex = gm.savedata.getBlankInventoryIndex();
+            gm.savedata.Inventory[blankIndex] = itemId;
+            gm.savedata.Items[itemId] = true;
+
+            if (GameManager.eventHeijo)
+            {
+                panelMessage.SetActive(true);
+                gm.exportLocal();
+            }
+            else
+            {
+                panelMessage.SetActive(false);
+            }
+        }
 
         gm.savedata.Settings[se.GachaCnt] ++;
         hopDiamond(gm.savedata.Settings[se.GachaCnt]);
@@ -1046,6 +1099,10 @@ public class TypingSoft : MonoBehaviour
             else if (spaceThrow)
             {
                 spaceThrow = false;
+                if (GameManager.guestMode)
+                {
+                    return;     // イベント用に固まらせる
+                }
                 diaRank = new System.Random().Next(0, 5);
 
                 StartCoroutine(PlayAnimationsInSequence());
@@ -1057,6 +1114,13 @@ public class TypingSoft : MonoBehaviour
                 {
                     gm.savedata.Status[st.Gold] = totalSeeker;      // 所持シーカー
                     GameManager.SceneNo = (int)scene.House;         // ワールドシーンショップ前
+                    if (GameManager.guestMode)
+                    {
+                        return;     // イベント用に固まらせる
+
+                        GameManager.SceneNo = (int)scene.Heijo;   // ワールドシーン平城京
+                        GameManager.eventHeijo = false;
+                    }
                     SceneManager.LoadScene("WorldScene");           // ワールドシーンに遷移
                     goNextScene = true;
                 }

@@ -68,6 +68,8 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject tennisR;
     [SerializeField] private GameObject tennisBatR;
     [SerializeField] private GameObject basketBallR;
+    [SerializeField] private GameObject eSnowManR;
+    [SerializeField] private GameObject eTreeR;
 
 
     [SerializeField] private GameObject spadL;
@@ -91,6 +93,8 @@ public class ChibiCat : MonoBehaviour
     [SerializeField] private GameObject tennisL;
     [SerializeField] private GameObject tennisBatL;
     [SerializeField] private GameObject basketBallL;
+    [SerializeField] private GameObject eSnowManL;
+    [SerializeField] private GameObject eTreeL;
 
     // Start is called before the first frame update
     void Awake()
@@ -226,6 +230,12 @@ public class ChibiCat : MonoBehaviour
             case 21:
                 basketBallR.SetActive(true);
                 break;
+            case 241:
+                eSnowManR.SetActive(true);
+                break;
+            case 242:
+                eTreeR.SetActive(true);
+                break;
         }
         switch (itemIdLeft)     // 左手
         {
@@ -295,6 +305,12 @@ public class ChibiCat : MonoBehaviour
                 break;
             case 21:
                 basketBallL.SetActive(true);
+                break;
+            case 241:
+                eSnowManL.SetActive(true);
+                break;
+            case 242:
+                eTreeL.SetActive(true);
                 break;
         }
     }
@@ -430,6 +446,9 @@ public class ChibiCat : MonoBehaviour
         tennisR.SetActive(false);
         tennisBatR.SetActive(false);
         basketBallR.SetActive(false);
+        eSnowManR.SetActive(false);
+        eTreeR.SetActive(false);
+
 
         battonWoodL.SetActive(false);   // 左手解除
         spadL.SetActive(false);
@@ -452,6 +471,8 @@ public class ChibiCat : MonoBehaviour
         tennisL.SetActive(false);
         tennisBatL.SetActive(false);
         basketBallL.SetActive(false);
+        eSnowManL.SetActive(false);
+        eTreeL.SetActive(false);
     }
 
     private void releaseGlasses()

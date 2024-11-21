@@ -80,6 +80,24 @@ public class CollectionItem : MonoBehaviour
                     }
                 }
             }
+            for (int i = 0; i < shopdata.eventIDs.Count; i++)
+            {
+                GameObject itemSlot = Instantiate(itemSlotPrefab, transform);
+                Image itemImage = itemSlot.transform.Find("Item").GetComponent<Image>();
+
+                if (itemImage != null)
+                {
+                    if (collectItem[shopdata.eventIDs[i]])
+                    {
+                        itemImage.sprite = gm.db.GetItemList()[shopdata.eventIDs[i]].MyItemImage;
+                        itemImage.color = new Color(1, 1, 1, 0.9f);
+                    }
+                    else
+                    {
+                        itemImage.color = new Color(0, 0, 0, 0);
+                    }
+                }
+            }
         }
         catch (System.Exception ex)
         {

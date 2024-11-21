@@ -53,6 +53,9 @@ public class TitleSky : MonoBehaviour
 
     [SerializeField]
     private GameObject startButton; // startボタン
+
+    [SerializeField]
+    private GameObject guestButton; // guestボタン
     [SerializeField]
     private GameObject userData; // ユーザーデータ
     [SerializeField]
@@ -109,6 +112,7 @@ public class TitleSky : MonoBehaviour
         if (GameManager.SceneNo == scene.Night)
         {
             startButton.SetActive(false);
+            guestButton.SetActive(false);
 
             message.SetActive(true);
             Text messageText = message.GetComponentInChildren<Text>();
@@ -154,6 +158,7 @@ public class TitleSky : MonoBehaviour
         if (loginFlg == 0)
         {
             startButton.SetActive(false);   // ログイン完了まで一旦消す
+            guestButton.SetActive(false);   // ログイン完了まで一旦消す
             gm.connection.enetLogin();    // OAuthログイン。
         }
         else if (loginFlg == 1)
@@ -374,6 +379,7 @@ public class TitleSky : MonoBehaviour
         userData.SetActive(false);
         reLogin.SetActive(false);
         startButton.SetActive(true);
+        guestButton.SetActive(true);
         Text messageText = message.GetComponentInChildren<Text>();
         messageText.text = "ログアウトしました。";
 
@@ -460,5 +466,23 @@ public class TitleSky : MonoBehaviour
             necoNo = 209;
         }
         cat.setChara(necoNo);
+    }
+
+    public void onGuestMode()
+    {
+        if (!firstPush)
+        {
+            GameManager.guestMode = true;
+            GameManager.TypingDataPath = "TextCustom/heijoEvent";
+            GameManager.SceneNo = (int)scene.Typing;
+            SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
+            firstPush = true;
+        }
+    }
+
+    public void onHeijoMode()
+    {
+        GameManager.eventHeijo = true;
+        onGuestMode();
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Analytics;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -49,8 +50,10 @@ public class Player : MonoBehaviour
     private float speed = 8f;
     private int typingWindow = 0;
     private int shopWindow = 0;
+    private int heijoWindow = 0;
     private int keepOutCount = 0;
 
+    private bool goNextScene = false;    // 次のシーンに遷移するためのフラグ
 
     void Start()
     {
@@ -76,7 +79,7 @@ public class Player : MonoBehaviour
         {
             exitHouse.SetActive(false);
             exitShop.SetActive(false);
-            transform.position = new Vector3(286, 1, 96);
+//            transform.position = new Vector3(286, 1, 96);
             transform.rotation = Quaternion.Euler(0, 180, 0);
             resetTypingPanel();
         
@@ -101,6 +104,24 @@ public class Player : MonoBehaviour
             tiikawa.SetActive(true);
 
             switchCam.SwitchCamera();           // カメラ切り替え
+        }
+        else if (GameManager.SceneNo == scene.Heijo)
+        {
+            exitHouse.SetActive(false);
+            exitShop.SetActive(false);
+
+
+            typingRoom.SetActive(false);
+            itemShop.SetActive(false);
+            rankingButton.GetComponent<OpenButton>().OnButton();
+
+            talkObject.SetActive(false);
+
+
+            GameManager.SceneNo = scene.World;
+            heijoWindow = -1;
+        
+            animator.SetTrigger("Hi");    // "Hi" トリガーアニメーションを開始
         }
     }
 
@@ -256,6 +277,17 @@ public class Player : MonoBehaviour
             // "Bow" トリガーアニメーションを開始
             animator.SetTrigger("Bow");
         }
+        if (heijoWindow == -1)
+        {
+            if (!fade.IsFadeOutComplete())
+            {
+                return;
+            }
+            heijoWindow = 0;
+
+            transform.position = new Vector3(259, 1.668f, 173);
+            transform.rotation = Quaternion.Euler(0, -179, 0);
+        }
 
         if (keepOutCount > 0)
         {
@@ -408,6 +440,19 @@ public class Player : MonoBehaviour
             // NavMeshAgentを使用して、計算した位置にワープさせる
             agent.Move(centerDirection * hitBackForce / 2);
             agent.destination = transform.position + centerDirection * hitBackForce;
+        }
+        else if (col.gameObject.name == "kanbanCube")
+        {
+            /*
+            if (!goNextScene)
+            {
+                GameManager.eventHeijo = true;
+                GameManager.TypingDataPath = "TextCustom/heijoEvent";
+                GameManager.SceneNo = (int)scene.Typing;
+                SceneManager.LoadScene("typingStage"); // タイピングシーンに遷移
+                goNextScene = true;
+            }
+            */
         }
         else if (col.gameObject.name != "Terrain")
         {

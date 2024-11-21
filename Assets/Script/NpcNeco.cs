@@ -8,6 +8,7 @@ public class NpcNeco : MonoBehaviour
 {
     private Animator animator;
     private NavMeshAgent agent; // NavMeshAgentへの参照
+    private Rigidbody rb;
     public float radius = 16f; // ランダムな目的地を探す範囲
     private float speed = 5f;
     public float interval = 8f;
@@ -15,6 +16,7 @@ public class NpcNeco : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         animator.SetInteger("animation", 10);
 
@@ -92,14 +94,16 @@ public class NpcNeco : MonoBehaviour
         {
             animator.SetBool("idol", true);
             agent.velocity = Vector3.zero;
+            rb.velocity = Vector3.zero; // 速度を0にする
+            rb.angularVelocity = Vector3.zero; // 角速度を0にする
         }
     }
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.name != "Terrain")
         {
-//            animator.SetTrigger("run");
-//            animator.SetTrigger("walk");
+            rb.velocity = Vector3.zero; // 速度を0にする
+            rb.angularVelocity = Vector3.zero; // 角速度を0にする
             agent.ResetPath(); // 目的地を解除する
             if (col.gameObject.name == "Player")
             {
