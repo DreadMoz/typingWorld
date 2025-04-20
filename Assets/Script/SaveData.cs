@@ -251,6 +251,11 @@ public class SaveData : ScriptableObject
         }
     }
 
+    public void updateLastName(string newLastName)
+    {
+        LastName = newLastName;
+    }
+
     // 初期データ登録。
     public void setNewData(string googleMail, string googleFirstName, string googleLastName, string googleOu)
     {

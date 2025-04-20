@@ -190,9 +190,12 @@ public class TitleSky : MonoBehaviour
         StartCoroutine(LoadImage(userInfo.picture));
         messageText.text = userInfo.message;
 
-        if (userInfo.access == "true")
+        gm.savedata.updateLastName(userInfo.lastName);
+        gm.exportLocal();  // lastName更新データ保存ローカル＆GSS
+
+        if (userInfo.access == "true")  // いいネットなら照合成功
         {
-            gm.connection.loadLocal(); // あしあとデータサーチ
+            gm.connection.loadLocal(); // ローカルデータをロードする
         }
         reLogin.SetActive(true); // ログアウトボタン表示
     }
